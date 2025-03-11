@@ -1,0 +1,16 @@
+[project]
+name = "ragas-annotator"
+version = "0.1.0"
+description = "Add your description here"
+readme = "README.md"
+requires-python = ">=3.12"
+dependencies = []
+
+[build-system]
+requires = ["setuptools>=64.0"]
+build-backend = "setuptools.build_meta"
+
+[dependency-groups]
+dev = [
+    "nbdev>=2.3.35",
+]
