@@ -1,0 +1,20 @@
+website:
+  sidebar:
+    contents:
+      - index.ipynb
+      - dataset.ipynb
+      - experiment.ipynb
+      - section: backends
+        contents:
+          - backends/notion.ipynb
+      - section: model
+        contents:
+          - model/notion_model.ipynb
+          - model/notion_types.ipynb
+      - section: project
+        contents:
+          - project/experiment.ipynb
+          - project/project.ipynb
+      - section: utils
+        contents:
+          - utils/exceptions.ipynb
