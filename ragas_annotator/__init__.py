@@ -5,9 +5,12 @@ __version__ = "0.0.1"
 __all__ = []
 
 # %% ../nbs/init_module.ipynb 2
-from .project import Project
+from .project.core import Project
 import ragas_annotator.model.notion_typing as nmt
 from .model.notion_model import NotionModel
+
+# just import to run the module
+import ragas_annotator.project.experiments
 
 # %% ../nbs/init_module.ipynb 3
 __all__ = ["Project", "NotionModel", "nmt"]

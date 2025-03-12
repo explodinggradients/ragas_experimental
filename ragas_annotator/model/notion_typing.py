@@ -103,12 +103,13 @@ class ID(Field[int], int):
     def _to_notion_property(self) -> dict:
         return {self.name: {"type": "unique_id", "unique_id": {"prefix": None}}}
 
-# %% ../../nbs/model/notion_types.ipynb 9
+# %% ../../nbs/model/notion_types.ipynb 10
 class Text(Field[str], str):
     """Rich text property type."""
 
     NOTION_FIELD_TYPE = "rich_text"
     _type = str
+    CHUNK_SIZE = 2000  # Notion's character limit per rich text block
 
     def __new__(cls, *args, **kwargs):
         return str.__new__(cls)
@@ -117,7 +118,14 @@ class Text(Field[str], str):
         super().__init__(required=required)
 
     def _to_notion(self, value: str) -> dict:
-        return {self.name: {self.NOTION_FIELD_TYPE: [{"text": {"content": value}}]}}
+        # Split the text into chunks of CHUNK_SIZE characters
+        if not value:
+            return {self.name: {self.NOTION_FIELD_TYPE: []}}
+        
+        chunks = [value[i:i+self.CHUNK_SIZE] for i in range(0, len(value), self.CHUNK_SIZE)]
+        rich_text_array = [{"text": {"content": chunk}} for chunk in chunks]
+        
+        return {self.name: {self.NOTION_FIELD_TYPE: rich_text_array}}
 
     def _from_notion(self, data: dict) -> t.Optional[str]:
         # Handle both direct and properties-wrapped format
@@ -125,11 +133,14 @@ class Text(Field[str], str):
             rich_text = data["properties"][self.name][self.NOTION_FIELD_TYPE]
         else:
             rich_text = data[self.name][self.NOTION_FIELD_TYPE]
+        
         if not rich_text:
             return None
-        return rich_text[0]["text"]["content"]
+            
+        # Combine all text chunks into a single string
+        return "".join(item["text"]["content"] for item in rich_text if "text" in item)
 
-# %% ../../nbs/model/notion_types.ipynb 10
+# %% ../../nbs/model/notion_types.ipynb 15
 class Title(Field[str], str):
     """Title property type."""
 
@@ -154,7 +165,7 @@ class Title(Field[str], str):
             return None
         return title[0]["text"]["content"]
 
-# %% ../../nbs/model/notion_types.ipynb 11
+# %% ../../nbs/model/notion_types.ipynb 16
 class Select(Field[str], str):
     """Select property type."""
 
@@ -198,7 +209,7 @@ class Select(Field[str], str):
             ]
         return prop
 
-# %% ../../nbs/model/notion_types.ipynb 12
+# %% ../../nbs/model/notion_types.ipynb 17
 class MultiSelect(Field[list[str]], list):
     """Multi-select property type."""
 
@@ -244,7 +255,7 @@ class MultiSelect(Field[list[str]], list):
             ]
         return prop
 
-# %% ../../nbs/model/notion_types.ipynb 13
+# %% ../../nbs/model/notion_types.ipynb 18
 class URL(Field[str], str):
     """URL property type."""
 
