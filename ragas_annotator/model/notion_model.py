@@ -5,7 +5,7 @@
 # %% auto 0
 __all__ = ['NotionModelMeta', 'NotionModel']
 
-# %% ../../nbs/model/notion_model.ipynb 2
+# %% ../../nbs/model/notion_model.ipynb 3
 from dataclasses import dataclass
 import typing as t
 from datetime import datetime
@@ -15,7 +15,7 @@ from fastcore.utils import patch, patch_to
 from ..exceptions import ValidationError
 from .notion_typing import Field, ID
 
-# %% ../../nbs/model/notion_model.ipynb 3
+# %% ../../nbs/model/notion_model.ipynb 4
 class NotionModelMeta(type):
     """Metaclass for NotionModel to handle field registration."""
 
@@ -47,7 +47,7 @@ class NotionModelMeta(type):
         namespace["_fields"] = _fields
         return super().__new__(mcs, name, bases, namespace)
 
-# %% ../../nbs/model/notion_model.ipynb 4
+# %% ../../nbs/model/notion_model.ipynb 5
 class NotionModel(metaclass=NotionModelMeta):
     """Base class for Notion database models.
 
@@ -126,7 +126,7 @@ class NotionModel(metaclass=NotionModelMeta):
 
         return f"{class_name}({' '.join(parts)})"
 
-# %% ../../nbs/model/notion_model.ipynb 7
+# %% ../../nbs/model/notion_model.ipynb 8
 @patch
 def to_notion(self: NotionModel) -> dict:
     """Convert the model to Notion API format."""

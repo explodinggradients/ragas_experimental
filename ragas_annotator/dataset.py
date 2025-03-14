@@ -79,7 +79,7 @@ class Dataset(t.Generic[NotionModelType]):
     def __iter__(self) -> t.Iterator[NotionModelType]:
         return iter(self._entries)
 
-# %% ../nbs/dataset.ipynb 12
+# %% ../nbs/dataset.ipynb 9
 @patch
 def append(self: Dataset, entry: NotionModelType) -> None:
     """Add a new entry to the dataset and sync to Notion."""
@@ -95,7 +95,7 @@ def append(self: Dataset, entry: NotionModelType) -> None:
     updated_entry = self.model.from_notion(response)
     self._entries.append(updated_entry)
 
-# %% ../nbs/dataset.ipynb 16
+# %% ../nbs/dataset.ipynb 12
 @patch
 def pop(self: Dataset, index: int = -1) -> NotionModelType:
     """Remove and return entry at index, sync deletion to Notion."""
@@ -110,7 +110,7 @@ def pop(self: Dataset, index: int = -1) -> NotionModelType:
     # Remove from local cache
     return self._entries.pop(index)
 
-# %% ../nbs/dataset.ipynb 18
+# %% ../nbs/dataset.ipynb 15
 @patch
 def load(self: Dataset) -> None:
     """Load all entries from the Notion database."""
@@ -127,7 +127,7 @@ def load(self: Dataset) -> None:
         entry = self.model.from_notion(page)
         self._entries.append(entry)
 
-# %% ../nbs/dataset.ipynb 22
+# %% ../nbs/dataset.ipynb 20
 @patch
 def get(self: Dataset, id: int) -> t.Optional[NotionModelType]:
     """Get an entry by ID."""
@@ -145,7 +145,7 @@ def get(self: Dataset, id: int) -> t.Optional[NotionModelType]:
 
     return self.model.from_notion(response["results"][0])
 
-# %% ../nbs/dataset.ipynb 24
+# %% ../nbs/dataset.ipynb 23
 @patch
 def save(self: Dataset, item: NotionModelType) -> None:
     """Save changes to an item to Notion."""

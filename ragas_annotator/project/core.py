@@ -23,7 +23,7 @@ class Project:
     def __init__(
         self,
         name: str,
-        notion_repo: t.Optional[NotionBackend] = None,
+        notion_backend: t.Optional[NotionBackend] = None,
         notion_api_key: t.Optional[str] = None,
         notion_root_page_id: t.Optional[str] = None,
     ):
@@ -32,7 +32,7 @@ class Project:
         self.experiments_page_id = ""
         self.comparisons_page_id = ""
 
-        if notion_repo is None:
+        if notion_backend is None:
             # check that the environment variables are set
             notion_api_key = os.getenv("NOTION_API_KEY") or notion_api_key
             notion_root_page_id = (
@@ -50,7 +50,7 @@ class Project:
                 root_page_id=notion_root_page_id,
             )
         else:
-            self._notion_backend = notion_repo
+            self._notion_backend = notion_backend
 
         # initialize the project structure
         self.initialize()
@@ -96,7 +96,7 @@ class Project:
     def __repr__(self):
         return f"Project(name='{self.name}', root_page_id={self._notion_backend.root_page_id})"
 
-# %% ../../nbs/project/core.ipynb 8
+# %% ../../nbs/project/core.ipynb 9
 @patch
 def create_dataset(
     self: Project, model: t.Type[NotionModel], name: t.Optional[str] = None
@@ -140,7 +140,7 @@ def create_dataset(
         notion_backend=self._notion_backend,
     )
 
-# %% ../../nbs/project/core.ipynb 11
+# %% ../../nbs/project/core.ipynb 12
 @patch
 def get_dataset(self: Project, name: str, model: t.Type[NotionModel]) -> Dataset:
     """Get an existing dataset by name."""
