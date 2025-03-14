@@ -94,7 +94,7 @@ class Project:
         )
 
     def __repr__(self):
-        return f"Project(name={self.name}, root_page_id={self._notion_backend.root_page_id})"
+        return f"Project(name='{self.name}', root_page_id={self._notion_backend.root_page_id})"
 
 # %% ../../nbs/project/core.ipynb 8
 @patch

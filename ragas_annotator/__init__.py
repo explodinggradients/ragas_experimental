@@ -11,6 +11,7 @@ from .model.notion_model import NotionModel
 
 # just import to run the module
 import ragas_annotator.project.experiments
+import ragas_annotator.project.comparison
 
 # %% ../nbs/init_module.ipynb 3
 __all__ = ["Project", "NotionModel", "nmt"]
