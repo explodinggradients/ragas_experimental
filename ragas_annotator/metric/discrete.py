@@ -48,7 +48,7 @@ class DiscreteMetric(Metric):
             if counter[candidate.result] == max_count:
                 result = candidate.result              
                 reason = candidate.reason
-                break
+                return MetricResult(result=result, reason=reason)
         
         return results[0]
 
