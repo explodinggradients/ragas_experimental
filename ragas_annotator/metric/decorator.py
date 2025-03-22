@@ -5,7 +5,7 @@
 # %% auto 0
 __all__ = ['create_metric_decorator']
 
-# %% ../../nbs/metric/decorator.ipynb 3
+# %% ../../nbs/metric/decorator.ipynb 2
 import typing as t
 import inspect
 import asyncio

@@ -5,7 +5,7 @@
 # %% auto 0
 __all__ = ['Metric']
 
-# %% ../../nbs/metric/base.ipynb 3
+# %% ../../nbs/metric/base.ipynb 2
 from abc import ABC, abstractmethod
 import asyncio
 from dataclasses import dataclass, field
