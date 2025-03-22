@@ -5,7 +5,7 @@
 # %% auto 0
 __all__ = ['discrete_metric', 'DiscreteMetric']
 
-# %% ../../nbs/metric/discrete.ipynb 3
+# %% ../../nbs/metric/discrete.ipynb 2
 import typing as t
 from dataclasses import dataclass, field
 from pydantic import BaseModel, create_model
