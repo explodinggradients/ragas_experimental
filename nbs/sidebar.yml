@@ -4,17 +4,35 @@ website:
       - index.ipynb
       - dataset.ipynb
       - experiment.ipynb
+      - init_module.ipynb
       - section: backends
         contents:
+          - backends/factory.ipynb
+          - backends/mock_notion_client.ipynb
           - backends/notion.ipynb
+      - section: metric
+        contents:
+          - metric/base.ipynb
+          - metric/decorator.ipynb
+          - metric/discrete.ipynb
+          - metric/llm.ipynb
+          - metric/numeric.ipynb
+          - metric/ranking.ipynb
+          - metric/result.ipynb
+          - metric/test_base.ipynb
       - section: model
         contents:
           - model/notion_model.ipynb
           - model/notion_types.ipynb
       - section: project
         contents:
-          - project/experiment.ipynb
-          - project/project.ipynb
+          - project/comparison.ipynb
+          - project/core.ipynb
+          - project/experiments.ipynb
+          - project/naming.ipynb
+      - section: tracing
+        contents:
+          - tracing/langfuse.ipynb
       - section: utils
         contents:
           - utils/exceptions.ipynb
