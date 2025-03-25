@@ -22,10 +22,6 @@ $ pip install ragas_annotator
 
 ## Getting Started
 
-Fill me in please! Don’t forget code examples:
-
-``` python
-1 + 1
-```
-
-    2
+First lets init a
+[`Project`](https://explodinggradients.github.io/ragas_annotator/project/core.html#project)
+from notion.
