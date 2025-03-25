@@ -22,10 +22,64 @@ $ pip install ragas_annotator
 
 ## Getting Started
 
-Fill me in please! Don’t forget code examples:
+First lets init a
+[`Project`](https://explodinggradients.github.io/ragas_annotator/project/core.html#project)
+from notion.
 
 ``` python
-1 + 1
+from ragas_annotator import Project
+
+project = Project(
+    name="Ragas Dashboard",
+    notion_root_page_id="1b35d9bf94ff801792bfd1824fac0c96"
+)
+project
 ```
 
-    2
+    Project(name='Ragas Dashboard', root_page_id=1b35d9bf94ff801792bfd1824fac0c96)
+
+NOTE: ideally this should be optional - just send a dict
+
+``` python
+from ragas_annotator import NotionModel, nmt
+
+# define the model
+class RAGDataset(NotionModel):
+    id: int = nmt.ID()
+    query: str = nmt.Title()
+    ground_truth: str = nmt.Text()
+```
+
+Lets check the datasets it has
+
+``` python
+dataset = project.get_dataset("RAG Dataset", RAGDataset)
+dataset
+```
+
+    Dataset(name=RAG Dataset, model=RAGDataset, len=0)
+
+``` python
+def example_llm_app(query: str):
+    return "This is a test"
+
+
+
+@project.experiment(RAGDataset)
+def random_experiment(row):
+    print(row)
+    return row
+```
+
+    AttributeError: 'Project' object has no attribute 'experiment'
+    [31m---------------------------------------------------------------------------[39m
+    [31mAttributeError[39m                            Traceback (most recent call last)
+    [36mCell[39m[36m [39m[32mIn[5][39m[32m, line 6[39m
+    [32m      1[39m [38;5;28;01mdef[39;00m[38;5;250m [39m[34mexample_llm_app[39m(query: [38;5;28mstr[39m):
+    [32m      2[39m     [38;5;28;01mreturn[39;00m [33m"[39m[33mThis is a test[39m[33m"[39m
+    [32m----> [39m[32m6[39m [38;5;129m@project[39m[43m.[49m[43mexperiment[49m(RAGDataset)
+    [32m      7[39m [38;5;28;01mdef[39;00m[38;5;250m [39m[34mrandom_experiment[39m(row):
+    [32m      8[39m     [38;5;28mprint[39m(row)
+    [32m      9[39m     [38;5;28;01mreturn[39;00m row
+
+    [31mAttributeError[39m: 'Project' object has no attribute 'experiment'

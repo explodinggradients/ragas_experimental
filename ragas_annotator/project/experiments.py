@@ -90,12 +90,13 @@ memorable_names = MemorableNames()
 
 # %% ../../nbs/project/experiments.ipynb 9
 @patch
-def langfuse_experiment(
+def experiment(
     self: Project, experiment_model: t.Type[NotionModel], name_prefix: str = ""
 ):
-    """Decorator for creating experiment functions.
+    """Decorator for creating experiment functions without Langfuse integration.
 
     Args:
+        experiment_model: The NotionModel type to use for experiment results
         name_prefix: Optional prefix for experiment names
 
     Returns:
@@ -105,11 +106,8 @@ def langfuse_experiment(
     def decorator(func: t.Callable) -> ExperimentProtocol:
         @wraps(func)
         async def wrapped_experiment(*args, **kwargs):
-            # wrap the function with langfuse observation so that it can be traced
-            # and spans inside the function can be retrieved with sync_trace()
-            observed_func = observe(name=f"{name_prefix}-{func.__name__}")(func)
-
-            return await observed_func(*args, **kwargs)
+            # Simply call the function without Langfuse observation
+            return await func(*args, **kwargs)
 
         # Add run method to the wrapped function
         async def run_async(dataset: Dataset, name: t.Optional[str] = None):
@@ -127,7 +125,8 @@ def langfuse_experiment(
             for future in tqdm(asyncio.as_completed(tasks), total=len(tasks)):
                 result = await future
                 # Add each result to experiment view as it completes
-                results.append(result) if result is not None else None
+                if result is not None:
+                    results.append(result)
 
             # upload results to experiment view
             experiment_view = self.create_experiment(name=name, model=experiment_model)
@@ -138,5 +137,50 @@ def langfuse_experiment(
 
         wrapped_experiment.__setattr__("run_async", run_async)
         return t.cast(ExperimentProtocol, wrapped_experiment)
+
+    return decorator
+
+
+# %% ../../nbs/project/experiments.ipynb 10
+@patch
+def langfuse_experiment(
+    self: Project, experiment_model: t.Type[NotionModel], name_prefix: str = ""
+):
+    """Decorator for creating experiment functions with Langfuse integration.
+
+    Args:
+        experiment_model: The NotionModel type to use for experiment results
+        name_prefix: Optional prefix for experiment names
+
+    Returns:
+        Decorator function that wraps experiment functions with Langfuse observation
+    """
+
+    def decorator(func: t.Callable) -> ExperimentProtocol:
+        # First, create a base experiment wrapper
+        base_experiment = self.experiment(experiment_model, name_prefix)(func)
+        
+        # Override the wrapped function to add Langfuse observation
+        @wraps(func)
+        async def wrapped_with_langfuse(*args, **kwargs):
+            # wrap the function with langfuse observation
+            observed_func = observe(name=f"{name_prefix}-{func.__name__}")(func)
+            return await observed_func(*args, **kwargs)
+        
+        # Replace the async function to use Langfuse
+        original_run_async = base_experiment.run_async
+        
+        # Use the original run_async but with the Langfuse-wrapped function
+        async def run_async_with_langfuse(dataset: Dataset, name: t.Optional[str] = None):
+            # Override the internal wrapped_experiment with our Langfuse version
+            base_experiment.__wrapped__ = wrapped_with_langfuse
+            
+            # Call the original run_async which will now use our Langfuse-wrapped function
+            return await original_run_async(dataset, name)
+        
+        # Replace the run_async method
+        base_experiment.__setattr__("run_async", run_async_with_langfuse)
+        
+        return t.cast(ExperimentProtocol, base_experiment)
 
     return decorator
