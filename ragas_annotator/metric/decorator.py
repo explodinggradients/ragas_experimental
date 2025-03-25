@@ -11,6 +11,7 @@ import inspect
 import asyncio
 from dataclasses import dataclass
 from . import MetricResult
+from ..llm import RagasLLM
 
 
 
@@ -25,7 +26,7 @@ def create_metric_decorator(metric_class):
     Returns:
         A decorator factory function for the specified metric type
     """
-    def decorator_factory(llm, prompt, name: t.Optional[str] = None, **metric_params):
+    def decorator_factory(llm:RagasLLM, prompt, name: t.Optional[str] = None, **metric_params):
         """
         Creates a decorator that wraps a function into a metric instance.
         
