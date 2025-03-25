@@ -13,9 +13,10 @@ import instructor
 T = t.TypeVar('T', bound=BaseModel)
 
 class RagasLLM:
-    def __init__(self, provider: str, model:str, client: t.Any):
+    def __init__(self, provider: str, model:str, client: t.Any, **model_args):
         self.provider = provider.lower()
         self.model = model
+        self.model_args = model_args or {}
         self.client = self._initialize_client(provider, client)
         # Check if client is async-capable at initialization
         self.is_async = self._check_client_async()
@@ -69,33 +70,30 @@ class RagasLLM:
                 loop.close()
                 asyncio.set_event_loop(None)
     
-    def generate(self, prompt: str, response_model: t.Type[T], **kwargs) -> T:
+    def generate(self, prompt: str, response_model: t.Type[T]) -> T:
         """Generate a response using the configured LLM.
         
         For async clients, this will run the async method in the appropriate event loop.
         """
         messages = [{"role": "user", "content": prompt}]
-        if "model" not in kwargs and self.model:
-            kwargs["model"] = self.model
         
         # If client is async, use the appropriate method to run it
         if self.is_async:
             return self._run_async_in_current_loop(
-                self.agenerate(prompt, response_model, **kwargs)
+                self.agenerate(prompt, response_model)
             )
         else:
             # Regular sync client, just call the method directly
             return self.client.chat.completions.create(
+                model=self.model,
                 messages=messages,
                 response_model=response_model,
-                **kwargs
+                **self.model_args,
             )
     
-    async def agenerate(self, prompt: str, response_model: t.Type[T], **kwargs) -> T:
+    async def agenerate(self, prompt: str, response_model: t.Type[T]) -> T:
         """Asynchronously generate a response using the configured LLM."""
         messages = [{"role": "user", "content": prompt}]
-        if "model" not in kwargs and self.model:
-            kwargs["model"] = self.model
         
         # If client is not async, raise a helpful error
         if not self.is_async:
@@ -105,10 +103,11 @@ class RagasLLM:
         
         # Regular async client, call the method directly
         return await self.client.chat.completions.create(
+            model=self.model,
             messages=messages,
             response_model=response_model,
-            **kwargs
+            **self.model_args,
         )
 
-def ragas_llm(provider: str,model:str, client: t.Any,) -> RagasLLM:
-    return RagasLLM(provider=provider, client=client, model=model)
+def ragas_llm(provider: str,model:str, client: t.Any, **model_args) -> RagasLLM:
+    return RagasLLM(provider=provider, client=client, model=model, **model_args)
