@@ -13,6 +13,7 @@ from notion_client import Client as NotionClient
 from fastcore.utils import patch
 
 from ..backends.notion_backend import NotionBackend
+from ..backends.factory import NotionBackendFactory
 from ..model.notion_model import NotionModel
 import ragas_annotator.model.notion_typing as nmt
 from ..dataset import Dataset
@@ -45,10 +46,17 @@ class Project:
             if notion_root_page_id is None:
                 raise ValueError("NOTION_ROOT_PAGE_ID is not set")
 
-            self._notion_backend = NotionBackend(
-                notion_client=NotionClient(auth=notion_api_key),
-                root_page_id=notion_root_page_id,
-            )
+            if notion_api_key == "TEST":
+                self._notion_backend = NotionBackendFactory.create(
+                    root_page_id=notion_root_page_id,
+                    use_mock=True,
+                    initialize_project=True,
+                )
+            else:
+                self._notion_backend = NotionBackend(
+                    notion_client=NotionClient(auth=notion_api_key),
+                    root_page_id=notion_root_page_id,
+                )
         else:
             self._notion_backend = notion_backend
 
