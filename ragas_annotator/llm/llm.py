@@ -13,7 +13,7 @@ import instructor
 T = t.TypeVar('T', bound=BaseModel)
 
 class RagasLLM:
-    def __init__(self, provider: str, client: t.Any, model: t.Optional[str] = None):
+    def __init__(self, provider: str, model:str, client: t.Any):
         self.provider = provider.lower()
         self.model = model
         self.client = self._initialize_client(provider, client)
@@ -110,5 +110,5 @@ class RagasLLM:
             **kwargs
         )
 
-def ragas_llm(provider: str, client: t.Any, model: t.Optional[str] = None) -> RagasLLM:
+def ragas_llm(provider: str,model:str, client: t.Any,) -> RagasLLM:
     return RagasLLM(provider=provider, client=client, model=model)
