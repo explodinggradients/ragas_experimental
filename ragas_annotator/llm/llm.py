@@ -7,13 +7,14 @@ __all__ = ['T', 'RagasLLM', 'ragas_llm']
 import typing as t
 import asyncio
 import inspect
+import threading
 from pydantic import BaseModel
 import instructor
 
 T = t.TypeVar('T', bound=BaseModel)
 
 class RagasLLM:
-    def __init__(self, provider: str, model:str, client: t.Any, **model_args):
+    def __init__(self, provider: str, model: str, client: t.Any, **model_args):
         self.provider = provider.lower()
         self.model = model
         self.model_args = model_args or {}
@@ -50,16 +51,46 @@ class RagasLLM:
     def _run_async_in_current_loop(self, coro):
         """Run an async coroutine in the current event loop if possible.
         
-        This handles Jupyter environments correctly by using the existing loop.
+        This handles Jupyter environments correctly by using a separate thread
+        when a running event loop is detected.
         """
         try:
-            # Check if we're in an environment with an existing event loop (like Jupyter)
+            # Try to get the current event loop
             loop = asyncio.get_event_loop()
+            
             if loop.is_running():
-                # We're likely in a Jupyter environment
-                import nest_asyncio
-                nest_asyncio.apply()
-            return loop.run_until_complete(coro)
+                # If the loop is already running (like in Jupyter notebooks),
+                # we run the coroutine in a separate thread with its own event loop
+                result_container = {'result': None, 'exception': None}
+                
+                def run_in_thread():
+                    # Create a new event loop for this thread
+                    new_loop = asyncio.new_event_loop()
+                    asyncio.set_event_loop(new_loop)
+                    try:
+                        # Run the coroutine in this thread's event loop
+                        result_container['result'] = new_loop.run_until_complete(coro)
+                    except Exception as e:
+                        # Capture any exceptions to re-raise in the main thread
+                        result_container['exception'] = e
+                    finally:
+                        # Clean up the event loop
+                        new_loop.close()
+                
+                # Start the thread and wait for it to complete
+                thread = threading.Thread(target=run_in_thread)
+                thread.start()
+                thread.join()
+                
+                # Re-raise any exceptions that occurred in the thread
+                if result_container['exception']:
+                    raise result_container['exception']
+                    
+                return result_container['result']
+            else:
+                # Standard case - event loop exists but isn't running
+                return loop.run_until_complete(coro)
+                
         except RuntimeError:
             # If we get a runtime error about no event loop, create a new one
             loop = asyncio.new_event_loop()
@@ -67,6 +98,7 @@ class RagasLLM:
             try:
                 return loop.run_until_complete(coro)
             finally:
+                # Clean up
                 loop.close()
                 asyncio.set_event_loop(None)
     
@@ -109,5 +141,5 @@ class RagasLLM:
             **self.model_args,
         )
 
-def ragas_llm(provider: str,model:str, client: t.Any, **model_args) -> RagasLLM:
+def ragas_llm(provider: str, model: str, client: t.Any, **model_args) -> RagasLLM:
     return RagasLLM(provider=provider, client=client, model=model, **model_args)
