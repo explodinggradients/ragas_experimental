@@ -64,3 +64,6 @@ class Metric(ABC):
             
         # Run all tasks concurrently and return results
         return await asyncio.gather(*async_tasks)
+            
+        
+        
