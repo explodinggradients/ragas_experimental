@@ -14,16 +14,18 @@ import typing as t
 from . import MetricResult
 from . import LLM
 
+
 @dataclass
 class Metric(ABC):
     """Base class for all metrics in the LLM evaluation library."""
+
     name: str
     prompt: str
     llm: LLM
     _response_models: t.Dict[bool, t.Type[BaseModel]] = field(
         default_factory=dict, init=False, repr=False
     )
-    
+
     @abstractmethod
     def _get_response_model(self, with_reasoning: bool) -> t.Type[BaseModel]:
         """Get the appropriate response model."""
@@ -32,35 +34,45 @@ class Metric(ABC):
     @abstractmethod
     def _ensemble(self, results: t.List[MetricResult]) -> MetricResult:
         pass
-        
-    
+
     def score(self, reasoning: bool = True, n: int = 1, **kwargs) -> t.Any:
         responses = []
         prompt_input = self.prompt.format(**kwargs)
         for _ in range(n):
-            response = self.llm.generate(prompt_input, response_model = self._get_response_model(reasoning)) 
+            response = self.llm.generate(
+                prompt_input, response_model=self._get_response_model(reasoning)
+            )
             response = MetricResult(**response.model_dump())
             responses.append(response)
         return self._ensemble(responses)
 
-
-    async def ascore(self, reasoning: bool = True, n: int = 1, **kwargs) -> MetricResult:
+    async def ascore(
+        self, reasoning: bool = True, n: int = 1, **kwargs
+    ) -> MetricResult:
         responses = []  # Added missing initialization
         prompt_input = self.prompt.format(**kwargs)
         for _ in range(n):
-            response = await self.llm.agenerate(prompt_input, response_model = self._get_response_model(reasoning))
-            response = MetricResult(**response.model_dump())  # Fixed missing parentheses
+            response = await self.llm.agenerate(
+                prompt_input, response_model=self._get_response_model(reasoning)
+            )
+            response = MetricResult(
+                **response.model_dump()
+            )  # Fixed missing parentheses
             responses.append(response)
         return self._ensemble(responses)
-        
-    def batch_score(self, inputs: t.List[t.Dict[str, t.Any]], reasoning: bool = True, n: int = 1) -> t.List[t.Any]:
+
+    def batch_score(
+        self, inputs: t.List[t.Dict[str, t.Any]], reasoning: bool = True, n: int = 1
+    ) -> t.List[t.Any]:
         return [self.score(reasoning, n, **input_dict) for input_dict in inputs]
-    
-    async def abatch_score(self, inputs: t.List[t.Dict[str, t.Any]], reasoning: bool = True, n: int = 1) -> t.List[MetricResult]:
+
+    async def abatch_score(
+        self, inputs: t.List[t.Dict[str, t.Any]], reasoning: bool = True, n: int = 1
+    ) -> t.List[MetricResult]:
         async_tasks = []
         for input_dict in inputs:
             # Add reasoning and n to the input parameters
             async_tasks.append(self.ascore(reasoning=reasoning, n=n, **input_dict))
-            
+
         # Run all tasks concurrently and return results
         return await asyncio.gather(*async_tasks)
