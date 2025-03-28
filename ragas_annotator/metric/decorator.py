@@ -47,15 +47,6 @@ def create_metric_decorator(metric_class):
             
             @dataclass
             class CustomMetric(metric_class):
-                def _extract_result(self, result, reasoning: bool):
-                    """Extract score and reason from the result."""
-                    if isinstance(result, tuple) and len(result) == 2:
-                        score, reason = result
-                    else:
-                        score, reason = result, None
-                    
-                    # Use "result" instead of "score" for the new MetricResult implementation
-                    return MetricResult(result=score, reason=reason if reasoning else None)
                 
                 def _run_sync_in_async(self, func, *args, **kwargs):
                     """Run a synchronous function in an async context."""
@@ -82,7 +73,7 @@ def create_metric_decorator(metric_class):
                             # Sync function implementation
                             result = func(self.llm, self.prompt, **kwargs)
                         
-                        return self._extract_result(result, reasoning)
+                        return result
                     except Exception as e:
                         # Handle errors gracefully
                         error_msg = f"Error executing metric {self.name}: {str(e)}"
@@ -101,7 +92,7 @@ def create_metric_decorator(metric_class):
                     else:
                         # For sync functions, run normally
                         result = self._run_sync_in_async(func, self.llm, self.prompt, **kwargs)
-                        return self._extract_result(result, reasoning)
+                        return result
             
             # Create the metric instance with all parameters
             metric_instance = CustomMetric(

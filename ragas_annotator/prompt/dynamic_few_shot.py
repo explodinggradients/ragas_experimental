@@ -174,10 +174,11 @@ class DynamicFewShotPrompt(Prompt):
         TypeError
             If inputs or output is not a dictionary
         """
-        
-        self.examples.append((inputs, output))
+        if (inputs, output) not in self.examples:
+            self.examples.append((inputs, output))
+            
         # Add to example store
-        if self.example_store:
+        if isinstance(self.example_store, ExampleStore) and (inputs, output) not in self.example_store._examples:
             self.example_store.add_example(inputs, output)
     
     @classmethod
