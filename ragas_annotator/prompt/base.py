@@ -41,24 +41,28 @@ class Prompt:
     
     def format(self, **kwargs) -> str:
         """Format the prompt with the provided variables."""
-        # Start with examples if we have them
+
         prompt_parts = []
-        
-                
-        # Add instruction with variables filled in
         prompt_parts.append(self.instruction.format(**kwargs))
+        prompt_parts.append(self._format_examples())
+
+        # Combine all parts
+        return "\n\n".join(prompt_parts)
+    
+    def _format_examples(self) -> str:
         
         # Add examples in a simple format
+        examples = []
         if self.examples:
-            prompt_parts.append("Examples:")
+            examples.append("Examples:")
             for i, (inputs, output) in enumerate(self.examples, 1):
                 example_input = "\n".join([f"{k}: {v}" for k, v in inputs.items()])
                 example_output = "\n".join([f"{k}: {v}" for k, v in output.items()])
                 
-                prompt_parts.append(f"Example {i}:\nInput:\n{example_input}\nOutput:\n{example_output}")
-
-        # Combine all parts
-        return "\n\n".join(prompt_parts)
+                examples.append(f"Example {i}:\nInput:\n{example_input}\nOutput:\n{example_output}")
+        
+        return "\n\n".join(examples) if examples else ""
+        
     
     def add_example(self, inputs: t.Dict, output: t.Dict) -> None:
         """
@@ -85,4 +89,4 @@ class Prompt:
     
     def __str__(self) -> str:
         """String representation showing the instruction."""
-        return f"Prompt(instruction='{self.instruction}')"
+        return f"Prompt(instruction='{self.instruction}',\n examples={self.examples})"

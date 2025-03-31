@@ -15,7 +15,7 @@ import json
 from tqdm import tqdm
 
 from ..prompt.base import Prompt
-from ..embedding.base import RagasEmbedding
+from ..embedding.base import BaseEmbedding
 from . import MetricResult
 from ..llm import RagasLLM
 from ..project.core import Project
@@ -88,7 +88,7 @@ class Metric(ABC):
         # Run all tasks concurrently and return results
         return await asyncio.gather(*async_tasks)
     
-    def train(self,project:Project, experiment_names: t.List[str], model:NotionModel, embedding_model: RagasEmbedding,method: t.Dict[str, t.Any]):
+    def train(self,project:Project, experiment_names: t.List[str], model:NotionModel, embedding_model: BaseEmbedding,method: t.Dict[str, t.Any]):
         
         assert isinstance(self.prompt, Prompt)
         self.prompt = DynamicFewShotPrompt.from_prompt(self.prompt,embedding_model)

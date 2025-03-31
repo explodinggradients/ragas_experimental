@@ -9,7 +9,7 @@ import numpy as np
 from abc import ABC, abstractmethod
 
 from .base import Prompt
-from ..embedding.base import RagasEmbedding
+from ..embedding import BaseEmbedding
 
 class ExampleStore(ABC):
     @abstractmethod
@@ -185,7 +185,7 @@ class DynamicFewShotPrompt(Prompt):
     def from_prompt(
         cls,
         prompt: Prompt,
-        embedding_model: RagasEmbedding,
+        embedding_model: BaseEmbedding,
         num_examples: int = 3
     ) -> "DynamicFewShotPrompt":
         """Create a DynamicFewShotPrompt from a Prompt object."""
