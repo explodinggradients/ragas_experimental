@@ -24,9 +24,14 @@ class MetricResult:
     - RankingMetrics (list results)
     """
     
-    def __init__(self, result: t.Any, reason: t.Optional[str] = None):
+    def __init__(self, result: t.Any, reason: t.Optional[str] = None, traces: t.Optional[t.Dict[str, t.Any]] = None):
+        if traces is not None:
+            invalid_keys = [key for key in traces.keys() if key not in {"input", "output"}]
+            if invalid_keys:
+                raise ValueError(f"Invalid keys in traces: {invalid_keys}. Allowed keys are 'input' and 'output'.")
         self._result = result
         self.reason = reason
+        self.traces = traces
     
     def __repr__(self):
         return repr(self._result)
