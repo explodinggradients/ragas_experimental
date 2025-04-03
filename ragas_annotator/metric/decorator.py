@@ -12,6 +12,7 @@ import asyncio
 from dataclasses import dataclass
 from . import MetricResult
 from ..llm import RagasLLM
+from ..prompt.base import Prompt
 
 
 
@@ -26,7 +27,7 @@ def create_metric_decorator(metric_class):
     Returns:
         A decorator factory function for the specified metric type
     """
-    def decorator_factory(llm:RagasLLM, prompt, name: t.Optional[str] = None, **metric_params):
+    def decorator_factory(llm:RagasLLM, prompt: t.Union[str, Prompt], name: t.Optional[str] = None, **metric_params):
         """
         Creates a decorator that wraps a function into a metric instance.
         
@@ -45,6 +46,7 @@ def create_metric_decorator(metric_class):
             metric_name = name or func.__name__
             is_async = inspect.iscoroutinefunction(func)
             
+            #TODO: Move to dataclass type implementation
             @dataclass
             class CustomMetric(metric_class):
                 
