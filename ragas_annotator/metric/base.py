@@ -12,14 +12,14 @@ from dataclasses import dataclass, field
 from pydantic import BaseModel
 import typing as t
 from . import MetricResult
-from . import LLM
+from ..llm import RagasLLM
 
 @dataclass
 class Metric(ABC):
     """Base class for all metrics in the LLM evaluation library."""
     name: str
     prompt: str
-    llm: LLM
+    llm: RagasLLM
     _response_models: t.Dict[bool, t.Type[BaseModel]] = field(
         default_factory=dict, init=False, repr=False
     )
