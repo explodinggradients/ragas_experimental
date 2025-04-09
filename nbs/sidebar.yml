@@ -10,16 +10,17 @@ website:
           - backends/factory.ipynb
           - backends/mock_notion_client.ipynb
           - backends/notion.ipynb
+      - section: llm
+        contents:
+          - llm/llm.ipynb
       - section: metric
         contents:
           - metric/base.ipynb
           - metric/decorator.ipynb
           - metric/discrete.ipynb
-          - metric/llm.ipynb
           - metric/numeric.ipynb
           - metric/ranking.ipynb
           - metric/result.ipynb
-          - metric/test_base.ipynb
       - section: model
         contents:
           - model/notion_model.ipynb
