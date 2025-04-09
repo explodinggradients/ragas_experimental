@@ -24,12 +24,16 @@ logger = logging.getLogger(__name__)
 # %% ../../nbs/project/comparison.ipynb 5
 # utility function to check if a model has a title property and get the name of the title property
 @t.overload
-def _get_title_property(model: NotionModel|t.Type[NotionModel], raise_exception: t.Literal[True] = True) -> str:
-    ...
+def _get_title_property(
+    model: NotionModel | t.Type[NotionModel], raise_exception: t.Literal[True] = True
+) -> str: ...
 @t.overload
-def _get_title_property(model: NotionModel|t.Type[NotionModel], raise_exception: t.Literal[False] = False) -> t.Optional[str]:
-    ...
-def _get_title_property(model: NotionModel|t.Type[NotionModel], raise_exception: bool = True) -> t.Optional[str]:
+def _get_title_property(
+    model: NotionModel | t.Type[NotionModel], raise_exception: t.Literal[False] = False
+) -> t.Optional[str]: ...
+def _get_title_property(
+    model: NotionModel | t.Type[NotionModel], raise_exception: bool = True
+) -> t.Optional[str]:
     has_title = False
     for field in model._fields.keys():
         if isinstance(model._fields[field], nmt.Title):
@@ -56,7 +60,9 @@ def _validate_experiments(experiments: t.Sequence[Experiment]):
         if not isinstance(exp, Experiment):
             raise ValueError("All experiments must be of type Experiment")
         if top_exp != exp.model:
-            logger.warning(f"Experiments have different models: {top_exp.model} and {exp.model}")
+            logger.warning(
+                f"Experiments have different models: {top_exp.model} and {exp.model}"
+            )
         if title_property != _get_title_property(exp.model):
             raise ValueError("All experiments must have the same title property.")
 
@@ -70,39 +76,38 @@ def _model_to_dict(model: NotionModel) -> dict:
         data[field_name] = model.__getattribute__(field_name)
     return data
 
-
 # %% ../../nbs/project/comparison.ipynb 14
 def _combine_experiments(experiments: t.Sequence[Experiment]):
     """Group experiment rows by their title property value."""
     if not experiments:
         return []
-    
+
     title_property: str = _get_title_property(experiments[0].model)
-    
+
     # Create a dictionary to group rows by title value
     grouped_by_title = {}
-    
+
     # Process each experiment
     for exp in experiments:
         for row in exp:
             title_value = getattr(row, title_property)
-            
+
             # Create key if it doesn't exist
             if title_value not in grouped_by_title:
                 grouped_by_title[title_value] = []
-            
+
             # Add this row to the appropriate group
             row_dict = _model_to_dict(row)
             row_dict["experiment_name"] = exp.name
             grouped_by_title[title_value].append(row_dict)
-    
+
     # Convert dictionary to list and add id_str
     result = []
     for i, (_, rows) in enumerate(grouped_by_title.items()):
         for row in rows:
             row["id_str"] = str(i)
         result.append(rows)
-    
+
     return result
 
 # %% ../../nbs/project/comparison.ipynb 17
@@ -117,6 +122,7 @@ def compare_experiments(
     class CombinedModel(NotionModel):
         id_str: str = nmt.Text()
         experiment_name: str = nmt.Text()
+
     for exp in experiments:
         for field in exp.model._fields.keys():
             if field not in CombinedModel._fields:
@@ -145,10 +151,10 @@ def compare_experiments(
             combined_model_instance = CombinedModel(**row)
             self._notion_backend.create_page_in_database(
                 database_id=comparison_database_id,
-                properties=combined_model_instance.to_notion()["properties"]
+                properties=combined_model_instance.to_notion()["properties"],
             )
     # Get the URL for the created database
     # The format for Notion URLs is: https://www.notion.so/{database_id}
     notion_url = f"https://www.notion.so/{comparison_database_id.replace('-', '')}"
-    
+
     return notion_url

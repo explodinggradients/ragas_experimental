@@ -29,14 +29,16 @@ class LangfuseTrace:
         self._langfuse_client = langfuse_context.client_instance
 
     def get_url(self):
-        return langfuse_context.get_current_trace_url()    
+        return langfuse_context.get_current_trace_url()
 
     def filter(self, span_name: str) -> t.List[Observation]:
         trace = self._langfuse_client.fetch_trace(self.trace.id)
         return [span for span in trace.data.observations if span.name == span_name]
 
 # %% ../../nbs/tracing/langfuse.ipynb 6
-async def sync_trace(trace_id: t.Optional[str] = None, max_retries: int = 10, delay: float = 2) -> LangfuseTrace:
+async def sync_trace(
+    trace_id: t.Optional[str] = None, max_retries: int = 10, delay: float = 2
+) -> LangfuseTrace:
     """Wait for a Langfuse trace to be synced to the server.
 
     Args:
@@ -52,7 +54,9 @@ async def sync_trace(trace_id: t.Optional[str] = None, max_retries: int = 10, de
         trace_id = langfuse_context.get_current_trace_id()
 
     if not trace_id:
-        raise ValueError("No trace id found. Please ensure you are running this function within a function decorated with @observe().")
+        raise ValueError(
+            "No trace id found. Please ensure you are running this function within a function decorated with @observe()."
+        )
     for _ in range(max_retries):
         langfuse_client = LangfuseSingleton().get()
         try:
@@ -73,14 +77,13 @@ def add_query_param(url, param_name, param_value):
     """Add a query parameter to a URL."""
     # Parse the URL
     url_parts = list(urlparse(url))
-    
+
     # Get query params as a dict and add new param
     query_dict = dict(parse_qsl(url_parts[4]))
     query_dict[param_name] = param_value
-    
+
     # Replace the query part with updated params
     url_parts[4] = urlencode(query_dict)
-    
+
     # Reconstruct the URL
     return urlunparse(url_parts)
-

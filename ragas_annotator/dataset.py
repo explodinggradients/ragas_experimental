@@ -71,7 +71,9 @@ class Dataset(t.Generic[NotionModelType]):
         self._entries[index] = self.model.from_notion(response)
 
     def __repr__(self) -> str:
-        return f"Dataset(name={self.name}, model={self.model.__name__}, len={len(self)})"
+        return (
+            f"Dataset(name={self.name}, model={self.model.__name__}, len={len(self)})"
+        )
 
     def __len__(self) -> int:
         return len(self._entries)
