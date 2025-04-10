@@ -11,8 +11,9 @@ import asyncio
 from dataclasses import dataclass, field
 from pydantic import BaseModel
 import typing as t
-import json
 from tqdm import tqdm
+import string
+
 
 from ..prompt.base import Prompt
 from ..embedding.base import BaseEmbedding
@@ -45,7 +46,14 @@ class Metric(ABC):
     @abstractmethod
     def _ensemble(self, results: t.List[MetricResult]) -> MetricResult:
         pass
-        
+    
+    def get_variables(self) -> t.List[str]:
+        if isinstance(self.prompt, Prompt):
+            fstr = self.prompt.instruction
+        else:
+            fstr = self.prompt
+        vars = [field_name for _, field_name, _, _ in string.Formatter().parse(fstr) if field_name]
+        return vars
     
     def score(self, reasoning: bool = True, n: int = 1, **kwargs) -> t.Any:
         responses = []
@@ -99,13 +107,15 @@ class Metric(ABC):
             datasets.append(experiment_data)
         
         total_items = sum([len(dataset) for dataset in datasets])
+        input_vars = self.get_variables()
+        output_vars = [self.name, f'{self.name}_reason']
         with tqdm(total=total_items, desc="Processing examples") as pbar:
             for dataset in datasets:
                 for row in dataset:
-                    if hasattr(row, f'{self.name}_traces'):
-                        traces = json.loads(getattr(row, f'{self.name}_traces'))
-                        if traces:
-                            self.prompt.add_example(traces['input'],traces['output'])
+                    inputs = {var: getattr(row, var) for var in input_vars if hasattr(row, var)}
+                    output = {var: getattr(row, var) for var in output_vars if hasattr(row, var)}
+                    if output:
+                            self.prompt.add_example(inputs,output)
                     pbar.update(1)
         
                 
