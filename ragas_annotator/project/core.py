@@ -122,6 +122,7 @@ def create_dataset(
     return Dataset(
         name=name if name is not None else model.__name__,
         model=model,
+        project_id=self.project_id,
         dataset_id=dataset_info["id"],
         ragas_api_client=self._ragas_api_client,
     )
@@ -141,6 +142,7 @@ def get_dataset(self: Project, dataset_id: str, model) -> Dataset:
     return Dataset(
         name=dataset_info["name"],
         model=model,
+        project_id=self.project_id,
         dataset_id=dataset_id,
         ragas_api_client=self._ragas_api_client,
     )

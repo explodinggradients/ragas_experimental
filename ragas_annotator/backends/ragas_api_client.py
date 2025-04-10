@@ -343,11 +343,73 @@ async def delete_dataset_column(
         f"projects/{project_id}/datasets/{dataset_id}/columns/{column_id}"
     )
 
-# %% ../../nbs/backends/ragas_api_client.ipynb 44
+# %% ../../nbs/backends/ragas_api_client.ipynb 33
+#---- Dataset Rows ----
+@patch
+async def list_dataset_rows(
+    self: RagasApiClient,
+    project_id: str,
+    dataset_id: str,
+    limit: int = 50,
+    offset: int = 0,
+    order_by: t.Optional[str] = None,
+    sort_dir: t.Optional[str] = None,
+) -> t.Dict:
+    """List rows in a dataset."""
+    params = {"limit": limit, "offset": offset}
+    if order_by:
+        params["order_by"] = order_by
+    if sort_dir:
+        params["sort_dir"] = sort_dir
+    return await self._list_resources(
+        f"projects/{project_id}/datasets/{dataset_id}/rows", **params
+    )
+
+@patch
+async def get_dataset_row(
+    self: RagasApiClient, project_id: str, dataset_id: str, row_id: str
+) -> t.Dict:
+    """Get a specific row in a dataset."""
+    return await self._get_resource(
+        f"projects/{project_id}/datasets/{dataset_id}/rows/{row_id}"
+    )
+
+@patch
+async def create_dataset_row(
+    self: RagasApiClient, project_id: str, dataset_id: str, id: str, data: t.Dict
+) -> t.Dict:
+    """Create a new row in a dataset."""
+    row_data = {"id": id, "data": data}
+    return await self._create_resource(
+        f"projects/{project_id}/datasets/{dataset_id}/rows", row_data
+    )
+
+@patch
+async def update_dataset_row(
+    self: RagasApiClient, project_id: str, dataset_id: str, row_id: str, data: t.Dict
+) -> t.Dict:
+    """Update an existing row in a dataset."""
+    row_data = {"data": data}
+    return await self._update_resource(
+        f"projects/{project_id}/datasets/{dataset_id}/rows/{row_id}",
+        row_data,
+    )
+
+@patch
+async def delete_dataset_row(
+    self: RagasApiClient, project_id: str, dataset_id: str, row_id: str
+) -> None:
+    """Delete a row from a dataset."""
+    await self._delete_resource(
+        f"projects/{project_id}/datasets/{dataset_id}/rows/{row_id}"
+    )
+
+
+# %% ../../nbs/backends/ragas_api_client.ipynb 45
 import uuid
 import string
 
-# %% ../../nbs/backends/ragas_api_client.ipynb 45
+# %% ../../nbs/backends/ragas_api_client.ipynb 46
 def create_nano_id(size=12):
     # Define characters to use (alphanumeric)
     alphabet = string.ascii_letters + string.digits
@@ -364,7 +426,7 @@ def create_nano_id(size=12):
     # Pad if necessary and return desired length
     return result[:size]
 
-# %% ../../nbs/backends/ragas_api_client.ipynb 47
+# %% ../../nbs/backends/ragas_api_client.ipynb 48
 # Default settings for columns
 DEFAULT_SETTINGS = {
     "is_required": False,
@@ -387,7 +449,7 @@ class Row(BaseModel):
     id: str = Field(default_factory=create_nano_id)
     data: t.List[RowCell] = Field(...)
 
-# %% ../../nbs/backends/ragas_api_client.ipynb 48
+# %% ../../nbs/backends/ragas_api_client.ipynb 49
 #---- Resource With Data Helper Methods ----
 @patch
 async def _create_with_data(
@@ -514,7 +576,7 @@ async def create_dataset_with_data(
         "dataset", project_id, name, description, columns, rows, batch_size
     )
 
-# %% ../../nbs/backends/ragas_api_client.ipynb 54
+# %% ../../nbs/backends/ragas_api_client.ipynb 55
 #---- Experiment Columns ----
 @patch
 async def list_experiment_columns(
@@ -645,7 +707,7 @@ async def delete_experiment_row(
         f"projects/{project_id}/experiments/{experiment_id}/rows/{row_id}"
     )
 
-# %% ../../nbs/backends/ragas_api_client.ipynb 57
+# %% ../../nbs/backends/ragas_api_client.ipynb 58
 @patch
 async def create_experiment_with_data(
     self: RagasApiClient,
@@ -676,7 +738,7 @@ async def create_experiment_with_data(
         "experiment", project_id, name, description, columns, rows, batch_size
     )
 
-# %% ../../nbs/backends/ragas_api_client.ipynb 58
+# %% ../../nbs/backends/ragas_api_client.ipynb 59
 #---- Utility Methods ----
 @patch
 def create_column(

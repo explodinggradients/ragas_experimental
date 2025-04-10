@@ -12,11 +12,9 @@ from fastcore.utils import patch
 
 from pydantic import BaseModel
 
-from .model.notion_model import NotionModel
 from .backends.ragas_api_client import RagasApiClient
-from .backends.notion_backend import NotionBackend
 
-# %% ../nbs/dataset.ipynb 5
+# %% ../nbs/dataset.ipynb 4
 PydanticModelType = t.TypeVar("PydanticModelType", bound=BaseModel)
 
 
@@ -27,11 +25,13 @@ class Dataset(t.Generic[PydanticModelType]):
         self,
         name: str,
         model: t.Type[BaseModel],
+        project_id: str,
         dataset_id: str,
         ragas_api_client: RagasApiClient,
     ):
         self.name = name
         self.model = model
+        self.project_id = project_id
         self.dataset_id = dataset_id
         self._ragas_api_client = ragas_api_client
         self._entries: t.List[PydanticModelType] = []
@@ -44,6 +44,7 @@ class Dataset(t.Generic[PydanticModelType]):
             new_dataset = type(self)(
                 name=self.name,
                 model=self.model,
+                project_id=self.project_id,
                 dataset_id=self.dataset_id,
                 ragas_api_client=self._ragas_api_client,
             )
@@ -84,30 +85,46 @@ class Dataset(t.Generic[PydanticModelType]):
     def __iter__(self) -> t.Iterator[PydanticModelType]:
         return iter(self._entries)
 
-# %% ../nbs/dataset.ipynb 10
+# %% ../nbs/dataset.ipynb 14
 @patch
 def append(self: Dataset, entry: PydanticModelType) -> None:
     """Add a new entry to the dataset and sync to Notion."""
-    # if not isinstance(entry, self.model):
-    #     raise TypeError(f"Entry must be an instance of {self.model.__name__}")
+    # Create row inside the table
 
-    # Create in Notion and get response
-    response = self._ragas_api_client.create_page_in_database(
-        database_id=self.dataset_id, properties=entry.to_notion()["properties"]
+    # first get the columns for the dataset
+    # TODO: this is a hack to get the columns for the dataset
+    column_id_map = self.get_column_id_map(dataset_id=self.dataset_id)
+
+    # create the rows
+    row_dict = entry.model_dump()
+    row_id = create_nano_id()
+    row_data = {}
+    for key, value in row_dict.items():
+        if key in column_id_map:
+            row_data[column_id_map[key]] = value
+
+    sync_func = async_to_sync(self._ragas_api_client.create_dataset_row)
+    response = sync_func(
+        project_id=self.project_id,
+        dataset_id=self.dataset_id,
+        id=row_id,
+        data=row_data,
     )
-
     # Update entry with Notion data (like ID)
-    updated_entry = self.model.from_notion(response)
-    self._entries.append(updated_entry)
+    self._entries.append(entry)
 
-# %% ../nbs/dataset.ipynb 13
+# %% ../nbs/dataset.ipynb 17
 @patch
 def pop(self: Dataset, index: int = -1) -> PydanticModelType:
     """Remove and return entry at index, sync deletion to Notion."""
     entry = self._entries[index]
-    if not hasattr(entry, "_page_id"):
-        raise ValueError("Entry has no page_id")
-
+    # get the row id
+    # TODO: this is a hack to get the row id
+    sync_func = async_to_sync(self._ragas_api_client.list_dataset_rows)
+    rows = sync_func(project_id=self.project_id, dataset_id=self.dataset_id)
+    for row in rows["items"]:
+        print(row, entry.id)
+    return
     # Archive in Notion (soft delete)
     assert entry._page_id is not None  # mypy fails to infer that we check for it above
     self._ragas_api_client.update_page(page_id=entry._page_id, archived=True)
@@ -115,7 +132,7 @@ def pop(self: Dataset, index: int = -1) -> PydanticModelType:
     # Remove from local cache
     return self._entries.pop(index)
 
-# %% ../nbs/dataset.ipynb 16
+# %% ../nbs/dataset.ipynb 20
 @patch
 def load(self: Dataset) -> None:
     """Load all entries from the Notion database."""
@@ -132,7 +149,7 @@ def load(self: Dataset) -> None:
         entry = self.model.from_notion(page)
         self._entries.append(entry)
 
-# %% ../nbs/dataset.ipynb 21
+# %% ../nbs/dataset.ipynb 25
 @patch
 def get(self: Dataset, id: int) -> t.Optional[PydanticModelType]:
     """Get an entry by ID."""
@@ -150,7 +167,7 @@ def get(self: Dataset, id: int) -> t.Optional[PydanticModelType]:
 
     return self.model.from_notion(response["results"][0])
 
-# %% ../nbs/dataset.ipynb 24
+# %% ../nbs/dataset.ipynb 28
 @patch
 def save(self: Dataset, item: PydanticModelType) -> None:
     """Save changes to an item to Notion."""
