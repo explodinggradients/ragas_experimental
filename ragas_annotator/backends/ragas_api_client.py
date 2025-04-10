@@ -343,11 +343,11 @@ async def delete_dataset_column(
         f"projects/{project_id}/datasets/{dataset_id}/columns/{column_id}"
     )
 
-# %% ../../nbs/backends/ragas_api_client.ipynb 46
+# %% ../../nbs/backends/ragas_api_client.ipynb 44
 import uuid
 import string
 
-# %% ../../nbs/backends/ragas_api_client.ipynb 47
+# %% ../../nbs/backends/ragas_api_client.ipynb 45
 def create_nano_id(size=12):
     # Define characters to use (alphanumeric)
     alphabet = string.ascii_letters + string.digits
@@ -364,7 +364,7 @@ def create_nano_id(size=12):
     # Pad if necessary and return desired length
     return result[:size]
 
-# %% ../../nbs/backends/ragas_api_client.ipynb 49
+# %% ../../nbs/backends/ragas_api_client.ipynb 47
 # Default settings for columns
 DEFAULT_SETTINGS = {
     "is_required": False,
@@ -387,7 +387,7 @@ class Row(BaseModel):
     id: str = Field(default_factory=create_nano_id)
     data: t.List[RowCell] = Field(...)
 
-# %% ../../nbs/backends/ragas_api_client.ipynb 50
+# %% ../../nbs/backends/ragas_api_client.ipynb 48
 #---- Resource With Data Helper Methods ----
 @patch
 async def _create_with_data(
@@ -514,7 +514,7 @@ async def create_dataset_with_data(
         "dataset", project_id, name, description, columns, rows, batch_size
     )
 
-# %% ../../nbs/backends/ragas_api_client.ipynb 56
+# %% ../../nbs/backends/ragas_api_client.ipynb 54
 #---- Experiment Columns ----
 @patch
 async def list_experiment_columns(
@@ -645,7 +645,7 @@ async def delete_experiment_row(
         f"projects/{project_id}/experiments/{experiment_id}/rows/{row_id}"
     )
 
-# %% ../../nbs/backends/ragas_api_client.ipynb 59
+# %% ../../nbs/backends/ragas_api_client.ipynb 57
 @patch
 async def create_experiment_with_data(
     self: RagasApiClient,
@@ -676,7 +676,7 @@ async def create_experiment_with_data(
         "experiment", project_id, name, description, columns, rows, batch_size
     )
 
-# %% ../../nbs/backends/ragas_api_client.ipynb 60
+# %% ../../nbs/backends/ragas_api_client.ipynb 58
 #---- Utility Methods ----
 @patch
 def create_column(

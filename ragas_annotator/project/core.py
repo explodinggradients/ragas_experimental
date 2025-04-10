@@ -42,9 +42,9 @@ def async_to_sync(async_func):
 class Project:
     def _create_ragas_app_client(self):
         if ragas_app_client is None:
-            self._ragas_app_client = RagasApiClientFactory.create()
+            self._ragas_api_client = RagasApiClientFactory.create()
         else:
-            self._ragas_app_client = ragas_app_client
+            self._ragas_api_client = ragas_app_client
 
     def __init__(
         self,
@@ -53,13 +53,13 @@ class Project:
     ):
         self.project_id = project_id
         if ragas_app_client is None:
-            self._ragas_app_client = RagasApiClientFactory.create()
+            self._ragas_api_client = RagasApiClientFactory.create()
         else:
-            self._ragas_app_client = ragas_app_client
+            self._ragas_api_client = ragas_app_client
 
         # create the project
         try:
-            sync_version = async_to_sync(self._ragas_app_client.get_project)
+            sync_version = async_to_sync(self._ragas_api_client.get_project)
             existing_project = sync_version(project_id=self.project_id)
             self.project_id = existing_project["id"]
             self.name = existing_project["title"]
@@ -80,7 +80,7 @@ class Project:
         return cls(new_project["id"], ragas_app_client)
 
     def delete(self):
-        sync_version = async_to_sync(self._ragas_app_client.delete_project)
+        sync_version = async_to_sync(self._ragas_api_client.delete_project)
         sync_version(project_id=self.project_id)
         print("Project deleted!")
 
@@ -102,7 +102,7 @@ def create_dataset(
         Dataset: A new dataset object for managing entries
     """
     # create the dataset
-    sync_version = async_to_sync(self._ragas_app_client.create_dataset)
+    sync_version = async_to_sync(self._ragas_api_client.create_dataset)
     dataset_info = sync_version(
         project_id=self.project_id,
         name=name if name is not None else model.__name__,
@@ -115,34 +115,32 @@ def create_dataset(
         project_id=self.project_id,
         dataset_id=dataset_info["id"],
         columns=column_types,
-        create_dataset_column_func=self._ragas_app_client.create_dataset_column,
+        create_dataset_column_func=self._ragas_api_client.create_dataset_column,
     )
         
-    return
     # Return a new Dataset instance
     return Dataset(
         name=name if name is not None else model.__name__,
         model=model,
-        database_id=database_id,
-        notion_backend=self._ragas_app_client,
+        dataset_id=dataset_info["id"],
+        ragas_api_client=self._ragas_api_client,
     )
 
 # %% ../../nbs/project/core.ipynb 16
 @patch
-def get_dataset(self: Project, name: str, model) -> Dataset:
+def get_dataset(self: Project, dataset_id: str, model) -> Dataset:
     """Get an existing dataset by name."""
-    if self.datasets_page_id == "":
-        raise ValueError("Datasets page ID is not set")
-
     # Search for database with given name
-    database_id = self._ragas_app_client.get_database_id(
-        parent_page_id=self.datasets_page_id, name=name, return_multiple=False
+    sync_version = async_to_sync(self._ragas_api_client.get_dataset)
+    dataset_info = sync_version(
+        project_id=self.project_id,
+        dataset_id=dataset_id
     )
 
     # For now, return Dataset without model type
     return Dataset(
-        name=name,
+        name=dataset_info["name"],
         model=model,
-        database_id=database_id,
-        notion_backend=self._ragas_app_client,
+        dataset_id=dataset_id,
+        ragas_api_client=self._ragas_api_client,
     )
