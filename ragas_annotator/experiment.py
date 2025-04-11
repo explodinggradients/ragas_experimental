@@ -10,8 +10,8 @@ import typing as t
 
 from fastcore.utils import patch
 
-from .model.notion_model import NotionModel
-from .backends.notion_backend import NotionBackend
+from .model.pydantic_model import ExtendedPydanticBaseModel as BaseModel
+from .backends.ragas_api_client import RagasApiClient
 from .dataset import Dataset
 
 # %% ../nbs/experiment.ipynb 3
@@ -19,11 +19,12 @@ class Experiment(Dataset):
     def __init__(
         self,
         name: str,
-        model: t.Type[NotionModel],
-        database_id: str,
-        notion_backend: NotionBackend,
+        model: t.Type[BaseModel],
+        project_id: str,
+        dataset_id: str,
+        ragas_api_client: RagasApiClient,
     ):
-        super().__init__(name, model, database_id, notion_backend)
+        super().__init__(name, model, project_id, dataset_id, ragas_api_client)
 
     def __str__(self):
         return f"Experiment(name={self.name}, model={self.model.__name__})"

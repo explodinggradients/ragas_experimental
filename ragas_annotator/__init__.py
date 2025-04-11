@@ -8,10 +8,11 @@ __all__ = []
 from .project.core import Project
 import ragas_annotator.model.notion_typing as nmt
 from .model.notion_model import NotionModel
+from .model.pydantic_model import ExtendedPydanticBaseModel as BaseModel
 
 # just import to run the module
 import ragas_annotator.project.experiments
 import ragas_annotator.project.comparison
 
 # %% ../nbs/init_module.ipynb 3
-__all__ = ["Project", "NotionModel", "nmt"]
+__all__ = ["Project", "NotionModel", "nmt", "BaseModel"]

@@ -5,7 +5,7 @@
 # %% auto 0
 __all__ = ['DEFAULT_SETTINGS', 'RagasApiClient', 'ColumnType', 'create_nano_id', 'Column', 'RowCell', 'Row']
 
-# %% ../../nbs/backends/ragas_api_client.ipynb 3
+# %% ../../nbs/backends/ragas_api_client.ipynb 4
 import httpx
 import asyncio
 import functools
@@ -16,7 +16,7 @@ from enum import StrEnum
 import uuid
 from fastcore.utils import patch
 
-# %% ../../nbs/backends/ragas_api_client.ipynb 4
+# %% ../../nbs/backends/ragas_api_client.ipynb 5
 class RagasApiClient():
     """Client for the Ragas Relay API."""
 
@@ -88,7 +88,7 @@ class RagasApiClient():
         """Generic resource deletion."""
         return await self._request("DELETE", path)
 
-# %% ../../nbs/backends/ragas_api_client.ipynb 5
+# %% ../../nbs/backends/ragas_api_client.ipynb 6
 #---- Projects ----
 @patch
 async def list_projects(
@@ -150,7 +150,7 @@ async def delete_project(self: RagasApiClient, project_id: str) -> None:
     await self._delete_resource(f"projects/{project_id}")
 
 
-# %% ../../nbs/backends/ragas_api_client.ipynb 12
+# %% ../../nbs/backends/ragas_api_client.ipynb 13
 #---- Datasets ----
 @patch
 async def list_datasets(
@@ -205,7 +205,7 @@ async def delete_dataset(self: RagasApiClient, project_id: str, dataset_id: str)
     """Delete a dataset."""
     await self._delete_resource(f"projects/{project_id}/datasets/{dataset_id}")
 
-# %% ../../nbs/backends/ragas_api_client.ipynb 19
+# %% ../../nbs/backends/ragas_api_client.ipynb 20
 #---- Experiments ----
 @patch
 async def list_experiments(
@@ -261,7 +261,7 @@ async def delete_experiment(self: RagasApiClient, project_id: str, experiment_id
     await self._delete_resource(f"projects/{project_id}/experiments/{experiment_id}")
 
 
-# %% ../../nbs/backends/ragas_api_client.ipynb 24
+# %% ../../nbs/backends/ragas_api_client.ipynb 25
 class ColumnType(StrEnum):
     NUMBER = "number"
     TEXT = "text"
@@ -272,7 +272,7 @@ class ColumnType(StrEnum):
     CHECKBOX = "checkbox"
     CUSTOM = "custom"
 
-# %% ../../nbs/backends/ragas_api_client.ipynb 25
+# %% ../../nbs/backends/ragas_api_client.ipynb 26
 #---- Dataset Columns ----
 @patch
 async def list_dataset_columns(
@@ -343,7 +343,7 @@ async def delete_dataset_column(
         f"projects/{project_id}/datasets/{dataset_id}/columns/{column_id}"
     )
 
-# %% ../../nbs/backends/ragas_api_client.ipynb 33
+# %% ../../nbs/backends/ragas_api_client.ipynb 34
 #---- Dataset Rows ----
 @patch
 async def list_dataset_rows(
@@ -405,11 +405,11 @@ async def delete_dataset_row(
     )
 
 
-# %% ../../nbs/backends/ragas_api_client.ipynb 45
+# %% ../../nbs/backends/ragas_api_client.ipynb 46
 import uuid
 import string
 
-# %% ../../nbs/backends/ragas_api_client.ipynb 46
+# %% ../../nbs/backends/ragas_api_client.ipynb 47
 def create_nano_id(size=12):
     # Define characters to use (alphanumeric)
     alphabet = string.ascii_letters + string.digits
@@ -426,7 +426,28 @@ def create_nano_id(size=12):
     # Pad if necessary and return desired length
     return result[:size]
 
-# %% ../../nbs/backends/ragas_api_client.ipynb 48
+# %% ../../nbs/backends/ragas_api_client.ipynb 49
+import uuid
+import string
+
+# %% ../../nbs/backends/ragas_api_client.ipynb 50
+def create_nano_id(size=12):
+    # Define characters to use (alphanumeric)
+    alphabet = string.ascii_letters + string.digits
+    
+    # Generate UUID and convert to int
+    uuid_int = uuid.uuid4().int
+    
+    # Convert to base62
+    result = ""
+    while uuid_int:
+        uuid_int, remainder = divmod(uuid_int, len(alphabet))
+        result = alphabet[remainder] + result
+    
+    # Pad if necessary and return desired length
+    return result[:size]
+
+# %% ../../nbs/backends/ragas_api_client.ipynb 52
 # Default settings for columns
 DEFAULT_SETTINGS = {
     "is_required": False,
@@ -449,7 +470,7 @@ class Row(BaseModel):
     id: str = Field(default_factory=create_nano_id)
     data: t.List[RowCell] = Field(...)
 
-# %% ../../nbs/backends/ragas_api_client.ipynb 49
+# %% ../../nbs/backends/ragas_api_client.ipynb 53
 #---- Resource With Data Helper Methods ----
 @patch
 async def _create_with_data(
@@ -576,7 +597,7 @@ async def create_dataset_with_data(
         "dataset", project_id, name, description, columns, rows, batch_size
     )
 
-# %% ../../nbs/backends/ragas_api_client.ipynb 55
+# %% ../../nbs/backends/ragas_api_client.ipynb 59
 #---- Experiment Columns ----
 @patch
 async def list_experiment_columns(
@@ -707,7 +728,7 @@ async def delete_experiment_row(
         f"projects/{project_id}/experiments/{experiment_id}/rows/{row_id}"
     )
 
-# %% ../../nbs/backends/ragas_api_client.ipynb 58
+# %% ../../nbs/backends/ragas_api_client.ipynb 62
 @patch
 async def create_experiment_with_data(
     self: RagasApiClient,
@@ -738,7 +759,7 @@ async def create_experiment_with_data(
         "experiment", project_id, name, description, columns, rows, batch_size
     )
 
-# %% ../../nbs/backends/ragas_api_client.ipynb 59
+# %% ../../nbs/backends/ragas_api_client.ipynb 63
 #---- Utility Methods ----
 @patch
 def create_column(

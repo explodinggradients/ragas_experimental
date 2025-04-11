@@ -27,15 +27,16 @@ class ColumnType(str, Enum):
 # %% ../nbs/typing.ipynb 5
 class FieldMeta:
     """Base metadata for field type annotations."""
-    def __init__(self, type, required=True, **settings):
+    def __init__(self, type, required=True, id: t.Optional[str]=None, **settings):
         self.type = type
         self.required = required
+        self.id = id
         self.settings = settings.copy()
 
 # %% ../nbs/typing.ipynb 6
 class Number(FieldMeta):
     """Number field metadata."""
-    def __init__(self, min_value: t.Optional[float] = None, max_value: t.Optional[float] = None, required: bool = True):
+    def __init__(self, min_value: t.Optional[float] = None, max_value: t.Optional[float] = None, required: bool = True, id: t.Optional[str]=None):
         settings = {}
         if min_value is not None or max_value is not None:
             settings["range"] = {}
@@ -43,17 +44,17 @@ class Number(FieldMeta):
                 settings["range"]["min"] = min_value
             if max_value is not None:
                 settings["range"]["max"] = max_value
-        super().__init__(ColumnType.NUMBER, required, **settings)
+        super().__init__(ColumnType.NUMBER, required, id, **settings)
 
 
 # %% ../nbs/typing.ipynb 7
 class Text(FieldMeta):
     """Text field metadata."""
-    def __init__(self, max_length: int = 1000, required: bool = True):
+    def __init__(self, max_length: int = 1000, required: bool = True, id: t.Optional[str]=None):
         settings = {}
         if max_length is not None:
             settings["max_length"] = max_length
-        super().__init__(ColumnType.TEXT, required, **settings)
+        super().__init__(ColumnType.TEXT, required, id, **settings)
 
 # %% ../nbs/typing.ipynb 8
 class Select(FieldMeta):
