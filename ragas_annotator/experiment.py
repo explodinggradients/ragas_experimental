@@ -21,10 +21,11 @@ class Experiment(Dataset):
         name: str,
         model: t.Type[BaseModel],
         project_id: str,
-        dataset_id: str,
+        experiment_id: str,
         ragas_api_client: RagasApiClient,
     ):
-        super().__init__(name, model, project_id, dataset_id, ragas_api_client)
+        self.experiment_id = experiment_id
+        super().__init__(name, model, project_id, experiment_id, ragas_api_client)
 
     def __str__(self):
         return f"Experiment(name={self.name}, model={self.model.__name__})"
