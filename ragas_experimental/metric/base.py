@@ -23,7 +23,7 @@ from ..model.notion_model import NotionModel
 from ..prompt.dynamic_few_shot import DynamicFewShotPrompt
 
 if t.TYPE_CHECKING:
-    from ragas_annotator.project.core import Project
+    from ragas_experimental.project.core import Project
 
 # %% ../../nbs/metric/base.ipynb 3
 @dataclass

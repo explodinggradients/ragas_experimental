@@ -15,7 +15,7 @@ from pydantic import BaseModel
 
 from ..backends.factory import RagasApiClientFactory
 from ..backends.ragas_api_client import RagasApiClient
-import ragas_annotator.typing as rt
+import ragas_experimental.typing as rt
 from ..utils import async_to_sync, create_nano_id
 from ..dataset import Dataset
 from ..experiment import Experiment

@@ -19,7 +19,7 @@ from ..model.pydantic_model import ExtendedPydanticBaseModel as BaseModel
 from ..utils import async_to_sync, create_nano_id
 from ..dataset import Dataset, BaseModelType
 from ..experiment import Experiment
-import ragas_annotator.typing as rt
+import ragas_experimental.typing as rt
 
 # %% ../../nbs/project/experiments.ipynb 3
 @patch
