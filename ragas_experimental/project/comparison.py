@@ -14,7 +14,7 @@ from tqdm import tqdm
 
 from .core import Project
 from ..model.notion_model import NotionModel
-import ragas_annotator.model.notion_typing as nmt
+import ragas_experimental.model.notion_typing as nmt
 from ..experiment import Experiment
 from ..dataset import Dataset
 

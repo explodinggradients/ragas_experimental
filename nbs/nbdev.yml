@@ -2,7 +2,7 @@ project:
   output-dir: _docs
 
 website:
-  title: "ragas_annotator"
+  title: "ragas_experimental"
   site-url: "https://explodinggradients.github.io/ragas_annotator"
   description: "Experimental Ragas Evaluation UI and Library"
   repo-branch: main
