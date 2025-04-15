@@ -19,11 +19,11 @@ from ..prompt.base import Prompt
 from ..embedding.base import BaseEmbedding
 from . import MetricResult
 from ..llm import RagasLLM
-from ..project.core import Project
 from ..model.notion_model import NotionModel
 from ..prompt.dynamic_few_shot import DynamicFewShotPrompt
 
-
+if t.TYPE_CHECKING:
+    from ragas_annotator.project.core import Project
 
 # %% ../../nbs/metric/base.ipynb 3
 @dataclass
@@ -98,7 +98,7 @@ class Metric(ABC):
         # Run all tasks concurrently and return results
         return await asyncio.gather(*async_tasks)
     
-    def train(self,project:Project, experiment_names: t.List[str], model:NotionModel, embedding_model: BaseEmbedding,method: t.Dict[str, t.Any]):
+    def train(self,project: "Project", experiment_names: t.List[str], model:NotionModel, embedding_model: BaseEmbedding,method: t.Dict[str, t.Any]):
         
         assert isinstance(self.prompt, Prompt)
         self.prompt = DynamicFewShotPrompt.from_prompt(self.prompt,embedding_model)
