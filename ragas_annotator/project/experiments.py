@@ -167,7 +167,7 @@ def experiment(
 
     return decorator
 
-# %% ../../nbs/project/experiments.ipynb 16
+# %% ../../nbs/project/experiments.ipynb 19
 @patch
 def langfuse_experiment(
     self: Project, experiment_model, name_prefix: str = ""

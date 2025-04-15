@@ -24,6 +24,8 @@ from ..model.notion_model import NotionModel
 from ..prompt.dynamic_few_shot import DynamicFewShotPrompt
 
 
+
+# %% ../../nbs/metric/base.ipynb 3
 @dataclass
 class Metric(ABC):
     """Base class for all metrics in the LLM evaluation library."""

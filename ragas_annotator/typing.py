@@ -228,3 +228,202 @@ class ModelConverter:
             model_class = instances[0].__class__
         
         return [cls.instance_to_row(instance, model_class) for instance in instances]
+
+# %% ../nbs/typing.ipynb 22
+class ModelConverter:
+    """Convert Pydantic models to Ragas API columns and rows."""
+    
+    @staticmethod
+    def infer_field_type(annotation, field_info=None):
+        """Infer field type from Python type annotation."""
+        # Check for Annotated with our custom metadata
+        origin = t.get_origin(annotation)
+        args = t.get_args(annotation)
+        
+        # Check if this is a MetricResult type
+        if annotation is MetricResult or (hasattr(annotation, "__origin__") and annotation.__origin__ is MetricResult):
+            # Default to Text since we can't determine the result type statically
+            return Text()
+        
+        # If this is an Annotated field with our metadata
+        if origin is t.Annotated and len(args) > 1:
+            for arg in args[1:]:
+                if isinstance(arg, FieldMeta):
+                    return arg
+            
+            # If no field metadata found, infer from the base type
+            return ModelConverter.infer_field_type(args[0], field_info)
+        
+        # Handle Optional, List, etc.
+        if origin is t.Union:
+            if type(None) in args:
+                # This is Optional[T]
+                non_none_args = [arg for arg in args if arg is not type(None)]
+                if len(non_none_args) == 1:
+                    # Get the field type of the non-None arg
+                    field_meta = ModelConverter.infer_field_type(non_none_args[0], field_info)
+                    field_meta.required = False
+                    return field_meta
+        
+        # Handle List and array types
+        # NOTE: here we are converting lists to strings, except for literal types
+        if origin is list or origin is t.List:
+            if len(args) > 0:
+                # Check if it's a list of literals
+                if t.get_origin(args[0]) is t.Literal:
+                    literal_options = t.get_args(args[0])
+                    return MultiSelect(options=list(literal_options))
+                # Otherwise just a regular list
+                return Text()  # Default to Text for lists
+        
+        # Handle Literal
+        if origin is t.Literal:
+            return Select(options=list(args))
+        
+        # Basic type handling
+        if annotation is str:
+            return Text()
+        elif annotation is int or annotation is float:
+            return Number()
+        elif annotation is bool:
+            return Checkbox()
+        elif annotation is datetime or annotation is date:
+            return Date(include_time=annotation is datetime)
+        
+        # Default to Text for complex or unknown types
+        return Text()
+    
+    @staticmethod
+    def infer_metric_result_type(field_value):
+        """Infer field type from a MetricResult instance."""
+        if field_value is None:
+            return Text()
+        
+        # Infer type based on the _result type
+        result_value = field_value._result
+        
+        if isinstance(result_value, (int, float)):
+            return Number()
+        elif isinstance(result_value, bool):
+            return Checkbox()
+        elif isinstance(result_value, (list, tuple)):
+            # For ranking metrics that return lists
+            return Text()
+        else:
+            # Default to Text for string or other types
+            return Text()
+    
+    @classmethod
+    def model_to_columns(cls, model_class):
+        """Convert a Pydantic model class to Ragas API column definitions."""
+        columns = []
+        for field_name, field_info in model_class.model_fields.items():
+            # Get the field's type annotation
+            annotation = field_info.annotation
+            
+            # Special handling for MetricResult fields
+            if (annotation is MetricResult or 
+                (hasattr(annotation, "__origin__") and annotation.__origin__ is MetricResult) or
+                (hasattr(field_info, "annotation") and str(field_info.annotation).find("MetricResult") != -1)):
+                
+                # Create column for the result value
+                field_meta = cls.infer_field_type(annotation, field_info)
+                column = {
+                    "id": field_name,
+                    "name": field_name,
+                    "type": field_meta.type.value,
+                    "settings": field_meta.settings.copy(),
+                    "editable": True
+                }
+                columns.append(column)
+                
+                # Create additional column for the reason
+                reason_column = {
+                    "id": f"{field_name}_reason",
+                    "name": f"{field_name} Reason",
+                    "type": ColumnType.TEXT.value,
+                    "settings": Text().settings.copy(),
+                    "editable": True
+                }
+                columns.append(reason_column)
+            else:
+                # Regular field handling
+                field_meta = cls.infer_field_type(annotation, field_info)
+                
+                column = {
+                    "id": field_name,
+                    "name": field_name,
+                    "type": field_meta.type.value,
+                    "settings": field_meta.settings.copy(),
+                    "editable": False  # Non-MetricResult fields are not editable
+                }
+                
+                columns.append(column)
+        
+        return columns
+    
+    @classmethod
+    def instance_to_row(cls, instance, model_class=None):
+        """Convert a Pydantic model instance to a Ragas API row."""
+        if model_class is None:
+            model_class = instance.__class__
+        
+        row_cells = []
+        model_data = instance.model_dump()
+        
+        for field_name, field_info in model_class.model_fields.items():
+            if field_name in model_data:
+                value = model_data[field_name]
+                # Get the field's type annotation
+                annotation = field_info.annotation
+                
+                # Special handling for MetricResult fields
+                if isinstance(value, MetricResult):
+                    # Process the result value
+                    field_meta = cls.infer_metric_result_type(value)
+                    processed_value = value._result
+                    
+                    # Add result cell
+                    row_cells.append({
+                        "column_id": field_name,
+                        "data": processed_value
+                    })
+                    
+                    # Add reason cell
+                    row_cells.append({
+                        "column_id": f"{field_name}_reason",
+                        "data": value.reason
+                    })
+                else:
+                    # Regular field handling
+                    field_meta = cls.infer_field_type(annotation, field_info)
+                    
+                    # Special handling for various types
+                    if field_meta.type == ColumnType.MULTI_SELECT and isinstance(value, list):
+                        # Convert list to string format accepted by API
+                        processed_value = value
+                    elif field_meta.type == ColumnType.DATE and isinstance(value, (datetime, date)):
+                        # Format date as string
+                        processed_value = value.isoformat()
+                    else:
+                        processed_value = value
+                    
+                    row_cells.append({
+                        "column_id": field_name,
+                        "data": processed_value
+                    })
+        
+        return {
+            "data": row_cells
+        }
+    
+    @classmethod
+    def instances_to_rows(cls, instances, model_class=None):
+        """Convert multiple Pydantic model instances to Ragas API rows."""
+        if not instances:
+            return []
+        
+        if model_class is None and instances:
+            model_class = instances[0].__class__
+        
+        return [cls.instance_to_row(instance, model_class) for instance in instances]

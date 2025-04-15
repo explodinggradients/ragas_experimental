@@ -8,10 +8,9 @@ __all__ = ['MetricResult']
 # %% ../../nbs/metric/result.ipynb 2
 import typing as t
 
+from fastcore.utils import patch
 
-
-
-
+# %% ../../nbs/metric/result.ipynb 3
 class MetricResult:
     """Class to hold the result of a metric evaluation.
     
@@ -176,3 +175,31 @@ class MetricResult:
             "result": self._result,
             "reason": self.reason
         }
+
+# %% ../../nbs/metric/result.ipynb 7
+from pydantic_core import core_schema
+from pydantic import GetCoreSchemaHandler, ValidationInfo
+
+# %% ../../nbs/metric/result.ipynb 8
+@patch(cls_method=True)
+def validate(cls: MetricResult, value: t.Any, info: ValidationInfo):
+    """Provide compatibility with older Pydantic versions."""
+    if isinstance(value, MetricResult):
+        return value
+    return MetricResult(result=value)
+
+# Add Pydantic compatibility methods
+@patch(cls_method=True)
+def __get_pydantic_core_schema__(
+    cls: MetricResult, 
+    _source_type: t.Any, 
+    _handler: GetCoreSchemaHandler
+) -> core_schema.CoreSchema:
+    """Generate a Pydantic core schema for MetricResult."""
+    return core_schema.with_info_plain_validator_function(cls.validate)
+
+
+@patch
+def model_dump(self: MetricResult):
+    """Support Pydantic's model_dump method."""
+    return self.to_dict()
