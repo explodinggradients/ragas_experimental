@@ -7,6 +7,7 @@ __all__ = ['RagasApiClientFactory']
 
 # %% ../../nbs/backends/factory.ipynb 2
 import typing as t
+import os
 
 from .ragas_api_client import RagasApiClient
 
