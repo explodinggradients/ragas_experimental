@@ -102,7 +102,10 @@ class Dataset(t.Generic[BaseModelType]):
     def __iter__(self) -> t.Iterator[BaseModelType]:
         return iter(self._entries)
 
-# %% ../nbs/dataset.ipynb 16
+# %% ../nbs/dataset.ipynb 17
+import ragas_experimental.typing as rt
+
+# %% ../nbs/dataset.ipynb 18
 @patch
 def append(self: Dataset, entry: BaseModelType) -> None:
     """Add a new entry to the dataset and sync to Notion."""
@@ -112,12 +115,12 @@ def append(self: Dataset, entry: BaseModelType) -> None:
     column_id_map = self.model.__column_mapping__
 
     # create the rows
-    row_dict = entry.model_dump()
+    row_dict_converted = rt.ModelConverter.instance_to_row(entry)
     row_id = create_nano_id()
     row_data = {}
-    for key, value in row_dict.items():
-        if key in column_id_map:
-            row_data[column_id_map[key]] = value
+    for column in row_dict_converted["data"]:
+        if column["column_id"] in column_id_map:
+            row_data[column_id_map[column["column_id"]]] = column["data"]
 
     sync_func = async_to_sync(self._ragas_api_client.create_dataset_row)
     response = sync_func(
@@ -131,7 +134,7 @@ def append(self: Dataset, entry: BaseModelType) -> None:
     # Update entry with Notion data (like ID)
     self._entries.append(entry)
 
-# %% ../nbs/dataset.ipynb 19
+# %% ../nbs/dataset.ipynb 21
 @patch
 def pop(self: Dataset, index: int = -1) -> BaseModelType:
     """Remove and return entry at index, sync deletion to Notion."""
@@ -148,7 +151,7 @@ def pop(self: Dataset, index: int = -1) -> BaseModelType:
     # Remove from local cache
     return self._entries.pop(index)
 
-# %% ../nbs/dataset.ipynb 22
+# %% ../nbs/dataset.ipynb 25
 @patch
 def load(self: Dataset) -> None:
     """Load all entries from the backend API."""
@@ -184,7 +187,7 @@ def load(self: Dataset) -> None:
         
         self._entries.append(entry)
 
-# %% ../nbs/dataset.ipynb 24
+# %% ../nbs/dataset.ipynb 27
 @patch
 def load_as_dicts(self: Dataset) -> t.List[t.Dict]:
     """Load all entries as dictionaries."""
@@ -210,7 +213,7 @@ def load_as_dicts(self: Dataset) -> t.List[t.Dict]:
     
     return result
 
-# %% ../nbs/dataset.ipynb 26
+# %% ../nbs/dataset.ipynb 29
 @patch
 def to_pandas(self: Dataset) -> "pd.DataFrame":
     """Convert dataset to pandas DataFrame."""
@@ -224,7 +227,7 @@ def to_pandas(self: Dataset) -> "pd.DataFrame":
     data = [entry.model_dump() for entry in self._entries]
     return pd.DataFrame(data)
 
-# %% ../nbs/dataset.ipynb 28
+# %% ../nbs/dataset.ipynb 31
 @patch
 def save(self: Dataset, item: BaseModelType) -> None:
     """Save changes to an item to the backend."""
@@ -248,12 +251,12 @@ def save(self: Dataset, item: BaseModelType) -> None:
     
     # Get column mapping and prepare data
     column_id_map = self.model.__column_mapping__
-    row_dict = item.model_dump()
+    row_dict = rt.ModelConverter.instance_to_row(item)["data"]
     row_data = {}
     
-    for key, value in row_dict.items():
-        if key in column_id_map:
-            row_data[column_id_map[key]] = value
+    for column in row_dict:
+        if column["column_id"] in column_id_map:
+            row_data[column_id_map[column["column_id"]]] = column["data"]
     
     # Update in backend
     sync_func = async_to_sync(self._ragas_api_client.update_dataset_row)
@@ -272,7 +275,7 @@ def save(self: Dataset, item: BaseModelType) -> None:
                 self._entries[i] = item
             break
 
-# %% ../nbs/dataset.ipynb 32
+# %% ../nbs/dataset.ipynb 35
 @patch
 def get(self: Dataset, field_value: str, field_name: str = "_row_id") -> t.Optional[BaseModelType]:
     """Get an entry by field value.
