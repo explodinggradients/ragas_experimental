@@ -162,25 +162,50 @@ def experiment(
             if name_prefix:
                 name = f"{name_prefix}-{name}"
 
-            # Create tasks for all items
-            tasks = []
-            for item in dataset:
-                tasks.append(wrapped_experiment(item))
+            experiment_view = None
+            try:
+                # Create the experiment view upfront
+                experiment_view = self.create_experiment(name=name, model=experiment_model)
+                
+                # Create tasks for all items
+                tasks = []
+                for item in dataset:
+                    tasks.append(wrapped_experiment(item))
 
-            # Use as_completed with tqdm for progress tracking
-            results = []
-            for future in tqdm(asyncio.as_completed(tasks), total=len(tasks)):
-                result = await future
-                # Add each result to experiment view as it completes
-                if result is not None:
-                    results.append(result)
-
-            # upload results to experiment view
-            experiment_view = self.create_experiment(name=name, model=experiment_model)
-            for result in results:
-                experiment_view.append(result)
-
-            return experiment_view
+                # Calculate total operations (processing + appending)
+                total_operations = len(tasks) * 2  # Each item requires processing and appending
+                
+                # Use tqdm for combined progress tracking
+                results = []
+                progress_bar = tqdm(total=total_operations, desc="Running experiment")
+                
+                # Process all items
+                for future in asyncio.as_completed(tasks):
+                    result = await future
+                    if result is not None:
+                        results.append(result)
+                    progress_bar.update(1)  # Update for task completion
+                
+                # Append results to experiment view
+                for result in results:
+                    experiment_view.append(result)
+                    progress_bar.update(1)  # Update for append operation
+                    
+                progress_bar.close()
+                return experiment_view
+                
+            except Exception as e:
+                # Clean up the experiment if there was an error and it was created
+                if experiment_view is not None:
+                    try:
+                        # Delete the experiment (you might need to implement this method)
+                        sync_version = async_to_sync(self._ragas_api_client.delete_experiment)
+                        sync_version(project_id=self.project_id, experiment_id=experiment_view.experiment_id)
+                    except Exception as cleanup_error:
+                        print(f"Failed to clean up experiment after error: {cleanup_error}")
+                
+                # Re-raise the original exception
+                raise e
 
         wrapped_experiment.__setattr__("run_async", run_async)
         return t.cast(ExperimentProtocol, wrapped_experiment)
