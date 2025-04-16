@@ -188,18 +188,50 @@ def validate(cls: MetricResult, value: t.Any, info: ValidationInfo):
         return value
     return MetricResult(result=value)
 
-# Add Pydantic compatibility methods
+@patch
+def __json__(self: MetricResult):
+    """Return data for JSON serialization.
+    
+    This method is used by json.dumps and other JSON serializers 
+    to convert MetricResult to a JSON-compatible format.
+    """
+    return {
+        "result": self._result,
+        "reason": self.reason,
+    }
+
 @patch(cls_method=True)
 def __get_pydantic_core_schema__(
     cls: MetricResult, 
     _source_type: t.Any, 
     _handler: GetCoreSchemaHandler
 ) -> core_schema.CoreSchema:
-    """Generate a Pydantic core schema for MetricResult."""
-    return core_schema.with_info_plain_validator_function(cls.validate)
-
-
-@patch
-def model_dump(self: MetricResult):
-    """Support Pydantic's model_dump method."""
-    return self.to_dict()
+    """Generate a Pydantic core schema for MetricResult.
+    
+    This custom schema handles different serialization behaviors:
+    - For model_dump(): Returns the original MetricResult instance
+    - For model_dump_json(): Converts to a JSON-compatible dict using __json__
+    """
+    def serializer_function(instance, info):
+        """Handle different serialization modes for MetricResult."""
+        # For JSON serialization (model_dump_json), use __json__ method
+        if getattr(info, 'mode', None) == 'json':
+            return instance.__json__()
+        # For Python serialization (model_dump), return the instance itself
+        return instance
+    
+    return core_schema.union_schema([
+        # First schema: handles validation of MetricResult instances
+        core_schema.is_instance_schema(MetricResult),
+        
+        # Second schema: handles validation of other values and conversion to MetricResult
+        core_schema.chain_schema([
+            core_schema.any_schema(),
+            core_schema.no_info_plain_validator_function(
+                lambda value: MetricResult(result=value) if not isinstance(value, MetricResult) else value
+            ),
+        ]),
+    ], serialization=core_schema.plain_serializer_function_ser_schema(
+        serializer_function,
+        info_arg=True  # Explicitly specify that we're using the info argument
+    ))

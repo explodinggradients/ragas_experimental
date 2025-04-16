@@ -44,6 +44,24 @@ class ExtendedPydanticBaseModel(BaseModel):
                 column_id = field_name
             
             cls.__column_mapping__[field_name] = column_id
+
+            # check if the field is a MetricResult
+            if cls._is_metric_result_field(field_info.annotation):
+                # add additional mapping for the metric result
+                reason_field_name = f"{field_name}_reason"
+                reason_column_id = f"{column_id}_reason"
+                cls.__column_mapping__[reason_field_name] = reason_column_id
+
+    @staticmethod
+    def _is_metric_result_field(annotation):
+        """Check if a field annotation represents a MetricResult."""
+        # Direct import of MetricResult
+        from ragas_experimental.metric.result import MetricResult
+        
+        # Check if annotation is or references MetricResult
+        return (annotation is MetricResult or 
+                (hasattr(annotation, "__origin__") and annotation.__origin__ is MetricResult) or
+                (hasattr(annotation, "__class__") and annotation.__class__ is MetricResult))
     
     @classmethod
     def get_column_id(cls, field_name: str) -> str:
