@@ -100,13 +100,13 @@ def get_experiment_by_id(self: Project, experiment_id: str, model: t.Type[BaseMo
 
 # %% ../../nbs/project/experiments.ipynb 11
 @patch
-def get_experiment(self: Project, dataset_name: str, model) -> Dataset:
+def get_experiment(self: Project, experiment_name: str, model) -> Dataset:
     """Get an existing dataset by name."""
     # Search for dataset with given name
     sync_version = async_to_sync(self._ragas_api_client.get_experiment_by_name)
     exp_info = sync_version(
         project_id=self.project_id,
-        experiment_name=dataset_name
+        experiment_name=experiment_name
     )
 
     # Return Dataset instance
@@ -258,3 +258,40 @@ def langfuse_experiment(
         return t.cast(ExperimentProtocol, base_experiment)
 
     return decorator
+
+# %% ../../nbs/project/experiments.ipynb 23
+import logging
+from ..utils import plot_experiments_as_subplots
+
+@patch
+def compare_and_plot(self: Project, experiment_names: t.List[str], model: t.Type[BaseModel], metric_names: t.List[str]):
+    """Compare multiple experiments and generate a plot.
+
+    Args:
+        experiment_names: List of experiment IDs to compare
+        model: Model class defining the experiment structure
+    """
+    results = {}
+    for experiment_name in tqdm(experiment_names, desc="Fetching experiments"):
+        experiment = self.get_experiment(experiment_name, model)
+        experiment.load()
+        results[experiment_name] = {}
+        for row in experiment:
+            for metric in metric_names:
+                if metric not in results[experiment_name]:
+                    results[experiment_name][metric] = []
+                if hasattr(row, metric):
+                    results[experiment_name][metric].append(getattr(row, metric))
+                else:
+                    results[metric].append(None)
+                    logging.warning(f"Metric {metric} not found in row: {row}")
+                    
+    
+    
+    fig = plot_experiments_as_subplots(results,experiment_ids=experiment_names)
+    fig.show()
+        
+        
+        
+        
+    

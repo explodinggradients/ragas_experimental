@@ -50,28 +50,26 @@ import plotly.graph_objects as go
 from plotly.subplots import make_subplots
 from collections import Counter
 
-def plot_experiments_as_subplots(data, experiment_ids=None):
+def plot_experiments_as_subplots(data, experiment_names=None):
     """
     Plot metrics comparison across experiments.
     
     Parameters:
-    - data: Dictionary with experiment_ids as keys and metrics as nested dictionaries
-    - experiment_ids: List of experiment IDs in the order they should be plotted
+    - data: Dictionary with experiment_names as keys and metrics as nested dictionaries
+    - experiment_names: List of experiment IDs in the order they should be plotted
     
     Returns:
     - Plotly figure object with horizontal subplots
     """
-    if experiment_ids is None:
-        experiment_ids = list(data.keys())
+    if experiment_names is None:
+        experiment_names = list(data.keys())
     
-    # Use short names for better display
-    exp_short_names = [f"Exp {i+1}" for i in range(len(experiment_ids))]
-    
+    exp_short_names = [f"{name[:10]}.."for name in experiment_names]
     #TODO: need better solution to identify what type of metric it is
     # this is a temporary solution
     # Identify metrics and their types
     metrics = {}
-    for exp_id in experiment_ids:
+    for exp_id in experiment_names:
         for metric_name, values in data[exp_id].items():
             # Classify metric type (discrete or numerical)
             if metric_name not in metrics:
@@ -93,7 +91,7 @@ def plot_experiments_as_subplots(data, experiment_ids=None):
         if metric_info["type"] == "discrete":
             # For discrete metrics (like pass/fail)
             categories = set()
-            for exp_id in experiment_ids:
+            for exp_id in experiment_names:
                 count = Counter(data[exp_id][metric_name])
                 categories.update(count.keys())
             
@@ -101,7 +99,7 @@ def plot_experiments_as_subplots(data, experiment_ids=None):
             
             for category in categories:
                 y_values = []
-                for exp_id in experiment_ids:
+                for exp_id in experiment_names:
                     count = Counter(data[exp_id][metric_name])
                     total = sum(count.values())
                     percentage = (count.get(category, 0) / total) * 100
@@ -133,7 +131,7 @@ def plot_experiments_as_subplots(data, experiment_ids=None):
             normalized_values = []
             original_values = []
             
-            for exp_id in experiment_ids:
+            for exp_id in experiment_names:
                 values = data[exp_id][metric_name]
                 mean_val = np.mean(values)
                 original_values.append(mean_val)
@@ -175,7 +173,7 @@ def plot_experiments_as_subplots(data, experiment_ids=None):
         
         fig.update_xaxes(
             title_text="Experiments",
-            tickangle=0,
+            tickangle=-45,
             showgrid=False,
             showline=True,
             linewidth=1,
