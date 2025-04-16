@@ -21,7 +21,7 @@ from ..dataset import Dataset, BaseModelType
 from ..experiment import Experiment
 import ragas_experimental.typing as rt
 
-# %% ../../nbs/project/experiments.ipynb 3
+# %% ../../nbs/project/experiments.ipynb 4
 @patch
 def create_experiment(
     self: Project, name: str, model: t.Type[BaseModel]
@@ -78,9 +78,9 @@ async def create_experiment_columns(project_id, experiment_id, columns, create_e
         ))
     return await asyncio.gather(*tasks)
 
-# %% ../../nbs/project/experiments.ipynb 7
+# %% ../../nbs/project/experiments.ipynb 8
 @patch
-def get_experiment(self: Project, experiment_id: str, model: t.Type[BaseModel]) -> Experiment:
+def get_experiment_by_id(self: Project, experiment_id: str, model: t.Type[BaseModel]) -> Experiment:
     """Get an existing experiment by ID."""
     # Get experiment info
     sync_version = async_to_sync(self._ragas_api_client.get_experiment)
@@ -98,22 +98,42 @@ def get_experiment(self: Project, experiment_id: str, model: t.Type[BaseModel]) 
     )
 
 # %% ../../nbs/project/experiments.ipynb 11
+@patch
+def get_experiment(self: Project, dataset_name: str, model) -> Dataset:
+    """Get an existing dataset by name."""
+    # Search for dataset with given name
+    sync_version = async_to_sync(self._ragas_api_client.get_experiment_by_name)
+    exp_info = sync_version(
+        project_id=self.project_id,
+        experiment_name=dataset_name
+    )
+
+    # Return Dataset instance
+    return Experiment(
+        name=exp_info["name"],
+        model=model,
+        project_id=self.project_id,
+        experiment_id=exp_info["id"],
+        ragas_api_client=self._ragas_api_client,
+    )
+
+# %% ../../nbs/project/experiments.ipynb 14
 @t.runtime_checkable
 class ExperimentProtocol(t.Protocol):
     async def __call__(self, *args, **kwargs): ...
     async def run_async(self, name: str, dataset: Dataset): ...
 
-# %% ../../nbs/project/experiments.ipynb 12
+# %% ../../nbs/project/experiments.ipynb 15
 # this one we have to clean up
 from langfuse.decorators import observe
 
-# %% ../../nbs/project/experiments.ipynb 13
+# %% ../../nbs/project/experiments.ipynb 16
 from .naming import MemorableNames
 
-# %% ../../nbs/project/experiments.ipynb 14
+# %% ../../nbs/project/experiments.ipynb 17
 memorable_names = MemorableNames()
 
-# %% ../../nbs/project/experiments.ipynb 15
+# %% ../../nbs/project/experiments.ipynb 18
 @patch
 def experiment(
     self: Project, experiment_model, name_prefix: str = ""
@@ -167,7 +187,7 @@ def experiment(
 
     return decorator
 
-# %% ../../nbs/project/experiments.ipynb 19
+# %% ../../nbs/project/experiments.ipynb 22
 @patch
 def langfuse_experiment(
     self: Project, experiment_model, name_prefix: str = ""
