@@ -21,7 +21,7 @@ from ..dataset import Dataset, BaseModelType
 from ..experiment import Experiment
 import ragas_experimental.typing as rt
 
-# %% ../../nbs/project/experiments.ipynb 3
+# %% ../../nbs/project/experiments.ipynb 4
 @patch
 def create_experiment(
     self: Project, name: str, model: t.Type[BaseModel]
@@ -78,9 +78,9 @@ async def create_experiment_columns(project_id, experiment_id, columns, create_e
         ))
     return await asyncio.gather(*tasks)
 
-# %% ../../nbs/project/experiments.ipynb 7
+# %% ../../nbs/project/experiments.ipynb 8
 @patch
-def get_experiment(self: Project, experiment_id: str, model: t.Type[BaseModel]) -> Experiment:
+def get_experiment_by_id(self: Project, experiment_id: str, model: t.Type[BaseModel]) -> Experiment:
     """Get an existing experiment by ID."""
     # Get experiment info
     sync_version = async_to_sync(self._ragas_api_client.get_experiment)
@@ -98,22 +98,42 @@ def get_experiment(self: Project, experiment_id: str, model: t.Type[BaseModel]) 
     )
 
 # %% ../../nbs/project/experiments.ipynb 11
+@patch
+def get_experiment(self: Project, dataset_name: str, model) -> Dataset:
+    """Get an existing dataset by name."""
+    # Search for dataset with given name
+    sync_version = async_to_sync(self._ragas_api_client.get_experiment_by_name)
+    exp_info = sync_version(
+        project_id=self.project_id,
+        experiment_name=dataset_name
+    )
+
+    # Return Dataset instance
+    return Experiment(
+        name=exp_info["name"],
+        model=model,
+        project_id=self.project_id,
+        experiment_id=exp_info["id"],
+        ragas_api_client=self._ragas_api_client,
+    )
+
+# %% ../../nbs/project/experiments.ipynb 14
 @t.runtime_checkable
 class ExperimentProtocol(t.Protocol):
     async def __call__(self, *args, **kwargs): ...
     async def run_async(self, name: str, dataset: Dataset): ...
 
-# %% ../../nbs/project/experiments.ipynb 12
+# %% ../../nbs/project/experiments.ipynb 15
 # this one we have to clean up
 from langfuse.decorators import observe
 
-# %% ../../nbs/project/experiments.ipynb 13
+# %% ../../nbs/project/experiments.ipynb 16
 from .naming import MemorableNames
 
-# %% ../../nbs/project/experiments.ipynb 14
+# %% ../../nbs/project/experiments.ipynb 17
 memorable_names = MemorableNames()
 
-# %% ../../nbs/project/experiments.ipynb 15
+# %% ../../nbs/project/experiments.ipynb 18
 @patch
 def experiment(
     self: Project, experiment_model, name_prefix: str = ""
@@ -142,32 +162,57 @@ def experiment(
             if name_prefix:
                 name = f"{name_prefix}-{name}"
 
-            # Create tasks for all items
-            tasks = []
-            for item in dataset:
-                tasks.append(wrapped_experiment(item))
+            experiment_view = None
+            try:
+                # Create the experiment view upfront
+                experiment_view = self.create_experiment(name=name, model=experiment_model)
+                
+                # Create tasks for all items
+                tasks = []
+                for item in dataset:
+                    tasks.append(wrapped_experiment(item))
 
-            # Use as_completed with tqdm for progress tracking
-            results = []
-            for future in tqdm(asyncio.as_completed(tasks), total=len(tasks)):
-                result = await future
-                # Add each result to experiment view as it completes
-                if result is not None:
-                    results.append(result)
-
-            # upload results to experiment view
-            experiment_view = self.create_experiment(name=name, model=experiment_model)
-            for result in results:
-                experiment_view.append(result)
-
-            return experiment_view
+                # Calculate total operations (processing + appending)
+                total_operations = len(tasks) * 2  # Each item requires processing and appending
+                
+                # Use tqdm for combined progress tracking
+                results = []
+                progress_bar = tqdm(total=total_operations, desc="Running experiment")
+                
+                # Process all items
+                for future in asyncio.as_completed(tasks):
+                    result = await future
+                    if result is not None:
+                        results.append(result)
+                    progress_bar.update(1)  # Update for task completion
+                
+                # Append results to experiment view
+                for result in results:
+                    experiment_view.append(result)
+                    progress_bar.update(1)  # Update for append operation
+                    
+                progress_bar.close()
+                return experiment_view
+                
+            except Exception as e:
+                # Clean up the experiment if there was an error and it was created
+                if experiment_view is not None:
+                    try:
+                        # Delete the experiment (you might need to implement this method)
+                        sync_version = async_to_sync(self._ragas_api_client.delete_experiment)
+                        sync_version(project_id=self.project_id, experiment_id=experiment_view.experiment_id)
+                    except Exception as cleanup_error:
+                        print(f"Failed to clean up experiment after error: {cleanup_error}")
+                
+                # Re-raise the original exception
+                raise e
 
         wrapped_experiment.__setattr__("run_async", run_async)
         return t.cast(ExperimentProtocol, wrapped_experiment)
 
     return decorator
 
-# %% ../../nbs/project/experiments.ipynb 19
+# %% ../../nbs/project/experiments.ipynb 22
 @patch
 def langfuse_experiment(
     self: Project, experiment_model, name_prefix: str = ""

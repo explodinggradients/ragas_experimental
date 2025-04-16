@@ -5,12 +5,19 @@
 # %% auto 0
 __all__ = ['DEFAULT_SETTINGS', 'RagasApiClient', 'create_nano_id', 'Column', 'RowCell', 'Row']
 
-# %% ../../nbs/backends/ragas_api_client.ipynb 4
+# %% ../../nbs/backends/ragas_api_client.ipynb 3
 import httpx
 import asyncio
 import typing as t
 from pydantic import BaseModel, Field
 from fastcore.utils import patch
+
+# %% ../../nbs/backends/ragas_api_client.ipynb 4
+from ragas_experimental.exceptions import (
+    DatasetNotFoundError, DuplicateDatasetError,
+    ProjectNotFoundError, DuplicateProjectError,
+    ExperimentNotFoundError, DuplicateExperimentError
+)
 
 # %% ../../nbs/backends/ragas_api_client.ipynb 5
 class RagasApiClient():
@@ -85,6 +92,94 @@ class RagasApiClient():
         return await self._request("DELETE", path)
 
 # %% ../../nbs/backends/ragas_api_client.ipynb 6
+@patch
+async def _get_resource_by_name(
+    self: RagasApiClient,
+    list_method: t.Callable,
+    get_method: t.Callable,
+    resource_name: str,
+    name_field: str,
+    not_found_error: t.Type[Exception],
+    duplicate_error: t.Type[Exception],
+    resource_type_name: str,
+    **list_method_kwargs
+) -> t.Dict:
+    """Generic method to get a resource by name.
+    
+    Args:
+        list_method: Method to list resources
+        get_method: Method to get a specific resource
+        resource_name: Name to search for
+        name_field: Field name that contains the resource name
+        not_found_error: Exception to raise when resource is not found
+        duplicate_error: Exception to raise when multiple resources are found
+        resource_type_name: Human-readable name of the resource type
+        **list_method_kwargs: Additional arguments to pass to list_method
+        
+    Returns:
+        The resource information dictionary
+        
+    Raises:
+        Exception: If resource is not found or multiple resources are found
+    """
+    # Initial pagination parameters
+    limit = 50  # Number of items per page
+    offset = 0  # Starting position
+    matching_resources = []
+    
+    while True:
+        # Get a page of resources
+        response = await list_method(
+            limit=limit,
+            offset=offset,
+            **list_method_kwargs
+        )
+        
+        items = response.get("items", [])
+        
+        # If no items returned, we've reached the end
+        if not items:
+            break
+            
+        # Collect all resources with the matching name in this page
+        for resource in items:
+            if resource.get(name_field) == resource_name:
+                matching_resources.append(resource)
+        
+        # Update offset for the next page
+        offset += limit
+        
+        # If we've processed all items (less than limit returned), exit the loop
+        if len(items) < limit:
+            break
+    
+    # Check results
+    if not matching_resources:
+        context = list_method_kwargs.get("project_id", "")
+        context_msg = f" in project {context}" if context else ""
+        raise not_found_error(
+            f"No {resource_type_name} with name '{resource_name}' found{context_msg}"
+        )
+    
+    if len(matching_resources) > 1:
+        # Multiple matches found - construct an informative error message
+        resource_ids = [r.get("id") for r in matching_resources]
+        context = list_method_kwargs.get("project_id", "")
+        context_msg = f" in project {context}" if context else ""
+        
+        raise duplicate_error(
+            f"Multiple {resource_type_name}s found with name '{resource_name}'{context_msg}. "
+            f"{resource_type_name.capitalize()} IDs: {', '.join(resource_ids)}. "
+            f"Please use get_{resource_type_name}() with a specific ID instead."
+        )
+    
+    # Exactly one match found - retrieve full details
+    if "project_id" in list_method_kwargs:
+        return await get_method(list_method_kwargs["project_id"], matching_resources[0].get("id"))
+    else:
+        return await get_method(matching_resources[0].get("id"))
+
+# %% ../../nbs/backends/ragas_api_client.ipynb 8
 #---- Projects ----
 @patch
 async def list_projects(
@@ -147,6 +242,33 @@ async def delete_project(self: RagasApiClient, project_id: str) -> None:
 
 
 # %% ../../nbs/backends/ragas_api_client.ipynb 13
+@patch
+async def get_project_by_name(
+    self: RagasApiClient, project_name: str
+) -> t.Dict:
+    """Get a project by its name.
+    
+    Args:
+        project_name: Name of the project to find
+        
+    Returns:
+        The project information dictionary
+        
+    Raises:
+        ProjectNotFoundError: If no project with the given name is found
+        DuplicateProjectError: If multiple projects with the given name are found
+    """
+    return await self._get_resource_by_name(
+        list_method=self.list_projects,
+        get_method=self.get_project,
+        resource_name=project_name,
+        name_field="title",  # Projects use 'title' instead of 'name'
+        not_found_error=ProjectNotFoundError,
+        duplicate_error=DuplicateProjectError,
+        resource_type_name="project"
+    )
+
+# %% ../../nbs/backends/ragas_api_client.ipynb 16
 #---- Datasets ----
 @patch
 async def list_datasets(
@@ -201,7 +323,36 @@ async def delete_dataset(self: RagasApiClient, project_id: str, dataset_id: str)
     """Delete a dataset."""
     await self._delete_resource(f"projects/{project_id}/datasets/{dataset_id}")
 
-# %% ../../nbs/backends/ragas_api_client.ipynb 20
+# %% ../../nbs/backends/ragas_api_client.ipynb 23
+@patch
+async def get_dataset_by_name(
+    self: RagasApiClient, project_id: str, dataset_name: str
+) -> t.Dict:
+    """Get a dataset by its name.
+    
+    Args:
+        project_id: ID of the project
+        dataset_name: Name of the dataset to find
+        
+    Returns:
+        The dataset information dictionary
+        
+    Raises:
+        DatasetNotFoundError: If no dataset with the given name is found
+        DuplicateDatasetError: If multiple datasets with the given name are found
+    """
+    return await self._get_resource_by_name(
+        list_method=self.list_datasets,
+        get_method=self.get_dataset,
+        resource_name=dataset_name,
+        name_field="name",
+        not_found_error=DatasetNotFoundError,
+        duplicate_error=DuplicateDatasetError,
+        resource_type_name="dataset",
+        project_id=project_id
+    )
+
+# %% ../../nbs/backends/ragas_api_client.ipynb 26
 #---- Experiments ----
 @patch
 async def list_experiments(
@@ -257,10 +408,39 @@ async def delete_experiment(self: RagasApiClient, project_id: str, experiment_id
     await self._delete_resource(f"projects/{project_id}/experiments/{experiment_id}")
 
 
-# %% ../../nbs/backends/ragas_api_client.ipynb 25
+# %% ../../nbs/backends/ragas_api_client.ipynb 29
+@patch
+async def get_experiment_by_name(
+    self: RagasApiClient, project_id: str, experiment_name: str
+) -> t.Dict:
+    """Get an experiment by its name.
+    
+    Args:
+        project_id: ID of the project containing the experiment
+        experiment_name: Name of the experiment to find
+        
+    Returns:
+        The experiment information dictionary
+        
+    Raises:
+        ExperimentNotFoundError: If no experiment with the given name is found
+        DuplicateExperimentError: If multiple experiments with the given name are found
+    """
+    return await self._get_resource_by_name(
+        list_method=self.list_experiments,
+        get_method=self.get_experiment,
+        resource_name=experiment_name,
+        name_field="name",
+        not_found_error=ExperimentNotFoundError,
+        duplicate_error=DuplicateExperimentError,
+        resource_type_name="experiment",
+        project_id=project_id
+    )
+
+# %% ../../nbs/backends/ragas_api_client.ipynb 33
 from ..typing import ColumnType
 
-# %% ../../nbs/backends/ragas_api_client.ipynb 26
+# %% ../../nbs/backends/ragas_api_client.ipynb 34
 #---- Dataset Columns ----
 @patch
 async def list_dataset_columns(
@@ -331,7 +511,7 @@ async def delete_dataset_column(
         f"projects/{project_id}/datasets/{dataset_id}/columns/{column_id}"
     )
 
-# %% ../../nbs/backends/ragas_api_client.ipynb 34
+# %% ../../nbs/backends/ragas_api_client.ipynb 42
 #---- Dataset Rows ----
 @patch
 async def list_dataset_rows(
@@ -393,11 +573,11 @@ async def delete_dataset_row(
     )
 
 
-# %% ../../nbs/backends/ragas_api_client.ipynb 46
+# %% ../../nbs/backends/ragas_api_client.ipynb 54
 import uuid
 import string
 
-# %% ../../nbs/backends/ragas_api_client.ipynb 47
+# %% ../../nbs/backends/ragas_api_client.ipynb 55
 def create_nano_id(size=12):
     # Define characters to use (alphanumeric)
     alphabet = string.ascii_letters + string.digits
@@ -414,11 +594,11 @@ def create_nano_id(size=12):
     # Pad if necessary and return desired length
     return result[:size]
 
-# %% ../../nbs/backends/ragas_api_client.ipynb 49
+# %% ../../nbs/backends/ragas_api_client.ipynb 57
 import uuid
 import string
 
-# %% ../../nbs/backends/ragas_api_client.ipynb 50
+# %% ../../nbs/backends/ragas_api_client.ipynb 58
 def create_nano_id(size=12):
     # Define characters to use (alphanumeric)
     alphabet = string.ascii_letters + string.digits
@@ -435,7 +615,7 @@ def create_nano_id(size=12):
     # Pad if necessary and return desired length
     return result[:size]
 
-# %% ../../nbs/backends/ragas_api_client.ipynb 52
+# %% ../../nbs/backends/ragas_api_client.ipynb 60
 # Default settings for columns
 DEFAULT_SETTINGS = {
     "is_required": False,
@@ -458,7 +638,7 @@ class Row(BaseModel):
     id: str = Field(default_factory=create_nano_id)
     data: t.List[RowCell] = Field(...)
 
-# %% ../../nbs/backends/ragas_api_client.ipynb 53
+# %% ../../nbs/backends/ragas_api_client.ipynb 61
 #---- Resource With Data Helper Methods ----
 @patch
 async def _create_with_data(
@@ -585,7 +765,7 @@ async def create_dataset_with_data(
         "dataset", project_id, name, description, columns, rows, batch_size
     )
 
-# %% ../../nbs/backends/ragas_api_client.ipynb 59
+# %% ../../nbs/backends/ragas_api_client.ipynb 67
 #---- Experiment Columns ----
 @patch
 async def list_experiment_columns(
@@ -716,7 +896,7 @@ async def delete_experiment_row(
         f"projects/{project_id}/experiments/{experiment_id}/rows/{row_id}"
     )
 
-# %% ../../nbs/backends/ragas_api_client.ipynb 62
+# %% ../../nbs/backends/ragas_api_client.ipynb 70
 @patch
 async def create_experiment_with_data(
     self: RagasApiClient,
@@ -747,7 +927,7 @@ async def create_experiment_with_data(
         "experiment", project_id, name, description, columns, rows, batch_size
     )
 
-# %% ../../nbs/backends/ragas_api_client.ipynb 63
+# %% ../../nbs/backends/ragas_api_client.ipynb 71
 #---- Utility Methods ----
 @patch
 def create_column(
