@@ -63,7 +63,27 @@ class Project:
     def __repr__(self):
         return f"Project(name='{self.name}')"
 
-# %% ../../nbs/project/core.ipynb 10
+# %% ../../nbs/project/core.ipynb 8
+@patch(cls_method=True)
+def get(cls: Project, name: str, ragas_app_client: t.Optional[RagasApiClient] = None) -> Project:
+    """Get an existing project by name."""
+    # Search for project with given name
+    if ragas_app_client is None:
+        ragas_app_client = RagasApiClientFactory.create()
+
+    # get the project by name
+    sync_version = async_to_sync(ragas_app_client.get_project_by_name)
+    project_info = sync_version(
+        project_name=name
+    )
+
+    # Return Project instance
+    return Project(
+        project_id=project_info["id"],
+        ragas_app_client=ragas_app_client,
+    )
+
+# %% ../../nbs/project/core.ipynb 12
 async def create_dataset_columns(project_id, dataset_id, columns, create_dataset_column_func):
     tasks = []
     for column in columns:
@@ -81,7 +101,7 @@ async def create_dataset_columns(project_id, dataset_id, columns, create_dataset
     return await asyncio.gather(*tasks)
 
 
-# %% ../../nbs/project/core.ipynb 11
+# %% ../../nbs/project/core.ipynb 13
 @patch
 def create_dataset(
     self: Project, model: t.Type[BaseModel], name: t.Optional[str] = None
@@ -121,9 +141,9 @@ def create_dataset(
         ragas_api_client=self._ragas_api_client,
     )
 
-# %% ../../nbs/project/core.ipynb 15
+# %% ../../nbs/project/core.ipynb 17
 @patch
-def get_dataset(self: Project, dataset_id: str, model) -> Dataset:
+def get_dataset_by_id(self: Project, dataset_id: str, model) -> Dataset:
     """Get an existing dataset by name."""
     # Search for database with given name
     sync_version = async_to_sync(self._ragas_api_client.get_dataset)
@@ -138,5 +158,25 @@ def get_dataset(self: Project, dataset_id: str, model) -> Dataset:
         model=model,
         project_id=self.project_id,
         dataset_id=dataset_id,
+        ragas_api_client=self._ragas_api_client,
+    )
+
+# %% ../../nbs/project/core.ipynb 19
+@patch
+def get_dataset(self: Project, dataset_name: str, model) -> Dataset:
+    """Get an existing dataset by name."""
+    # Search for dataset with given name
+    sync_version = async_to_sync(self._ragas_api_client.get_dataset_by_name)
+    dataset_info = sync_version(
+        project_id=self.project_id,
+        dataset_name=dataset_name
+    )
+
+    # Return Dataset instance
+    return Dataset(
+        name=dataset_info["name"],
+        model=model,
+        project_id=self.project_id,
+        dataset_id=dataset_info["id"],
         ragas_api_client=self._ragas_api_client,
     )
