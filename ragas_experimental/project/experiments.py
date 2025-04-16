@@ -9,6 +9,7 @@ __all__ = ['memorable_names', 'create_experiment_columns', 'ExperimentProtocol']
 from tqdm import tqdm
 from functools import wraps
 import asyncio
+from tqdm import tqdm
 
 import typing as t
 

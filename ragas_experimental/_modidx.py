@@ -687,4 +687,6 @@ d = { 'settings': { 'branch': 'main',
             'ragas_experimental.utils': { 'ragas_experimental.utils.async_to_sync': ( 'utils.html#async_to_sync',
                                                                                       'ragas_experimental/utils.py'),
                                           'ragas_experimental.utils.create_nano_id': ( 'utils.html#create_nano_id',
-                                                                                       'ragas_experimental/utils.py')}}}
+                                                                                       'ragas_experimental/utils.py'),
+                                          'ragas_experimental.utils.plot_experiments_as_subplots': ( 'utils.html#plot_experiments_as_subplots',
+                                                                                                     'ragas_experimental/utils.py')}}}
