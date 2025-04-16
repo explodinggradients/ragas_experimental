@@ -573,11 +573,11 @@ async def delete_dataset_row(
     )
 
 
-# %% ../../nbs/backends/ragas_api_client.ipynb 54
+# %% ../../nbs/backends/ragas_api_client.ipynb 55
 import uuid
 import string
 
-# %% ../../nbs/backends/ragas_api_client.ipynb 55
+# %% ../../nbs/backends/ragas_api_client.ipynb 56
 def create_nano_id(size=12):
     # Define characters to use (alphanumeric)
     alphabet = string.ascii_letters + string.digits
@@ -593,12 +593,12 @@ def create_nano_id(size=12):
     
     # Pad if necessary and return desired length
     return result[:size]
-
-# %% ../../nbs/backends/ragas_api_client.ipynb 57
-import uuid
-import string
 
 # %% ../../nbs/backends/ragas_api_client.ipynb 58
+import uuid
+import string
+
+# %% ../../nbs/backends/ragas_api_client.ipynb 59
 def create_nano_id(size=12):
     # Define characters to use (alphanumeric)
     alphabet = string.ascii_letters + string.digits
@@ -615,7 +615,7 @@ def create_nano_id(size=12):
     # Pad if necessary and return desired length
     return result[:size]
 
-# %% ../../nbs/backends/ragas_api_client.ipynb 60
+# %% ../../nbs/backends/ragas_api_client.ipynb 61
 # Default settings for columns
 DEFAULT_SETTINGS = {
     "is_required": False,
@@ -638,7 +638,7 @@ class Row(BaseModel):
     id: str = Field(default_factory=create_nano_id)
     data: t.List[RowCell] = Field(...)
 
-# %% ../../nbs/backends/ragas_api_client.ipynb 61
+# %% ../../nbs/backends/ragas_api_client.ipynb 62
 #---- Resource With Data Helper Methods ----
 @patch
 async def _create_with_data(
@@ -765,7 +765,7 @@ async def create_dataset_with_data(
         "dataset", project_id, name, description, columns, rows, batch_size
     )
 
-# %% ../../nbs/backends/ragas_api_client.ipynb 67
+# %% ../../nbs/backends/ragas_api_client.ipynb 68
 #---- Experiment Columns ----
 @patch
 async def list_experiment_columns(
@@ -896,7 +896,7 @@ async def delete_experiment_row(
         f"projects/{project_id}/experiments/{experiment_id}/rows/{row_id}"
     )
 
-# %% ../../nbs/backends/ragas_api_client.ipynb 70
+# %% ../../nbs/backends/ragas_api_client.ipynb 71
 @patch
 async def create_experiment_with_data(
     self: RagasApiClient,
@@ -927,7 +927,7 @@ async def create_experiment_with_data(
         "experiment", project_id, name, description, columns, rows, batch_size
     )
 
-# %% ../../nbs/backends/ragas_api_client.ipynb 71
+# %% ../../nbs/backends/ragas_api_client.ipynb 72
 #---- Utility Methods ----
 @patch
 def create_column(
