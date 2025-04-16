@@ -214,12 +214,11 @@ def load_as_dicts(self: Dataset) -> t.List[t.Dict]:
     return result
 
 # %% ../nbs/dataset.ipynb 30
-import pandas as pd
-
 @patch
 def to_pandas(self: Dataset) -> "pd.DataFrame":
     """Convert dataset to pandas DataFrame."""
-    
+    import pandas as pd
+
     # Make sure we have data
     if not self._entries:
         self.load()
