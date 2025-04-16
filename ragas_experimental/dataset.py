@@ -102,10 +102,10 @@ class Dataset(t.Generic[BaseModelType]):
     def __iter__(self) -> t.Iterator[BaseModelType]:
         return iter(self._entries)
 
-# %% ../nbs/dataset.ipynb 17
+# %% ../nbs/dataset.ipynb 18
 import ragas_experimental.typing as rt
 
-# %% ../nbs/dataset.ipynb 18
+# %% ../nbs/dataset.ipynb 19
 @patch
 def append(self: Dataset, entry: BaseModelType) -> None:
     """Add a new entry to the dataset and sync to Notion."""
@@ -134,7 +134,7 @@ def append(self: Dataset, entry: BaseModelType) -> None:
     # Update entry with Notion data (like ID)
     self._entries.append(entry)
 
-# %% ../nbs/dataset.ipynb 21
+# %% ../nbs/dataset.ipynb 22
 @patch
 def pop(self: Dataset, index: int = -1) -> BaseModelType:
     """Remove and return entry at index, sync deletion to Notion."""
@@ -151,7 +151,7 @@ def pop(self: Dataset, index: int = -1) -> BaseModelType:
     # Remove from local cache
     return self._entries.pop(index)
 
-# %% ../nbs/dataset.ipynb 25
+# %% ../nbs/dataset.ipynb 26
 @patch
 def load(self: Dataset) -> None:
     """Load all entries from the backend API."""
@@ -187,7 +187,7 @@ def load(self: Dataset) -> None:
         
         self._entries.append(entry)
 
-# %% ../nbs/dataset.ipynb 27
+# %% ../nbs/dataset.ipynb 28
 @patch
 def load_as_dicts(self: Dataset) -> t.List[t.Dict]:
     """Load all entries as dictionaries."""
@@ -213,7 +213,7 @@ def load_as_dicts(self: Dataset) -> t.List[t.Dict]:
     
     return result
 
-# %% ../nbs/dataset.ipynb 29
+# %% ../nbs/dataset.ipynb 30
 @patch
 def to_pandas(self: Dataset) -> "pd.DataFrame":
     """Convert dataset to pandas DataFrame."""
@@ -227,7 +227,7 @@ def to_pandas(self: Dataset) -> "pd.DataFrame":
     data = [entry.model_dump() for entry in self._entries]
     return pd.DataFrame(data)
 
-# %% ../nbs/dataset.ipynb 31
+# %% ../nbs/dataset.ipynb 32
 @patch
 def save(self: Dataset, item: BaseModelType) -> None:
     """Save changes to an item to the backend."""
@@ -275,7 +275,7 @@ def save(self: Dataset, item: BaseModelType) -> None:
                 self._entries[i] = item
             break
 
-# %% ../nbs/dataset.ipynb 35
+# %% ../nbs/dataset.ipynb 36
 @patch
 def get(self: Dataset, field_value: str, field_name: str = "_row_id") -> t.Optional[BaseModelType]:
     """Get an entry by field value.
