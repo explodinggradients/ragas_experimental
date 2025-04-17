@@ -406,7 +406,13 @@ from langfuse.decorators import observe
 
 # %% ../../nbs/project/experiments.ipynb 32
 @patch
-def langfuse_experiment(self: Project, experiment_model, name_prefix: str = ""):
+def langfuse_experiment(
+    self: Project,
+    experiment_model,
+    name_prefix: str = "",
+    save_to_git: bool = True,
+    stage_all: bool = True,
+):
     """Decorator for creating experiment functions with Langfuse integration.
 
     Args:
@@ -428,9 +434,9 @@ def langfuse_experiment(self: Project, experiment_model, name_prefix: str = ""):
             return await observed_func(*args, **kwargs)
 
         # Now create the experiment wrapper with our already-observed function
-        experiment_wrapper = self.experiment(experiment_model, name_prefix)(
-            langfuse_wrapped_func
-        )
+        experiment_wrapper = self.experiment(
+            experiment_model, name_prefix, save_to_git, stage_all
+        )(langfuse_wrapped_func)
 
         return t.cast(ExperimentProtocol, experiment_wrapper)
 
