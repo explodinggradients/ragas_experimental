@@ -42,4 +42,3 @@ class RagasApiClientFactory:
             base_url = "https://api.dev.app.ragas.io"
 
         return RagasApiClient(app_token=app_token, base_url=base_url)
-

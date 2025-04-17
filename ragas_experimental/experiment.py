@@ -10,7 +10,9 @@ import typing as t
 
 from fastcore.utils import patch
 
-from .model.pydantic_model import ExtendedPydanticBaseModel as BaseModel
+from ragas_experimental.model.pydantic_model import (
+    ExtendedPydanticBaseModel as BaseModel,
+)
 from .backends.ragas_api_client import RagasApiClient
 from .dataset import Dataset
 

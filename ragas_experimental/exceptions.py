@@ -10,6 +10,7 @@ __all__ = ['RagasError', 'ValidationError', 'DuplicateError', 'NotFoundError', '
 # %% ../nbs/exceptions.ipynb 2
 class RagasError(Exception):
     """Base class for all Ragas-related exceptions."""
+
     pass
 
 # %% ../nbs/exceptions.ipynb 3
@@ -33,33 +34,47 @@ class NotFoundError(Exception):
 # %% ../nbs/exceptions.ipynb 4
 class ResourceNotFoundError(RagasError):
     """Exception raised when a requested resource doesn't exist."""
+
     pass
+
 
 class ProjectNotFoundError(ResourceNotFoundError):
     """Exception raised when a project doesn't exist."""
+
     pass
+
 
 class DatasetNotFoundError(ResourceNotFoundError):
     """Exception raised when a dataset doesn't exist."""
+
     pass
+
 
 class ExperimentNotFoundError(ResourceNotFoundError):
     """Exception raised when an experiment doesn't exist."""
+
     pass
 
 # %% ../nbs/exceptions.ipynb 5
 class DuplicateResourceError(RagasError):
     """Exception raised when multiple resources exist with the same identifier."""
+
     pass
+
 
 class DuplicateProjectError(DuplicateResourceError):
     """Exception raised when multiple projects exist with the same name."""
+
     pass
+
 
 class DuplicateDatasetError(DuplicateResourceError):
     """Exception raised when multiple datasets exist with the same name."""
+
     pass
+
 
 class DuplicateExperimentError(DuplicateResourceError):
     """Exception raised when multiple experiments exist with the same name."""
+
     pass

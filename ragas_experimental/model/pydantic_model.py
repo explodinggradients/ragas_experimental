@@ -15,19 +15,19 @@ from ..typing import FieldMeta as RagasFieldMeta
 # %% ../../nbs/model/pydantic_mode.ipynb 3
 class ExtendedPydanticBaseModel(BaseModel):
     """Extended Pydantic BaseModel with database integration capabilities"""
-    
+
     # Private attribute for storing the database row_id
     _row_id: t.Optional[int] = PrivateAttr(default=None)
-    
+
     # Class variable for storing column mapping overrides
     __column_mapping__: t.ClassVar[t.Dict[str, str]] = {}
-    
+
     def __init__(self, **data):
         super().__init__(**data)
         # Initialize column mapping if not already defined
         if not self.__class__.__column_mapping__:
             self._initialize_column_mapping()
-    
+
     @classmethod
     def _initialize_column_mapping(cls):
         """Initialize mapping from field names to column IDs."""
@@ -38,11 +38,11 @@ class ExtendedPydanticBaseModel(BaseModel):
                 if isinstance(extra, RagasFieldMeta) and extra.id:
                     column_id = extra.id
                     break
-            
+
             # If no Column metadata found, use field name as column ID
             if not column_id:
                 column_id = field_name
-            
+
             cls.__column_mapping__[field_name] = column_id
 
             # check if the field is a MetricResult
@@ -57,28 +57,34 @@ class ExtendedPydanticBaseModel(BaseModel):
         """Check if a field annotation represents a MetricResult."""
         # Direct import of MetricResult
         from ragas_experimental.metric.result import MetricResult
-        
+
         # Check if annotation is or references MetricResult
-        return (annotation is MetricResult or 
-                (hasattr(annotation, "__origin__") and annotation.__origin__ is MetricResult) or
-                (hasattr(annotation, "__class__") and annotation.__class__ is MetricResult))
-    
+        return (
+            annotation is MetricResult
+            or (
+                hasattr(annotation, "__origin__")
+                and annotation.__origin__ is MetricResult
+            )
+            or (
+                hasattr(annotation, "__class__")
+                and annotation.__class__ is MetricResult
+            )
+        )
+
     @classmethod
     def get_column_id(cls, field_name: str) -> str:
         """Get the column ID for a given field name."""
         if field_name not in cls.__column_mapping__:
             raise ValueError(f"No column mapping found for field {field_name}")
         return cls.__column_mapping__[field_name]
-    
+
     @classmethod
     def set_column_id(cls, field_name: str, column_id: str):
         """Set the column ID for a given field name."""
         if field_name not in cls.model_fields:
             raise ValueError(f"Field {field_name} not found in model")
         cls.__column_mapping__[field_name] = column_id
-    
+
     def get_db_field_mapping(self) -> t.Dict[str, str]:
         """Get a mapping from field names to column IDs for this model."""
         return self.__class__.__column_mapping__
-
-

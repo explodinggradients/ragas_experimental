@@ -14,18 +14,21 @@ from fastcore.utils import patch
 
 # %% ../../nbs/backends/ragas_api_client.ipynb 4
 from ragas_experimental.exceptions import (
-    DatasetNotFoundError, DuplicateDatasetError,
-    ProjectNotFoundError, DuplicateProjectError,
-    ExperimentNotFoundError, DuplicateExperimentError
+    DatasetNotFoundError,
+    DuplicateDatasetError,
+    ProjectNotFoundError,
+    DuplicateProjectError,
+    ExperimentNotFoundError,
+    DuplicateExperimentError,
 )
 
 # %% ../../nbs/backends/ragas_api_client.ipynb 5
-class RagasApiClient():
+class RagasApiClient:
     """Client for the Ragas Relay API."""
 
     def __init__(self, base_url: str, app_token: t.Optional[str] = None):
         """Initialize the Ragas API client.
-        
+
         Args:
             base_url: Base URL for the API (e.g., "http://localhost:8087")
             app_token: API token for authentication
@@ -44,13 +47,13 @@ class RagasApiClient():
         json_data: t.Optional[t.Dict] = None,
     ) -> t.Dict:
         """Make a request to the API.
-        
+
         Args:
             method: HTTP method (GET, POST, PATCH, DELETE)
             endpoint: API endpoint path
             params: Query parameters
             json_data: JSON request body
-            
+
         Returns:
             The response data from the API
         """
@@ -70,23 +73,23 @@ class RagasApiClient():
 
             return data.get("data")
 
-    #---- Resource Handlers ----
+    # ---- Resource Handlers ----
     async def _create_resource(self, path, data):
         """Generic resource creation."""
         return await self._request("POST", path, json_data=data)
-        
+
     async def _list_resources(self, path, **params):
         """Generic resource listing."""
         return await self._request("GET", path, params=params)
-        
+
     async def _get_resource(self, path):
         """Generic resource retrieval."""
         return await self._request("GET", path)
-        
+
     async def _update_resource(self, path, data):
         """Generic resource update."""
         return await self._request("PATCH", path, json_data=data)
-        
+
     async def _delete_resource(self, path):
         """Generic resource deletion."""
         return await self._request("DELETE", path)
@@ -102,10 +105,10 @@ async def _get_resource_by_name(
     not_found_error: t.Type[Exception],
     duplicate_error: t.Type[Exception],
     resource_type_name: str,
-    **list_method_kwargs
+    **list_method_kwargs,
 ) -> t.Dict:
     """Generic method to get a resource by name.
-    
+
     Args:
         list_method: Method to list resources
         get_method: Method to get a specific resource
@@ -115,10 +118,10 @@ async def _get_resource_by_name(
         duplicate_error: Exception to raise when multiple resources are found
         resource_type_name: Human-readable name of the resource type
         **list_method_kwargs: Additional arguments to pass to list_method
-        
+
     Returns:
         The resource information dictionary
-        
+
     Raises:
         Exception: If resource is not found or multiple resources are found
     """
@@ -126,33 +129,29 @@ async def _get_resource_by_name(
     limit = 50  # Number of items per page
     offset = 0  # Starting position
     matching_resources = []
-    
+
     while True:
         # Get a page of resources
-        response = await list_method(
-            limit=limit,
-            offset=offset,
-            **list_method_kwargs
-        )
-        
+        response = await list_method(limit=limit, offset=offset, **list_method_kwargs)
+
         items = response.get("items", [])
-        
+
         # If no items returned, we've reached the end
         if not items:
             break
-            
+
         # Collect all resources with the matching name in this page
         for resource in items:
             if resource.get(name_field) == resource_name:
                 matching_resources.append(resource)
-        
+
         # Update offset for the next page
         offset += limit
-        
+
         # If we've processed all items (less than limit returned), exit the loop
         if len(items) < limit:
             break
-    
+
     # Check results
     if not matching_resources:
         context = list_method_kwargs.get("project_id", "")
@@ -160,27 +159,29 @@ async def _get_resource_by_name(
         raise not_found_error(
             f"No {resource_type_name} with name '{resource_name}' found{context_msg}"
         )
-    
+
     if len(matching_resources) > 1:
         # Multiple matches found - construct an informative error message
         resource_ids = [r.get("id") for r in matching_resources]
         context = list_method_kwargs.get("project_id", "")
         context_msg = f" in project {context}" if context else ""
-        
+
         raise duplicate_error(
             f"Multiple {resource_type_name}s found with name '{resource_name}'{context_msg}. "
             f"{resource_type_name.capitalize()} IDs: {', '.join(resource_ids)}. "
             f"Please use get_{resource_type_name}() with a specific ID instead."
         )
-    
+
     # Exactly one match found - retrieve full details
     if "project_id" in list_method_kwargs:
-        return await get_method(list_method_kwargs["project_id"], matching_resources[0].get("id"))
+        return await get_method(
+            list_method_kwargs["project_id"], matching_resources[0].get("id")
+        )
     else:
         return await get_method(matching_resources[0].get("id"))
 
 # %% ../../nbs/backends/ragas_api_client.ipynb 8
-#---- Projects ----
+# ---- Projects ----
 @patch
 async def list_projects(
     self: RagasApiClient,
@@ -204,11 +205,13 @@ async def list_projects(
 
     return await self._list_resources("projects", **params)
 
+
 @patch
 async def get_project(self: RagasApiClient, project_id: str) -> t.Dict:
     """Get a specific project by ID."""
     # TODO: Need get project by title
     return await self._get_resource(f"projects/{project_id}")
+
 
 @patch
 async def create_project(
@@ -219,6 +222,7 @@ async def create_project(
     if description:
         data["description"] = description
     return await self._create_resource("projects", data)
+
 
 @patch
 async def update_project(
@@ -235,25 +239,23 @@ async def update_project(
         data["description"] = description
     return await self._update_resource(f"projects/{project_id}", data)
 
+
 @patch
 async def delete_project(self: RagasApiClient, project_id: str) -> None:
     """Delete a project."""
     await self._delete_resource(f"projects/{project_id}")
 
-
 # %% ../../nbs/backends/ragas_api_client.ipynb 13
 @patch
-async def get_project_by_name(
-    self: RagasApiClient, project_name: str
-) -> t.Dict:
+async def get_project_by_name(self: RagasApiClient, project_name: str) -> t.Dict:
     """Get a project by its name.
-    
+
     Args:
         project_name: Name of the project to find
-        
+
     Returns:
         The project information dictionary
-        
+
     Raises:
         ProjectNotFoundError: If no project with the given name is found
         DuplicateProjectError: If multiple projects with the given name are found
@@ -265,11 +267,11 @@ async def get_project_by_name(
         name_field="title",  # Projects use 'title' instead of 'name'
         not_found_error=ProjectNotFoundError,
         duplicate_error=DuplicateProjectError,
-        resource_type_name="project"
+        resource_type_name="project",
     )
 
 # %% ../../nbs/backends/ragas_api_client.ipynb 16
-#---- Datasets ----
+# ---- Datasets ----
 @patch
 async def list_datasets(
     self: RagasApiClient,
@@ -287,20 +289,26 @@ async def list_datasets(
         params["sort_dir"] = sort_dir
     return await self._list_resources(f"projects/{project_id}/datasets", **params)
 
+
 @patch
 async def get_dataset(self: RagasApiClient, project_id: str, dataset_id: str) -> t.Dict:
     """Get a specific dataset."""
     return await self._get_resource(f"projects/{project_id}/datasets/{dataset_id}")
 
+
 @patch
 async def create_dataset(
-    self: RagasApiClient, project_id: str, name: str, description: t.Optional[str] = None
+    self: RagasApiClient,
+    project_id: str,
+    name: str,
+    description: t.Optional[str] = None,
 ) -> t.Dict:
     """Create a new dataset in a project."""
     data = {"name": name}
     if description:
         data["description"] = description
     return await self._create_resource(f"projects/{project_id}/datasets", data)
+
 
 @patch
 async def update_dataset(
@@ -316,10 +324,15 @@ async def update_dataset(
         data["name"] = name
     if description:
         data["description"] = description
-    return await self._update_resource(f"projects/{project_id}/datasets/{dataset_id}", data)
+    return await self._update_resource(
+        f"projects/{project_id}/datasets/{dataset_id}", data
+    )
+
 
 @patch
-async def delete_dataset(self: RagasApiClient, project_id: str, dataset_id: str) -> None:
+async def delete_dataset(
+    self: RagasApiClient, project_id: str, dataset_id: str
+) -> None:
     """Delete a dataset."""
     await self._delete_resource(f"projects/{project_id}/datasets/{dataset_id}")
 
@@ -329,14 +342,14 @@ async def get_dataset_by_name(
     self: RagasApiClient, project_id: str, dataset_name: str
 ) -> t.Dict:
     """Get a dataset by its name.
-    
+
     Args:
         project_id: ID of the project
         dataset_name: Name of the dataset to find
-        
+
     Returns:
         The dataset information dictionary
-        
+
     Raises:
         DatasetNotFoundError: If no dataset with the given name is found
         DuplicateDatasetError: If multiple datasets with the given name are found
@@ -349,11 +362,11 @@ async def get_dataset_by_name(
         not_found_error=DatasetNotFoundError,
         duplicate_error=DuplicateDatasetError,
         resource_type_name="dataset",
-        project_id=project_id
+        project_id=project_id,
     )
 
 # %% ../../nbs/backends/ragas_api_client.ipynb 26
-#---- Experiments ----
+# ---- Experiments ----
 @patch
 async def list_experiments(
     self: RagasApiClient,
@@ -371,20 +384,30 @@ async def list_experiments(
         params["sort_dir"] = sort_dir
     return await self._list_resources(f"projects/{project_id}/experiments", **params)
 
+
 @patch
-async def get_experiment(self: RagasApiClient, project_id: str, experiment_id: str) -> t.Dict:
+async def get_experiment(
+    self: RagasApiClient, project_id: str, experiment_id: str
+) -> t.Dict:
     """Get a specific experiment."""
-    return await self._get_resource(f"projects/{project_id}/experiments/{experiment_id}")
+    return await self._get_resource(
+        f"projects/{project_id}/experiments/{experiment_id}"
+    )
+
 
 @patch
 async def create_experiment(
-    self: RagasApiClient, project_id: str, name: str, description: t.Optional[str] = None
+    self: RagasApiClient,
+    project_id: str,
+    name: str,
+    description: t.Optional[str] = None,
 ) -> t.Dict:
     """Create a new experiment in a project."""
     data = {"name": name}
     if description:
         data["description"] = description
     return await self._create_resource(f"projects/{project_id}/experiments", data)
+
 
 @patch
 async def update_experiment(
@@ -400,13 +423,17 @@ async def update_experiment(
         data["name"] = name
     if description:
         data["description"] = description
-    return await self._update_resource(f"projects/{project_id}/experiments/{experiment_id}", data)
+    return await self._update_resource(
+        f"projects/{project_id}/experiments/{experiment_id}", data
+    )
+
 
 @patch
-async def delete_experiment(self: RagasApiClient, project_id: str, experiment_id: str) -> None:
+async def delete_experiment(
+    self: RagasApiClient, project_id: str, experiment_id: str
+) -> None:
     """Delete an experiment."""
     await self._delete_resource(f"projects/{project_id}/experiments/{experiment_id}")
-
 
 # %% ../../nbs/backends/ragas_api_client.ipynb 29
 @patch
@@ -414,14 +441,14 @@ async def get_experiment_by_name(
     self: RagasApiClient, project_id: str, experiment_name: str
 ) -> t.Dict:
     """Get an experiment by its name.
-    
+
     Args:
         project_id: ID of the project containing the experiment
         experiment_name: Name of the experiment to find
-        
+
     Returns:
         The experiment information dictionary
-        
+
     Raises:
         ExperimentNotFoundError: If no experiment with the given name is found
         DuplicateExperimentError: If multiple experiments with the given name are found
@@ -434,14 +461,14 @@ async def get_experiment_by_name(
         not_found_error=ExperimentNotFoundError,
         duplicate_error=DuplicateExperimentError,
         resource_type_name="experiment",
-        project_id=project_id
+        project_id=project_id,
     )
 
 # %% ../../nbs/backends/ragas_api_client.ipynb 33
 from ..typing import ColumnType
 
 # %% ../../nbs/backends/ragas_api_client.ipynb 34
-#---- Dataset Columns ----
+# ---- Dataset Columns ----
 @patch
 async def list_dataset_columns(
     self: RagasApiClient,
@@ -462,6 +489,7 @@ async def list_dataset_columns(
         f"projects/{project_id}/datasets/{dataset_id}/columns", **params
     )
 
+
 @patch
 async def get_dataset_column(
     self: RagasApiClient, project_id: str, dataset_id: str, column_id: str
@@ -470,6 +498,7 @@ async def get_dataset_column(
     return await self._get_resource(
         f"projects/{project_id}/datasets/{dataset_id}/columns/{column_id}"
     )
+
 
 @patch
 async def create_dataset_column(
@@ -492,15 +521,21 @@ async def create_dataset_column(
         f"projects/{project_id}/datasets/{dataset_id}/columns", data
     )
 
+
 @patch
 async def update_dataset_column(
-    self: RagasApiClient, project_id: str, dataset_id: str, column_id: str, **column_data
+    self: RagasApiClient,
+    project_id: str,
+    dataset_id: str,
+    column_id: str,
+    **column_data,
 ) -> t.Dict:
     """Update an existing column in a dataset."""
     return await self._update_resource(
         f"projects/{project_id}/datasets/{dataset_id}/columns/{column_id}",
         column_data,
     )
+
 
 @patch
 async def delete_dataset_column(
@@ -512,7 +547,7 @@ async def delete_dataset_column(
     )
 
 # %% ../../nbs/backends/ragas_api_client.ipynb 42
-#---- Dataset Rows ----
+# ---- Dataset Rows ----
 @patch
 async def list_dataset_rows(
     self: RagasApiClient,
@@ -533,6 +568,7 @@ async def list_dataset_rows(
         f"projects/{project_id}/datasets/{dataset_id}/rows", **params
     )
 
+
 @patch
 async def get_dataset_row(
     self: RagasApiClient, project_id: str, dataset_id: str, row_id: str
@@ -541,6 +577,7 @@ async def get_dataset_row(
     return await self._get_resource(
         f"projects/{project_id}/datasets/{dataset_id}/rows/{row_id}"
     )
+
 
 @patch
 async def create_dataset_row(
@@ -551,6 +588,7 @@ async def create_dataset_row(
     return await self._create_resource(
         f"projects/{project_id}/datasets/{dataset_id}/rows", row_data
     )
+
 
 @patch
 async def update_dataset_row(
@@ -563,6 +601,7 @@ async def update_dataset_row(
         row_data,
     )
 
+
 @patch
 async def delete_dataset_row(
     self: RagasApiClient, project_id: str, dataset_id: str, row_id: str
@@ -572,7 +611,6 @@ async def delete_dataset_row(
         f"projects/{project_id}/datasets/{dataset_id}/rows/{row_id}"
     )
 
-
 # %% ../../nbs/backends/ragas_api_client.ipynb 55
 import uuid
 import string
@@ -581,16 +619,16 @@ import string
 def create_nano_id(size=12):
     # Define characters to use (alphanumeric)
     alphabet = string.ascii_letters + string.digits
-    
+
     # Generate UUID and convert to int
     uuid_int = uuid.uuid4().int
-    
+
     # Convert to base62
     result = ""
     while uuid_int:
         uuid_int, remainder = divmod(uuid_int, len(alphabet))
         result = alphabet[remainder] + result
-    
+
     # Pad if necessary and return desired length
     return result[:size]
 
@@ -602,25 +640,23 @@ import string
 def create_nano_id(size=12):
     # Define characters to use (alphanumeric)
     alphabet = string.ascii_letters + string.digits
-    
+
     # Generate UUID and convert to int
     uuid_int = uuid.uuid4().int
-    
+
     # Convert to base62
     result = ""
     while uuid_int:
         uuid_int, remainder = divmod(uuid_int, len(alphabet))
         result = alphabet[remainder] + result
-    
+
     # Pad if necessary and return desired length
     return result[:size]
 
 # %% ../../nbs/backends/ragas_api_client.ipynb 61
 # Default settings for columns
-DEFAULT_SETTINGS = {
-    "is_required": False,
-    "max_length": 1000
-}
+DEFAULT_SETTINGS = {"is_required": False, "max_length": 1000}
+
 
 # Model definitions
 class Column(BaseModel):
@@ -630,29 +666,31 @@ class Column(BaseModel):
     settings: t.Dict = Field(default_factory=lambda: DEFAULT_SETTINGS.copy())
     col_order: t.Optional[int] = Field(default=None)
 
+
 class RowCell(BaseModel):
     data: t.Any = Field(...)
     column_id: str = Field(...)
+
 
 class Row(BaseModel):
     id: str = Field(default_factory=create_nano_id)
     data: t.List[RowCell] = Field(...)
 
 # %% ../../nbs/backends/ragas_api_client.ipynb 62
-#---- Resource With Data Helper Methods ----
+# ---- Resource With Data Helper Methods ----
 @patch
 async def _create_with_data(
     self: RagasApiClient,
     resource_type: str,
     project_id: str,
-    name: str, 
+    name: str,
     description: str,
     columns: t.List[Column],
     rows: t.List[Row],
-    batch_size: int = 50
+    batch_size: int = 50,
 ) -> t.Dict:
     """Generic method to create a resource with columns and rows.
-    
+
     Args:
         resource_type: Type of resource ("dataset" or "experiment")
         project_id: Project ID
@@ -661,7 +699,7 @@ async def _create_with_data(
         columns: List of column definitions
         rows: List of row data
         batch_size: Number of operations to perform concurrently
-        
+
     Returns:
         The created resource
     """
@@ -680,37 +718,37 @@ async def _create_with_data(
         id_key = "experiment_id"
     else:
         raise ValueError(f"Unsupported resource type: {resource_type}")
-        
+
     try:
         # Create the resource
         resource = await create_fn(project_id, name, description)
-        
+
         # Process columns in batches
         for i in range(0, len(columns), batch_size):
-            batch = columns[i:i+batch_size]
+            batch = columns[i : i + batch_size]
             col_tasks = []
-            
+
             for col in batch:
                 params = {
                     "project_id": project_id,
-                    id_key: resource["id"], # dataset_id here
+                    id_key: resource["id"],  # dataset_id here
                     "id": col.id,
                     "name": col.name,
                     "type": col.type,
-                    "settings": col.settings
+                    "settings": col.settings,
                 }
                 if col.col_order is not None:
                     params["col_order"] = col.col_order
-                
+
                 col_tasks.append(create_col_fn(**params))
-            
+
             await asyncio.gather(*col_tasks)
-            
+
         # Process rows in batches
         for i in range(0, len(rows), batch_size):
-            batch = rows[i:i+batch_size]
+            batch = rows[i : i + batch_size]
             row_tasks = []
-            
+
             for row in batch:
                 row_data = {cell.column_id: cell.data for cell in row.data}
                 row_tasks.append(
@@ -718,22 +756,23 @@ async def _create_with_data(
                         project_id=project_id,
                         **{id_key: resource["id"]},
                         id=row.id,
-                        data=row_data
+                        data=row_data,
                     )
                 )
-            
+
             await asyncio.gather(*row_tasks)
-            
+
         return resource
-        
+
     except Exception as e:
         # Clean up on error
-        if 'resource' in locals():
+        if "resource" in locals():
             try:
                 await delete_fn(project_id, resource["id"])
             except:
                 pass  # Ignore cleanup errors
         raise e
+
 
 @patch
 async def create_dataset_with_data(
@@ -743,13 +782,13 @@ async def create_dataset_with_data(
     description: str,
     columns: t.List[Column],
     rows: t.List[Row],
-    batch_size: int = 50
+    batch_size: int = 50,
 ) -> t.Dict:
     """Create a dataset with columns and rows.
-    
+
     This method creates a dataset and populates it with columns and rows in an
     optimized way using concurrent requests.
-    
+
     Args:
         project_id: Project ID
         name: Dataset name
@@ -757,7 +796,7 @@ async def create_dataset_with_data(
         columns: List of column definitions
         rows: List of row data
         batch_size: Number of operations to perform concurrently
-        
+
     Returns:
         The created dataset
     """
@@ -766,7 +805,7 @@ async def create_dataset_with_data(
     )
 
 # %% ../../nbs/backends/ragas_api_client.ipynb 68
-#---- Experiment Columns ----
+# ---- Experiment Columns ----
 @patch
 async def list_experiment_columns(
     self: RagasApiClient,
@@ -787,6 +826,7 @@ async def list_experiment_columns(
         f"projects/{project_id}/experiments/{experiment_id}/columns", **params
     )
 
+
 @patch
 async def get_experiment_column(
     self: RagasApiClient, project_id: str, experiment_id: str, column_id: str
@@ -795,6 +835,7 @@ async def get_experiment_column(
     return await self._get_resource(
         f"projects/{project_id}/experiments/{experiment_id}/columns/{column_id}"
     )
+
 
 @patch
 async def create_experiment_column(
@@ -817,15 +858,21 @@ async def create_experiment_column(
         f"projects/{project_id}/experiments/{experiment_id}/columns", data
     )
 
+
 @patch
 async def update_experiment_column(
-    self: RagasApiClient, project_id: str, experiment_id: str, column_id: str, **column_data
+    self: RagasApiClient,
+    project_id: str,
+    experiment_id: str,
+    column_id: str,
+    **column_data,
 ) -> t.Dict:
     """Update an existing column in an experiment."""
     return await self._update_resource(
         f"projects/{project_id}/experiments/{experiment_id}/columns/{column_id}",
         column_data,
     )
+
 
 @patch
 async def delete_experiment_column(
@@ -836,7 +883,8 @@ async def delete_experiment_column(
         f"projects/{project_id}/experiments/{experiment_id}/columns/{column_id}"
     )
 
-#---- Experiment Rows ----
+
+# ---- Experiment Rows ----
 @patch
 async def list_experiment_rows(
     self: RagasApiClient,
@@ -857,6 +905,7 @@ async def list_experiment_rows(
         f"projects/{project_id}/experiments/{experiment_id}/rows", **params
     )
 
+
 @patch
 async def get_experiment_row(
     self: RagasApiClient, project_id: str, experiment_id: str, row_id: str
@@ -865,6 +914,7 @@ async def get_experiment_row(
     return await self._get_resource(
         f"projects/{project_id}/experiments/{experiment_id}/rows/{row_id}"
     )
+
 
 @patch
 async def create_experiment_row(
@@ -876,6 +926,7 @@ async def create_experiment_row(
         f"projects/{project_id}/experiments/{experiment_id}/rows", row_data
     )
 
+
 @patch
 async def update_experiment_row(
     self: RagasApiClient, project_id: str, experiment_id: str, row_id: str, data: t.Dict
@@ -886,6 +937,7 @@ async def update_experiment_row(
         f"projects/{project_id}/experiments/{experiment_id}/rows/{row_id}",
         row_data,
     )
+
 
 @patch
 async def delete_experiment_row(
@@ -905,13 +957,13 @@ async def create_experiment_with_data(
     description: str,
     columns: t.List[Column],
     rows: t.List[Row],
-    batch_size: int = 50
+    batch_size: int = 50,
 ) -> t.Dict:
     """Create an experiment with columns and rows.
-    
+
     This method creates an experiment and populates it with columns and rows in an
     optimized way using concurrent requests.
-    
+
     Args:
         project_id: Project ID
         name: Experiment name
@@ -919,7 +971,7 @@ async def create_experiment_with_data(
         columns: List of column definitions
         rows: List of row data
         batch_size: Number of operations to perform concurrently
-        
+
     Returns:
         The created experiment
     """
@@ -928,25 +980,25 @@ async def create_experiment_with_data(
     )
 
 # %% ../../nbs/backends/ragas_api_client.ipynb 72
-#---- Utility Methods ----
+# ---- Utility Methods ----
 @patch
 def create_column(
-    self: RagasApiClient, 
-    name: str, 
-    type: str, 
-    settings: t.Optional[t.Dict] = None, 
+    self: RagasApiClient,
+    name: str,
+    type: str,
+    settings: t.Optional[t.Dict] = None,
     col_order: t.Optional[int] = None,
-    id: t.Optional[str] = None
+    id: t.Optional[str] = None,
 ) -> Column:
     """Create a Column object.
-    
+
     Args:
         name: Column name
         type: Column type (use ColumnType enum)
         settings: Column settings
         col_order: Column order
         id: Custom ID (generates one if not provided)
-        
+
     Returns:
         Column object
     """
@@ -957,64 +1009,64 @@ def create_column(
         params["col_order"] = col_order
     if id:
         params["id"] = id
-        
+
     return Column(**params)
-    
+
+
 @patch
 def create_row(
-    self: RagasApiClient, 
-    data: t.Dict[str, t.Any], 
+    self: RagasApiClient,
+    data: t.Dict[str, t.Any],
     column_map: t.Dict[str, str],
-    id: t.Optional[str] = None
+    id: t.Optional[str] = None,
 ) -> Row:
     """Create a Row object from a dictionary.
-    
+
     Args:
         data: Dictionary mapping column names to values
         column_map: Dictionary mapping column names to column IDs
         id: Custom ID (generates one if not provided)
-        
+
     Returns:
         Row object
     """
     cells = []
     for col_name, value in data.items():
         if col_name in column_map:
-            cells.append(RowCell(
-                data=value,
-                column_id=column_map[col_name]
-            ))
-            
+            cells.append(RowCell(data=value, column_id=column_map[col_name]))
+
     params = {"data": cells}
     if id:
         params["id"] = id
-        
+
     return Row(**params)
-    
+
+
 @patch
-def create_column_map(self: RagasApiClient, columns: t.List[Column]) -> t.Dict[str, str]:
+def create_column_map(
+    self: RagasApiClient, columns: t.List[Column]
+) -> t.Dict[str, str]:
     """Create a mapping of column names to IDs.
-    
+
     Args:
         columns: List of column objects
-        
+
     Returns:
         Dictionary mapping column names to IDs
     """
     return {col.name: col.id for col in columns}
-    
+
+
 @patch
 async def convert_raw_data(
-    self: RagasApiClient,
-    column_defs: t.List[t.Dict],
-    row_data: t.List[t.Dict]
+    self: RagasApiClient, column_defs: t.List[t.Dict], row_data: t.List[t.Dict]
 ) -> t.Tuple[t.List[Column], t.List[Row]]:
     """Convert raw data to column and row objects.
-    
+
     Args:
         column_defs: List of column definitions (dicts with name, type)
         row_data: List of dictionaries with row data
-        
+
     Returns:
         Tuple of (columns, rows)
     """
@@ -1022,13 +1074,13 @@ async def convert_raw_data(
     columns = []
     for col in column_defs:
         columns.append(self.create_column(**col))
-        
+
     # Create column map
     column_map = self.create_column_map(columns)
-    
+
     # Create rows
     rows = []
     for data in row_data:
         rows.append(self.create_row(data, column_map))
-        
+
     return columns, rows
