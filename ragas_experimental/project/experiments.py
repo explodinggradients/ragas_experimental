@@ -410,6 +410,54 @@ def langfuse_experiment(
     return decorator
 
 # %% ../../nbs/project/experiments.ipynb 40
+from mlflow import trace
+
+@patch
+def mlflow_experiment(
+    self: Project, experiment_model, name_prefix: str = ""
+):
+    """Decorator for creating experiment functions with mlflow integration.
+
+    Args:
+        experiment_model: The NotionModel type to use for experiment results
+        name_prefix: Optional prefix for experiment names
+
+    Returns:
+        Decorator function that wraps experiment functions with mlflow observation
+    """
+
+    def decorator(func: t.Callable) -> ExperimentProtocol:
+        # First, create a base experiment wrapper
+        base_experiment = self.experiment(experiment_model, name_prefix)(func)
+
+        # Override the wrapped function to add mlflow observation
+        @wraps(func)
+        async def wrapped_with_mlflow(*args, **kwargs):
+            # wrap the function with mlflow observation
+            observed_func = trace(name=f"{name_prefix}-{func.__name__}")(func)
+            return await observed_func(*args, **kwargs)
+
+        # Replace the async function to use mlflow
+        original_run_async = base_experiment.run_async
+
+        # Use the original run_async but with the mlflow-wrapped function
+        async def run_async_with_mlflow(
+            dataset: Dataset, name: t.Optional[str] = None
+        ):
+            # Override the internal wrapped_experiment with our mlflow version
+            base_experiment.__wrapped__ = wrapped_with_mlflow
+
+            # Call the original run_async which will now use our mlflow-wrapped function
+            return await original_run_async(dataset, name)
+
+        # Replace the run_async method
+        base_experiment.__setattr__("run_async", run_async_with_mlflow)
+
+        return t.cast(ExperimentProtocol, base_experiment)
+
+    return decorator
+
+# %% ../../nbs/project/experiments.ipynb 41
 import logging
 from ..utils import plot_experiments_as_subplots
 
