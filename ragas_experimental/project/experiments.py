@@ -302,7 +302,7 @@ memorable_names = MemorableNames()
 # %% ../../nbs/project/experiments.ipynb 26
 @patch
 def experiment(
-    self: Project, experiment_model, name_prefix: str = "", save_to_git: bool = True
+    self: Project, experiment_model, name_prefix: str = "", save_to_git: bool = True, stage_all: bool = False
 ):
     """Decorator for creating experiment functions without Langfuse integration.
 
@@ -321,7 +321,7 @@ def experiment(
             return await func(*args, **kwargs)
 
         # Add run method to the wrapped function
-        async def run_async(dataset: Dataset, name: t.Optional[str] = None):
+        async def run_async(dataset: Dataset, name: t.Optional[str] = None, save_to_git: bool = save_to_git, stage_all: bool = stage_all):
             # if name is not provided, generate a memorable name
             if name is None:
                 name = memorable_names.generate_unique_name()
@@ -375,7 +375,7 @@ def experiment(
             # save to git if requested
             if save_to_git:
                 repo_path = find_git_root()
-                version_experiment(experiment_name=name, repo_path=repo_path)
+                version_experiment(experiment_name=name, repo_path=repo_path, stage_all=stage_all)
 
             return experiment_view
 
