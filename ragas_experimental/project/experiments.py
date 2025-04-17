@@ -124,16 +124,12 @@ class ExperimentProtocol(t.Protocol):
     async def run_async(self, name: str, dataset: Dataset): ...
 
 # %% ../../nbs/project/experiments.ipynb 16
-# this one we have to clean up
-from langfuse.decorators import observe
-
-# %% ../../nbs/project/experiments.ipynb 17
 from .naming import MemorableNames
 
-# %% ../../nbs/project/experiments.ipynb 18
+# %% ../../nbs/project/experiments.ipynb 17
 memorable_names = MemorableNames()
 
-# %% ../../nbs/project/experiments.ipynb 19
+# %% ../../nbs/project/experiments.ipynb 18
 @patch
 def experiment(
     self: Project, experiment_model, name_prefix: str = ""
@@ -214,6 +210,10 @@ def experiment(
 
 
 
+# %% ../../nbs/project/experiments.ipynb 22
+# this one we have to clean up
+from langfuse.decorators import observe
+
 # %% ../../nbs/project/experiments.ipynb 23
 @patch
 def langfuse_experiment(
@@ -230,37 +230,21 @@ def langfuse_experiment(
     """
 
     def decorator(func: t.Callable) -> ExperimentProtocol:
-        # First, create a base experiment wrapper
-        base_experiment = self.experiment(experiment_model, name_prefix)(func)
-
-        # Override the wrapped function to add Langfuse observation
         @wraps(func)
-        async def wrapped_with_langfuse(*args, **kwargs):
-            # wrap the function with langfuse observation
-            observed_func = observe(name=f"{name_prefix}-{func.__name__}")(func)
+        async def langfuse_wrapped_func(*args, **kwargs):
+            # Apply langfuse observation directly here
+            trace_name = f"{name_prefix}-{func.__name__}" if name_prefix else func.__name__
+            observed_func = observe(name=trace_name)(func)
             return await observed_func(*args, **kwargs)
-
-        # Replace the async function to use Langfuse
-        original_run_async = base_experiment.run_async
-
-        # Use the original run_async but with the Langfuse-wrapped function
-        async def run_async_with_langfuse(
-            dataset: Dataset, name: t.Optional[str] = None
-        ):
-            # Override the internal wrapped_experiment with our Langfuse version
-            base_experiment.__wrapped__ = wrapped_with_langfuse
-
-            # Call the original run_async which will now use our Langfuse-wrapped function
-            return await original_run_async(dataset, name)
-
-        # Replace the run_async method
-        base_experiment.__setattr__("run_async", run_async_with_langfuse)
-
-        return t.cast(ExperimentProtocol, base_experiment)
+        
+        # Now create the experiment wrapper with our already-observed function
+        experiment_wrapper = self.experiment(experiment_model, name_prefix)(langfuse_wrapped_func)
+        
+        return t.cast(ExperimentProtocol, experiment_wrapper)
 
     return decorator
 
-# %% ../../nbs/project/experiments.ipynb 24
+# %% ../../nbs/project/experiments.ipynb 30
 import logging
 from ..utils import plot_experiments_as_subplots
 
