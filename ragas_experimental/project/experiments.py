@@ -420,7 +420,7 @@ def langfuse_experiment(
 
     return decorator
 
-# %% ../../nbs/project/experiments.ipynb 23
+# %% ../../nbs/project/experiments.ipynb 38
 from mlflow import trace
 
 @patch
@@ -468,7 +468,7 @@ def mlflow_experiment(
 
     return decorator
 
-# %% ../../nbs/project/experiments.ipynb 24
+# %% ../../nbs/project/experiments.ipynb 39
 import logging
 from ..utils import plot_experiments_as_subplots
 
