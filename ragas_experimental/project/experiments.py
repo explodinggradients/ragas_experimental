@@ -125,7 +125,7 @@ from pathlib import Path
 
 # %% ../../nbs/project/experiments.ipynb 17
 def find_git_root(
-    start_path: t.Union[str, Path, None] = None,  # starting path to search from
+    start_path: t.Union[str, Path, None] = None  # starting path to search from
 ) -> Path:
     """Find the root directory of a git repository by traversing up from the start path."""
     # Start from the current directory if no path is provided
@@ -447,7 +447,13 @@ from mlflow import trace
 
 
 @patch
-def mlflow_experiment(self: Project, experiment_model, name_prefix: str = ""):
+def mlflow_experiment(
+    self: Project,
+    experiment_model,
+    name_prefix: str = "",
+    save_to_git: bool = True,
+    stage_all: bool = True,
+):
     """Decorator for creating experiment functions with mlflow integration.
 
     Args:
@@ -459,31 +465,22 @@ def mlflow_experiment(self: Project, experiment_model, name_prefix: str = ""):
     """
 
     def decorator(func: t.Callable) -> ExperimentProtocol:
-        # First, create a base experiment wrapper
-        base_experiment = self.experiment(experiment_model, name_prefix)(func)
 
-        # Override the wrapped function to add mlflow observation
         @wraps(func)
-        async def wrapped_with_mlflow(*args, **kwargs):
-            # wrap the function with mlflow observation
-            observed_func = trace(name=f"{name_prefix}-{func.__name__}")(func)
+        async def mlflow_wrapped_func(*args, **kwargs):
+            # Apply mlflow observation directly here
+            trace_name = (
+                f"{name_prefix}-{func.__name__}" if name_prefix else func.__name__
+            )
+            observed_func = trace(name=trace_name)(func)
             return await observed_func(*args, **kwargs)
 
-        # Replace the async function to use mlflow
-        original_run_async = base_experiment.run_async
+        # Now create the experiment wrapper with our already-observed function
+        experiment_wrapper = self.experiment(
+            experiment_model, name_prefix, save_to_git, stage_all
+        )(mlflow_wrapped_func)
 
-        # Use the original run_async but with the mlflow-wrapped function
-        async def run_async_with_mlflow(dataset: Dataset, name: t.Optional[str] = None):
-            # Override the internal wrapped_experiment with our mlflow version
-            base_experiment.__wrapped__ = wrapped_with_mlflow
-
-            # Call the original run_async which will now use our mlflow-wrapped function
-            return await original_run_async(dataset, name)
-
-        # Replace the run_async method
-        base_experiment.__setattr__("run_async", run_async_with_mlflow)
-
-        return t.cast(ExperimentProtocol, base_experiment)
+        return t.cast(ExperimentProtocol, experiment_wrapper)
 
     return decorator
 
