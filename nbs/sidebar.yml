@@ -2,18 +2,16 @@ website:
   sidebar:
     contents:
       - index.ipynb
+      - section: Project
+        contents:
+          - project/core.ipynb
+          - project/experiments.ipynb
+          - project/naming.ipynb
+      - model/pydantic_mode.ipynb
+      - typing.ipynb
       - dataset.ipynb
       - experiment.ipynb
-      - init_module.ipynb
-      - section: backends
-        contents:
-          - backends/factory.ipynb
-          - backends/mock_notion_client.ipynb
-          - backends/notion.ipynb
-      - section: llm
-        contents:
-          - llm/llm.ipynb
-      - section: metric
+      - section: Metric
         contents:
           - metric/base.ipynb
           - metric/decorator.ipynb
@@ -21,19 +19,18 @@ website:
           - metric/numeric.ipynb
           - metric/ranking.ipynb
           - metric/result.ipynb
-      - section: model
+      - embedding/base.ipynb
+      - llm/llm.ipynb
+      - section: Prompt
         contents:
-          - model/notion_model.ipynb
-          - model/notion_types.ipynb
-      - section: project
-        contents:
-          - project/comparison.ipynb
-          - project/core.ipynb
-          - project/experiments.ipynb
-          - project/naming.ipynb
-      - section: tracing
+          - prompt/base.ipynb
+          - prompt/dynamic_few_shot.ipynb
+      - section: Tracing
         contents:
           - tracing/langfuse.ipynb
-      - section: utils
+      - section: Backends
         contents:
-          - utils/exceptions.ipynb
+          - backends/factory.ipynb
+          - backends/ragas_api_client.ipynb
+      - utils.ipynb
+      - exceptions.ipynb

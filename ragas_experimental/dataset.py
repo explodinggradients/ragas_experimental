@@ -9,6 +9,7 @@ __all__ = ['BaseModelType', 'Dataset']
 import typing as t
 
 from fastcore.utils import patch
+import pandas as pd
 
 from .model.pydantic_model import ExtendedPydanticBaseModel as BaseModel
 from .utils import create_nano_id, async_to_sync
@@ -217,7 +218,6 @@ def load_as_dicts(self: Dataset) -> t.List[t.Dict]:
 @patch
 def to_pandas(self: Dataset) -> "pd.DataFrame":
     """Convert dataset to pandas DataFrame."""
-    import pandas as pd
 
     # Make sure we have data
     if not self._entries:
