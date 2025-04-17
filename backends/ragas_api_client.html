@@ -1,0 +1,2266 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
+
+<meta charset="utf-8">
+<meta name="generator" content="quarto-1.6.43">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+
+<meta name="description" content="Python client to api.ragas.io">
+
+<title>Ragas API Client – ragas_experimental</title>
+<style>
+code{white-space: pre-wrap;}
+span.smallcaps{font-variant: small-caps;}
+div.columns{display: flex; gap: min(4vw, 1.5em);}
+div.column{flex: auto; overflow-x: auto;}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+ul.task-list{list-style: none;}
+ul.task-list li input[type="checkbox"] {
+  width: 0.8em;
+  margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
+  vertical-align: middle;
+}
+/* CSS for syntax highlighting */
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { display: inline-block; text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+  }
+pre.numberSource { margin-left: 3em;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
+</style>
+
+
+<script src="../site_libs/quarto-nav/quarto-nav.js"></script>
+<script src="../site_libs/quarto-nav/headroom.min.js"></script>
+<script src="../site_libs/clipboard/clipboard.min.js"></script>
+<script src="../site_libs/quarto-search/autocomplete.umd.js"></script>
+<script src="../site_libs/quarto-search/fuse.min.js"></script>
+<script src="../site_libs/quarto-search/quarto-search.js"></script>
+<meta name="quarto:offset" content="../">
+<script src="../site_libs/quarto-html/quarto.js"></script>
+<script src="../site_libs/quarto-html/popper.min.js"></script>
+<script src="../site_libs/quarto-html/tippy.umd.min.js"></script>
+<script src="../site_libs/quarto-html/anchor.min.js"></script>
+<link href="../site_libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="../site_libs/quarto-html/quarto-syntax-highlighting-d4d76bf8491c20bad77d141916dc28e1.css" rel="stylesheet" id="quarto-text-highlighting-styles">
+<script src="../site_libs/bootstrap/bootstrap.min.js"></script>
+<link href="../site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
+<link href="../site_libs/bootstrap/bootstrap-ae44de7e3b26b230a7801128389852ee.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="light">
+<script id="quarto-search-options" type="application/json">{
+  "location": "navbar",
+  "copy-button": false,
+  "collapse-after": 3,
+  "panel-placement": "end",
+  "type": "overlay",
+  "limit": 50,
+  "keyboard-shortcut": [
+    "f",
+    "/",
+    "s"
+  ],
+  "show-item-context": false,
+  "language": {
+    "search-no-results-text": "No results",
+    "search-matching-documents-text": "matching documents",
+    "search-copy-link-title": "Copy link to search",
+    "search-hide-matches-text": "Hide additional matches",
+    "search-more-match-text": "more match in this document",
+    "search-more-matches-text": "more matches in this document",
+    "search-clear-button-title": "Clear",
+    "search-text-placeholder": "",
+    "search-detached-cancel-button-title": "Cancel",
+    "search-submit-button-title": "Submit",
+    "search-label": "Search"
+  }
+}</script>
+
+
+<link rel="stylesheet" href="../styles.css">
+<meta property="og:title" content="Ragas API Client – ragas_experimental">
+<meta property="og:description" content="Python client to api.ragas.io">
+<meta property="og:site_name" content="ragas_experimental">
+<meta name="twitter:title" content="Ragas API Client – ragas_experimental">
+<meta name="twitter:description" content="Python client to api.ragas.io">
+<meta name="twitter:card" content="summary">
+</head>
+
+<body class="nav-sidebar floating nav-fixed">
+
+<div id="quarto-search-results"></div>
+  <header id="quarto-header" class="headroom fixed-top">
+    <nav class="navbar navbar-expand-lg " data-bs-theme="dark">
+      <div class="navbar-container container-fluid">
+      <div class="navbar-brand-container mx-auto">
+    <a class="navbar-brand" href="../index.html">
+    <span class="navbar-title">ragas_experimental</span>
+    </a>
+  </div>
+        <div class="quarto-navbar-tools tools-end">
+</div>
+          <div id="quarto-search" class="" title="Search"></div>
+      </div> <!-- /container-fluid -->
+    </nav>
+  <nav class="quarto-secondary-nav">
+    <div class="container-fluid d-flex">
+      <button type="button" class="quarto-btn-toggle btn" data-bs-toggle="collapse" role="button" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
+        <i class="bi bi-layout-text-sidebar-reverse"></i>
+      </button>
+        <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="../backends/factory.html">Backends</a></li><li class="breadcrumb-item"><a href="../backends/ragas_api_client.html">Ragas API Client</a></li></ol></nav>
+        <a class="flex-grow-1" role="navigation" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">      
+        </a>
+    </div>
+  </nav>
+</header>
+<!-- content -->
+<div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-article page-navbar">
+<!-- sidebar -->
+  <nav id="quarto-sidebar" class="sidebar collapse collapse-horizontal quarto-sidebar-collapse-item sidebar-navigation floating overflow-auto">
+    <div class="sidebar-menu-container"> 
+    <ul class="list-unstyled mt-1">
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../index.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Ragas Experimental</span></a>
+  </div>
+</li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-1" role="navigation" aria-expanded="true">
+ <span class="menu-text">Project</span></a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-1" role="navigation" aria-expanded="true" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-1" class="collapse list-unstyled sidebar-section depth1 show">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../project/core.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Project</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../project/experiments.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Experiments</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../project/naming.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Memorable Namer</span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../model/pydantic_mode.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Ragas <code>BaseModel</code></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../typing.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Typing Module</span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../dataset.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Dataset</span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../experiment.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Experiment</span></a>
+  </div>
+</li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-2" role="navigation" aria-expanded="true">
+ <span class="menu-text">Metric</span></a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-2" role="navigation" aria-expanded="true" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-2" class="collapse list-unstyled sidebar-section depth1 show">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../metric/base.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">BaseMetric</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../metric/decorator.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Decorator Factory</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../metric/discrete.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">DiscreteMetric</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../metric/numeric.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Numeric Metric</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../metric/ranking.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">RankingMetric</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../metric/result.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">MetricResult</span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../embedding/base.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Embeddings</span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../llm/llm.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">LLMs</span></a>
+  </div>
+</li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-3" role="navigation" aria-expanded="true">
+ <span class="menu-text">Prompt</span></a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-3" role="navigation" aria-expanded="true" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-3" class="collapse list-unstyled sidebar-section depth1 show">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../prompt/base.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Base Class</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../prompt/dynamic_few_shot.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Dynamic Few-Shot Learning</span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-4" role="navigation" aria-expanded="true">
+ <span class="menu-text">Tracing</span></a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-4" role="navigation" aria-expanded="true" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-4" class="collapse list-unstyled sidebar-section depth1 show">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../tracing/langfuse.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Langfuse Tracing</span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-5" role="navigation" aria-expanded="true">
+ <span class="menu-text">Backends</span></a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-5" role="navigation" aria-expanded="true" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-5" class="collapse list-unstyled sidebar-section depth1 show">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../backends/factory.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Backend Factory</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../backends/ragas_api_client.html" class="sidebar-item-text sidebar-link active">
+ <span class="menu-text">Ragas API Client</span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../utils.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Utils</span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../exceptions.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Exceptions</span></a>
+  </div>
+</li>
+    </ul>
+    </div>
+</nav>
+<div id="quarto-sidebar-glass" class="quarto-sidebar-collapse-item" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item"></div>
+<!-- margin-sidebar -->
+    <div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
+        <nav id="TOC" role="doc-toc" class="toc-active">
+    <h2 id="toc-title">On this page</h2>
+   
+  <ul>
+  <li><a href="#ragasapiclient" id="toc-ragasapiclient" class="nav-link active" data-scroll-target="#ragasapiclient">RagasApiClient</a></li>
+  <li><a href="#projects" id="toc-projects" class="nav-link" data-scroll-target="#projects">Projects</a></li>
+  <li><a href="#ragasapiclient.delete_project" id="toc-ragasapiclient.delete_project" class="nav-link" data-scroll-target="#ragasapiclient.delete_project">RagasApiClient.delete_project</a></li>
+  <li><a href="#ragasapiclient.update_project" id="toc-ragasapiclient.update_project" class="nav-link" data-scroll-target="#ragasapiclient.update_project">RagasApiClient.update_project</a></li>
+  <li><a href="#ragasapiclient.create_project" id="toc-ragasapiclient.create_project" class="nav-link" data-scroll-target="#ragasapiclient.create_project">RagasApiClient.create_project</a></li>
+  <li><a href="#ragasapiclient.get_project" id="toc-ragasapiclient.get_project" class="nav-link" data-scroll-target="#ragasapiclient.get_project">RagasApiClient.get_project</a></li>
+  <li><a href="#ragasapiclient.list_projects" id="toc-ragasapiclient.list_projects" class="nav-link" data-scroll-target="#ragasapiclient.list_projects">RagasApiClient.list_projects</a></li>
+  <li><a href="#ragasapiclient.get_project_by_name" id="toc-ragasapiclient.get_project_by_name" class="nav-link" data-scroll-target="#ragasapiclient.get_project_by_name">RagasApiClient.get_project_by_name</a></li>
+  <li><a href="#datasets" id="toc-datasets" class="nav-link" data-scroll-target="#datasets">Datasets</a></li>
+  <li><a href="#ragasapiclient.delete_dataset" id="toc-ragasapiclient.delete_dataset" class="nav-link" data-scroll-target="#ragasapiclient.delete_dataset">RagasApiClient.delete_dataset</a></li>
+  <li><a href="#ragasapiclient.update_dataset" id="toc-ragasapiclient.update_dataset" class="nav-link" data-scroll-target="#ragasapiclient.update_dataset">RagasApiClient.update_dataset</a></li>
+  <li><a href="#ragasapiclient.create_dataset" id="toc-ragasapiclient.create_dataset" class="nav-link" data-scroll-target="#ragasapiclient.create_dataset">RagasApiClient.create_dataset</a></li>
+  <li><a href="#ragasapiclient.get_dataset" id="toc-ragasapiclient.get_dataset" class="nav-link" data-scroll-target="#ragasapiclient.get_dataset">RagasApiClient.get_dataset</a></li>
+  <li><a href="#ragasapiclient.list_datasets" id="toc-ragasapiclient.list_datasets" class="nav-link" data-scroll-target="#ragasapiclient.list_datasets">RagasApiClient.list_datasets</a></li>
+  <li><a href="#ragasapiclient.get_dataset_by_name" id="toc-ragasapiclient.get_dataset_by_name" class="nav-link" data-scroll-target="#ragasapiclient.get_dataset_by_name">RagasApiClient.get_dataset_by_name</a></li>
+  <li><a href="#experiments" id="toc-experiments" class="nav-link" data-scroll-target="#experiments">Experiments</a></li>
+  <li><a href="#ragasapiclient.delete_experiment" id="toc-ragasapiclient.delete_experiment" class="nav-link" data-scroll-target="#ragasapiclient.delete_experiment">RagasApiClient.delete_experiment</a></li>
+  <li><a href="#ragasapiclient.update_experiment" id="toc-ragasapiclient.update_experiment" class="nav-link" data-scroll-target="#ragasapiclient.update_experiment">RagasApiClient.update_experiment</a></li>
+  <li><a href="#ragasapiclient.create_experiment" id="toc-ragasapiclient.create_experiment" class="nav-link" data-scroll-target="#ragasapiclient.create_experiment">RagasApiClient.create_experiment</a></li>
+  <li><a href="#ragasapiclient.get_experiment" id="toc-ragasapiclient.get_experiment" class="nav-link" data-scroll-target="#ragasapiclient.get_experiment">RagasApiClient.get_experiment</a></li>
+  <li><a href="#ragasapiclient.list_experiments" id="toc-ragasapiclient.list_experiments" class="nav-link" data-scroll-target="#ragasapiclient.list_experiments">RagasApiClient.list_experiments</a></li>
+  <li><a href="#ragasapiclient.get_experiment_by_name" id="toc-ragasapiclient.get_experiment_by_name" class="nav-link" data-scroll-target="#ragasapiclient.get_experiment_by_name">RagasApiClient.get_experiment_by_name</a></li>
+  <li><a href="#columns-for-datasets" id="toc-columns-for-datasets" class="nav-link" data-scroll-target="#columns-for-datasets">Columns (for datasets)</a></li>
+  <li><a href="#ragasapiclient.delete_dataset_column" id="toc-ragasapiclient.delete_dataset_column" class="nav-link" data-scroll-target="#ragasapiclient.delete_dataset_column">RagasApiClient.delete_dataset_column</a></li>
+  <li><a href="#ragasapiclient.update_dataset_column" id="toc-ragasapiclient.update_dataset_column" class="nav-link" data-scroll-target="#ragasapiclient.update_dataset_column">RagasApiClient.update_dataset_column</a></li>
+  <li><a href="#ragasapiclient.create_dataset_column" id="toc-ragasapiclient.create_dataset_column" class="nav-link" data-scroll-target="#ragasapiclient.create_dataset_column">RagasApiClient.create_dataset_column</a></li>
+  <li><a href="#ragasapiclient.get_dataset_column" id="toc-ragasapiclient.get_dataset_column" class="nav-link" data-scroll-target="#ragasapiclient.get_dataset_column">RagasApiClient.get_dataset_column</a></li>
+  <li><a href="#ragasapiclient.list_dataset_columns" id="toc-ragasapiclient.list_dataset_columns" class="nav-link" data-scroll-target="#ragasapiclient.list_dataset_columns">RagasApiClient.list_dataset_columns</a></li>
+  <li><a href="#rows-for-datasets" id="toc-rows-for-datasets" class="nav-link" data-scroll-target="#rows-for-datasets">Rows (for datasets)</a></li>
+  <li><a href="#ragasapiclient.delete_dataset_row" id="toc-ragasapiclient.delete_dataset_row" class="nav-link" data-scroll-target="#ragasapiclient.delete_dataset_row">RagasApiClient.delete_dataset_row</a></li>
+  <li><a href="#ragasapiclient.update_dataset_row" id="toc-ragasapiclient.update_dataset_row" class="nav-link" data-scroll-target="#ragasapiclient.update_dataset_row">RagasApiClient.update_dataset_row</a></li>
+  <li><a href="#ragasapiclient.create_dataset_row" id="toc-ragasapiclient.create_dataset_row" class="nav-link" data-scroll-target="#ragasapiclient.create_dataset_row">RagasApiClient.create_dataset_row</a></li>
+  <li><a href="#ragasapiclient.get_dataset_row" id="toc-ragasapiclient.get_dataset_row" class="nav-link" data-scroll-target="#ragasapiclient.get_dataset_row">RagasApiClient.get_dataset_row</a></li>
+  <li><a href="#ragasapiclient.list_dataset_rows" id="toc-ragasapiclient.list_dataset_rows" class="nav-link" data-scroll-target="#ragasapiclient.list_dataset_rows">RagasApiClient.list_dataset_rows</a></li>
+  <li><a href="#get-a-dataset-visualized---created-from-ui" id="toc-get-a-dataset-visualized---created-from-ui" class="nav-link" data-scroll-target="#get-a-dataset-visualized---created-from-ui">Get a Dataset Visualized - Created From UI</a></li>
+  <li><a href="#create-a-dataset-from-data" id="toc-create-a-dataset-from-data" class="nav-link" data-scroll-target="#create-a-dataset-from-data">Create a Dataset from data</a></li>
+  <li><a href="#create_nano_id" id="toc-create_nano_id" class="nav-link" data-scroll-target="#create_nano_id">create_nano_id</a></li>
+  <li><a href="#create_nano_id-1" id="toc-create_nano_id-1" class="nav-link" data-scroll-target="#create_nano_id-1">create_nano_id</a></li>
+  <li><a href="#row" id="toc-row" class="nav-link" data-scroll-target="#row">Row</a></li>
+  <li><a href="#rowcell" id="toc-rowcell" class="nav-link" data-scroll-target="#rowcell">RowCell</a></li>
+  <li><a href="#column" id="toc-column" class="nav-link" data-scroll-target="#column">Column</a></li>
+  <li><a href="#ragasapiclient.create_dataset_with_data" id="toc-ragasapiclient.create_dataset_with_data" class="nav-link" data-scroll-target="#ragasapiclient.create_dataset_with_data">RagasApiClient.create_dataset_with_data</a></li>
+  <li><a href="#the-same-but-for-experiments" id="toc-the-same-but-for-experiments" class="nav-link" data-scroll-target="#the-same-but-for-experiments">The same but for Experiments</a></li>
+  <li><a href="#ragasapiclient.delete_experiment_row" id="toc-ragasapiclient.delete_experiment_row" class="nav-link" data-scroll-target="#ragasapiclient.delete_experiment_row">RagasApiClient.delete_experiment_row</a></li>
+  <li><a href="#ragasapiclient.update_experiment_row" id="toc-ragasapiclient.update_experiment_row" class="nav-link" data-scroll-target="#ragasapiclient.update_experiment_row">RagasApiClient.update_experiment_row</a></li>
+  <li><a href="#ragasapiclient.create_experiment_row" id="toc-ragasapiclient.create_experiment_row" class="nav-link" data-scroll-target="#ragasapiclient.create_experiment_row">RagasApiClient.create_experiment_row</a></li>
+  <li><a href="#ragasapiclient.get_experiment_row" id="toc-ragasapiclient.get_experiment_row" class="nav-link" data-scroll-target="#ragasapiclient.get_experiment_row">RagasApiClient.get_experiment_row</a></li>
+  <li><a href="#ragasapiclient.list_experiment_rows" id="toc-ragasapiclient.list_experiment_rows" class="nav-link" data-scroll-target="#ragasapiclient.list_experiment_rows">RagasApiClient.list_experiment_rows</a></li>
+  <li><a href="#ragasapiclient.delete_experiment_column" id="toc-ragasapiclient.delete_experiment_column" class="nav-link" data-scroll-target="#ragasapiclient.delete_experiment_column">RagasApiClient.delete_experiment_column</a></li>
+  <li><a href="#ragasapiclient.update_experiment_column" id="toc-ragasapiclient.update_experiment_column" class="nav-link" data-scroll-target="#ragasapiclient.update_experiment_column">RagasApiClient.update_experiment_column</a></li>
+  <li><a href="#ragasapiclient.create_experiment_column" id="toc-ragasapiclient.create_experiment_column" class="nav-link" data-scroll-target="#ragasapiclient.create_experiment_column">RagasApiClient.create_experiment_column</a></li>
+  <li><a href="#ragasapiclient.get_experiment_column" id="toc-ragasapiclient.get_experiment_column" class="nav-link" data-scroll-target="#ragasapiclient.get_experiment_column">RagasApiClient.get_experiment_column</a></li>
+  <li><a href="#ragasapiclient.list_experiment_columns" id="toc-ragasapiclient.list_experiment_columns" class="nav-link" data-scroll-target="#ragasapiclient.list_experiment_columns">RagasApiClient.list_experiment_columns</a></li>
+  <li><a href="#ragasapiclient.create_experiment_with_data" id="toc-ragasapiclient.create_experiment_with_data" class="nav-link" data-scroll-target="#ragasapiclient.create_experiment_with_data">RagasApiClient.create_experiment_with_data</a></li>
+  <li><a href="#ragasapiclient.convert_raw_data" id="toc-ragasapiclient.convert_raw_data" class="nav-link" data-scroll-target="#ragasapiclient.convert_raw_data">RagasApiClient.convert_raw_data</a></li>
+  <li><a href="#ragasapiclient.create_column_map" id="toc-ragasapiclient.create_column_map" class="nav-link" data-scroll-target="#ragasapiclient.create_column_map">RagasApiClient.create_column_map</a></li>
+  <li><a href="#ragasapiclient.create_row" id="toc-ragasapiclient.create_row" class="nav-link" data-scroll-target="#ragasapiclient.create_row">RagasApiClient.create_row</a></li>
+  <li><a href="#ragasapiclient.create_column" id="toc-ragasapiclient.create_column" class="nav-link" data-scroll-target="#ragasapiclient.create_column">RagasApiClient.create_column</a></li>
+  </ul>
+<div class="toc-actions"><ul><li><a href="https://github.com/explodinggradients/ragas_experimental/issues/new" class="toc-action"><i class="bi bi-github"></i>Report an issue</a></li></ul></div><div class="quarto-alternate-formats"><h2>Other Formats</h2><ul><li><a href="ragas_api_client.html.md"><i class="bi bi-file-code"></i>CommonMark</a></li></ul></div></nav>
+    </div>
+<!-- main -->
+<main class="content" id="quarto-document-content">
+
+<header id="title-block-header" class="quarto-title-block default"><nav class="quarto-page-breadcrumbs quarto-title-breadcrumbs d-none d-lg-block" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="../backends/factory.html">Backends</a></li><li class="breadcrumb-item"><a href="../backends/ragas_api_client.html">Ragas API Client</a></li></ol></nav>
+<div class="quarto-title">
+<h1 class="title">Ragas API Client</h1>
+</div>
+
+<div>
+  <div class="description">
+    Python client to api.ragas.io
+  </div>
+</div>
+
+
+<div class="quarto-title-meta">
+
+    
+  
+    
+  </div>
+  
+
+
+</header>
+
+
+<!-- WARNING: THIS FILE WAS AUTOGENERATED! DO NOT EDIT! -->
+<div id="cell-2" class="cell">
+<div class="sourceCode cell-code" id="cb1"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a>RAGAS_APP_TOKEN <span class="op">=</span> <span class="st">"api_key"</span></span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a>RAGAS_API_ENDPOINT <span class="op">=</span> <span class="st">"https://api.dev.app.ragas.io"</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<hr>
+<p><a href="https://github.com/explodinggradients/ragas_experimental/blob/main/ragas_experimental/backends/ragas_api_client.py#L26" target="_blank" style="float:right; font-size:smaller">source</a></p>
+<section id="ragasapiclient" class="level3">
+<h3 class="anchored" data-anchor-id="ragasapiclient">RagasApiClient</h3>
+<blockquote class="blockquote">
+<pre><code> RagasApiClient (base_url:str, app_token:Optional[str]=None)</code></pre>
+</blockquote>
+<p><em>Client for the Ragas Relay API.</em></p>
+</section>
+<section id="projects" class="level3">
+<h3 class="anchored" data-anchor-id="projects">Projects</h3>
+<hr>
+<p><a href="https://github.com/explodinggradients/ragas_experimental/blob/main/ragas_experimental/backends/ragas_api_client.py#L244" target="_blank" style="float:right; font-size:smaller">source</a></p>
+</section>
+<section id="ragasapiclient.delete_project" class="level3">
+<h3 class="anchored" data-anchor-id="ragasapiclient.delete_project">RagasApiClient.delete_project</h3>
+<blockquote class="blockquote">
+<pre><code> RagasApiClient.delete_project (project_id:str)</code></pre>
+</blockquote>
+<p><em>Delete a project.</em></p>
+<hr>
+<p><a href="https://github.com/explodinggradients/ragas_experimental/blob/main/ragas_experimental/backends/ragas_api_client.py#L228" target="_blank" style="float:right; font-size:smaller">source</a></p>
+</section>
+<section id="ragasapiclient.update_project" class="level3">
+<h3 class="anchored" data-anchor-id="ragasapiclient.update_project">RagasApiClient.update_project</h3>
+<blockquote class="blockquote">
+<pre><code> RagasApiClient.update_project (project_id:str, title:Optional[str]=None,
+                                description:Optional[str]=None)</code></pre>
+</blockquote>
+<p><em>Update an existing project.</em></p>
+<hr>
+<p><a href="https://github.com/explodinggradients/ragas_experimental/blob/main/ragas_experimental/backends/ragas_api_client.py#L217" target="_blank" style="float:right; font-size:smaller">source</a></p>
+</section>
+<section id="ragasapiclient.create_project" class="level3">
+<h3 class="anchored" data-anchor-id="ragasapiclient.create_project">RagasApiClient.create_project</h3>
+<blockquote class="blockquote">
+<pre><code> RagasApiClient.create_project (title:str, description:Optional[str]=None)</code></pre>
+</blockquote>
+<p><em>Create a new project.</em></p>
+<hr>
+<p><a href="https://github.com/explodinggradients/ragas_experimental/blob/main/ragas_experimental/backends/ragas_api_client.py#L210" target="_blank" style="float:right; font-size:smaller">source</a></p>
+</section>
+<section id="ragasapiclient.get_project" class="level3">
+<h3 class="anchored" data-anchor-id="ragasapiclient.get_project">RagasApiClient.get_project</h3>
+<blockquote class="blockquote">
+<pre><code> RagasApiClient.get_project (project_id:str)</code></pre>
+</blockquote>
+<p><em>Get a specific project by ID.</em></p>
+<hr>
+<p><a href="https://github.com/explodinggradients/ragas_experimental/blob/main/ragas_experimental/backends/ragas_api_client.py#L186" target="_blank" style="float:right; font-size:smaller">source</a></p>
+</section>
+<section id="ragasapiclient.list_projects" class="level3">
+<h3 class="anchored" data-anchor-id="ragasapiclient.list_projects">RagasApiClient.list_projects</h3>
+<blockquote class="blockquote">
+<pre><code> RagasApiClient.list_projects (ids:Optional[List[str]]=None, limit:int=50,
+                               offset:int=0, order_by:Optional[str]=None,
+                               sort_dir:Optional[str]=None)</code></pre>
+</blockquote>
+<p><em>List projects.</em></p>
+<div id="cell-10" class="cell">
+<div class="sourceCode cell-code" id="cb8"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Initialize client with your authentication token</span></span>
+<span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a>client <span class="op">=</span> RagasApiClient(base_url<span class="op">=</span>RAGAS_API_ENDPOINT, app_token<span class="op">=</span>RAGAS_APP_TOKEN)</span>
+<span id="cb8-3"><a href="#cb8-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-4"><a href="#cb8-4" aria-hidden="true" tabindex="-1"></a><span class="co"># List projects</span></span>
+<span id="cb8-5"><a href="#cb8-5" aria-hidden="true" tabindex="-1"></a><span class="cf">try</span>:</span>
+<span id="cb8-6"><a href="#cb8-6" aria-hidden="true" tabindex="-1"></a>    projects <span class="op">=</span> <span class="cf">await</span> client.list_projects(limit<span class="op">=</span><span class="dv">10</span>)</span>
+<span id="cb8-7"><a href="#cb8-7" aria-hidden="true" tabindex="-1"></a>    <span class="bu">print</span>(<span class="ss">f"Found </span><span class="sc">{</span><span class="bu">len</span>(projects)<span class="sc">}</span><span class="ss"> projects:"</span>)</span>
+<span id="cb8-8"><a href="#cb8-8" aria-hidden="true" tabindex="-1"></a>    <span class="cf">for</span> project <span class="kw">in</span> projects:</span>
+<span id="cb8-9"><a href="#cb8-9" aria-hidden="true" tabindex="-1"></a>        <span class="bu">print</span>(<span class="ss">f"- </span><span class="sc">{</span>project[<span class="st">'title'</span>]<span class="sc">}</span><span class="ss"> (ID: </span><span class="sc">{</span>project[<span class="st">'id'</span>]<span class="sc">}</span><span class="ss">)"</span>)</span>
+<span id="cb8-10"><a href="#cb8-10" aria-hidden="true" tabindex="-1"></a><span class="cf">except</span> <span class="pp">Exception</span> <span class="im">as</span> e:</span>
+<span id="cb8-11"><a href="#cb8-11" aria-hidden="true" tabindex="-1"></a>    <span class="bu">print</span>(<span class="ss">f"Error: </span><span class="sc">{</span>e<span class="sc">}</span><span class="ss">"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>Found 2 projects:
+Error: string indices must be integers, not 'str'</code></pre>
+</div>
+</div>
+<div id="cell-11" class="cell">
+<div class="sourceCode cell-code" id="cb10"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a><span class="cf">await</span> client.create_project(<span class="st">"test project"</span>, <span class="st">"test description"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-display">
+<pre><code>{'id': '26b0e577-8ff8-4014-bc7a-cfc410df3488',
+ 'title': 'test project',
+ 'description': 'test description',
+ 'created_at': '2025-04-10T00:12:34.606398+00:00',
+ 'updated_at': '2025-04-10T00:12:34.606398+00:00'}</code></pre>
+</div>
+</div>
+<div id="cell-12" class="cell">
+<div class="sourceCode cell-code" id="cb12"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a><span class="cf">await</span> client.list_projects()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-display">
+<pre><code>{'items': [{'id': '1ef0843b-231f-4a2c-b64d-d39bcee9d830',
+   'title': 'yann-lecun-wisdom',
+   'description': 'Yann LeCun Wisdom',
+   'created_at': '2025-04-15T03:27:08.962384+00:00',
+   'updated_at': '2025-04-15T03:27:08.962384+00:00'},
+  {'id': 'c2d788ec-a602-495b-8ddc-f457ce11b414',
+   'title': 'Demo Project',
+   'description': None,
+   'created_at': '2025-04-12T19:47:10.928422+00:00',
+   'updated_at': '2025-04-12T19:47:10.928422+00:00'},
+  {'id': '0d465f02-c88f-454e-9ff3-780a001e3e21',
+   'title': 'test project',
+   'description': 'test description',
+   'created_at': '2025-04-12T19:46:36.221385+00:00',
+   'updated_at': '2025-04-12T19:46:36.221385+00:00'},
+  {'id': '2ae1434c-e700-44a7-9528-7c2f03cfb491',
+   'title': 'Demo Project',
+   'description': None,
+   'created_at': '2025-04-12T19:46:36.157122+00:00',
+   'updated_at': '2025-04-12T19:46:36.157122+00:00'},
+  {'id': 'adb45ec6-6902-4339-b05f-3b86fd256c7e',
+   'title': 'Demo Project',
+   'description': None,
+   'created_at': '2025-04-12T19:45:54.430913+00:00',
+   'updated_at': '2025-04-12T19:45:54.430913+00:00'},
+  {'id': '6f26bf5b-af4d-48b5-af2d-13d3e671bbbf',
+   'title': 'Demo Project',
+   'description': None,
+   'created_at': '2025-04-11T00:56:30.085249+00:00',
+   'updated_at': '2025-04-11T00:56:30.085249+00:00'},
+  {'id': '63e4fc0f-1a60-441b-bd71-f21ce8e35c7e',
+   'title': 'Demo Project',
+   'description': None,
+   'created_at': '2025-04-11T00:44:56.031721+00:00',
+   'updated_at': '2025-04-11T00:44:56.031721+00:00'},
+  {'id': 'db0bedd6-6cfa-4551-b1ab-af78fa82dca7',
+   'title': 'Demo Project',
+   'description': None,
+   'created_at': '2025-04-11T00:44:17.601598+00:00',
+   'updated_at': '2025-04-11T00:44:17.601598+00:00'},
+  {'id': '80c8ef9a-23d7-4a9f-a7d7-36c6472ab51e',
+   'title': 'Demo Project',
+   'description': None,
+   'created_at': '2025-04-11T00:42:37.287184+00:00',
+   'updated_at': '2025-04-11T00:42:37.287184+00:00'},
+  {'id': 'ae2a5a5c-3902-4ef6-af50-f2d8f27feea6',
+   'title': 'Demo Project',
+   'description': None,
+   'created_at': '2025-04-11T00:40:53.71528+00:00',
+   'updated_at': '2025-04-11T00:40:53.71528+00:00'},
+  {'id': '96618f8b-d3a1-4998-9a66-155f8f254512',
+   'title': 'Demo Project',
+   'description': None,
+   'created_at': '2025-04-11T00:31:21.410658+00:00',
+   'updated_at': '2025-04-11T00:31:21.410658+00:00'},
+  {'id': '4515aa23-cb4c-4c0a-b833-fefd0a30fdcc',
+   'title': 'Demo Project',
+   'description': None,
+   'created_at': '2025-04-11T00:27:49.977435+00:00',
+   'updated_at': '2025-04-11T00:27:49.977435+00:00'},
+  {'id': '138098a4-651e-4dca-b226-d70956b3e039',
+   'title': 'Demo Project',
+   'description': None,
+   'created_at': '2025-04-11T00:24:03.39505+00:00',
+   'updated_at': '2025-04-11T00:24:03.39505+00:00'},
+  {'id': 'bbe45632-3268-43a6-9694-b020b3f5226f',
+   'title': 'Demo Project',
+   'description': None,
+   'created_at': '2025-04-10T22:41:14.663646+00:00',
+   'updated_at': '2025-04-10T22:41:14.663646+00:00'},
+  {'id': 'df764139-bac7-4aec-af24-5c6886189f84',
+   'title': 'SuperMe-Demo',
+   'description': 'SuperMe demo to show the team',
+   'created_at': '2025-04-10T04:35:18.631257+00:00',
+   'updated_at': '2025-04-10T04:35:18.631257+00:00'},
+  {'id': 'a6ccabe0-7b8d-4866-98af-f167a36b94ff',
+   'title': 'SuperMe',
+   'description': 'SuperMe demo to show the team',
+   'created_at': '2025-04-10T03:10:29.153622+00:00',
+   'updated_at': '2025-04-10T03:10:29.153622+00:00'}],
+ 'pagination': {'offset': 0,
+  'limit': 50,
+  'total': 16,
+  'order_by': 'created_at',
+  'sort_dir': 'desc'}}</code></pre>
+</div>
+</div>
+<div id="cell-13" class="cell">
+<div class="sourceCode cell-code" id="cb14"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a>TEST_PROJECT_ID <span class="op">=</span> <span class="st">"a6ccabe0-7b8d-4866-98af-f167a36b94ff"</span></span>
+<span id="cb14-2"><a href="#cb14-2" aria-hidden="true" tabindex="-1"></a>project <span class="op">=</span> <span class="cf">await</span> client.get_project(TEST_PROJECT_ID)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<hr>
+<p><a href="https://github.com/explodinggradients/ragas_experimental/blob/main/ragas_experimental/backends/ragas_api_client.py#L250" target="_blank" style="float:right; font-size:smaller">source</a></p>
+</section>
+<section id="ragasapiclient.get_project_by_name" class="level3">
+<h3 class="anchored" data-anchor-id="ragasapiclient.get_project_by_name">RagasApiClient.get_project_by_name</h3>
+<blockquote class="blockquote">
+<pre><code> RagasApiClient.get_project_by_name (project_name:str)</code></pre>
+</blockquote>
+<p>*Get a project by its name.</p>
+<p>Args: project_name: Name of the project to find</p>
+<p>Returns: The project information dictionary</p>
+<p>Raises: ProjectNotFoundError: If no project with the given name is found DuplicateProjectError: If multiple projects with the given name are found*</p>
+<div id="cell-15" class="cell">
+<div class="sourceCode cell-code" id="cb16"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb16-1"><a href="#cb16-1" aria-hidden="true" tabindex="-1"></a><span class="cf">await</span> client.get_project_by_name(<span class="st">"SuperMe"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-display">
+<pre><code>{'id': 'a6ccabe0-7b8d-4866-98af-f167a36b94ff',
+ 'title': 'SuperMe',
+ 'description': 'SuperMe demo to show the team',
+ 'created_at': '2025-04-10T03:10:29.153622+00:00',
+ 'updated_at': '2025-04-10T03:10:29.153622+00:00'}</code></pre>
+</div>
+</div>
+</section>
+<section id="datasets" class="level3">
+<h3 class="anchored" data-anchor-id="datasets">Datasets</h3>
+<hr>
+<p><a href="https://github.com/explodinggradients/ragas_experimental/blob/main/ragas_experimental/backends/ragas_api_client.py#L333" target="_blank" style="float:right; font-size:smaller">source</a></p>
+</section>
+<section id="ragasapiclient.delete_dataset" class="level3">
+<h3 class="anchored" data-anchor-id="ragasapiclient.delete_dataset">RagasApiClient.delete_dataset</h3>
+<blockquote class="blockquote">
+<pre><code> RagasApiClient.delete_dataset (project_id:str, dataset_id:str)</code></pre>
+</blockquote>
+<p><em>Delete a dataset.</em></p>
+<hr>
+<p><a href="https://github.com/explodinggradients/ragas_experimental/blob/main/ragas_experimental/backends/ragas_api_client.py#L314" target="_blank" style="float:right; font-size:smaller">source</a></p>
+</section>
+<section id="ragasapiclient.update_dataset" class="level3">
+<h3 class="anchored" data-anchor-id="ragasapiclient.update_dataset">RagasApiClient.update_dataset</h3>
+<blockquote class="blockquote">
+<pre><code> RagasApiClient.update_dataset (project_id:str, dataset_id:str,
+                                name:Optional[str]=None,
+                                description:Optional[str]=None)</code></pre>
+</blockquote>
+<p><em>Update an existing dataset.</em></p>
+<hr>
+<p><a href="https://github.com/explodinggradients/ragas_experimental/blob/main/ragas_experimental/backends/ragas_api_client.py#L300" target="_blank" style="float:right; font-size:smaller">source</a></p>
+</section>
+<section id="ragasapiclient.create_dataset" class="level3">
+<h3 class="anchored" data-anchor-id="ragasapiclient.create_dataset">RagasApiClient.create_dataset</h3>
+<blockquote class="blockquote">
+<pre><code> RagasApiClient.create_dataset (project_id:str, name:str,
+                                description:Optional[str]=None)</code></pre>
+</blockquote>
+<p><em>Create a new dataset in a project.</em></p>
+<hr>
+<p><a href="https://github.com/explodinggradients/ragas_experimental/blob/main/ragas_experimental/backends/ragas_api_client.py#L294" target="_blank" style="float:right; font-size:smaller">source</a></p>
+</section>
+<section id="ragasapiclient.get_dataset" class="level3">
+<h3 class="anchored" data-anchor-id="ragasapiclient.get_dataset">RagasApiClient.get_dataset</h3>
+<blockquote class="blockquote">
+<pre><code> RagasApiClient.get_dataset (project_id:str, dataset_id:str)</code></pre>
+</blockquote>
+<p><em>Get a specific dataset.</em></p>
+<hr>
+<p><a href="https://github.com/explodinggradients/ragas_experimental/blob/main/ragas_experimental/backends/ragas_api_client.py#L276" target="_blank" style="float:right; font-size:smaller">source</a></p>
+</section>
+<section id="ragasapiclient.list_datasets" class="level3">
+<h3 class="anchored" data-anchor-id="ragasapiclient.list_datasets">RagasApiClient.list_datasets</h3>
+<blockquote class="blockquote">
+<pre><code> RagasApiClient.list_datasets (project_id:str, limit:int=50, offset:int=0,
+                               order_by:Optional[str]=None,
+                               sort_dir:Optional[str]=None)</code></pre>
+</blockquote>
+<p><em>List datasets in a project.</em></p>
+<div id="cell-22" class="cell">
+<div class="sourceCode cell-code" id="cb23"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb23-1"><a href="#cb23-1" aria-hidden="true" tabindex="-1"></a><span class="co"># check project ID</span></span>
+<span id="cb23-2"><a href="#cb23-2" aria-hidden="true" tabindex="-1"></a>projects <span class="op">=</span> <span class="cf">await</span> client.list_projects()</span>
+<span id="cb23-3"><a href="#cb23-3" aria-hidden="true" tabindex="-1"></a>projects[<span class="st">"items"</span>][<span class="dv">0</span>][<span class="st">"id"</span>], TEST_PROJECT_ID</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-display">
+<pre><code>('1ef0843b-231f-4a2c-b64d-d39bcee9d830',
+ 'a6ccabe0-7b8d-4866-98af-f167a36b94ff')</code></pre>
+</div>
+</div>
+<div id="cell-23" class="cell">
+<div class="sourceCode cell-code" id="cb25"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb25-1"><a href="#cb25-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Create a new dataset</span></span>
+<span id="cb25-2"><a href="#cb25-2" aria-hidden="true" tabindex="-1"></a>new_dataset <span class="op">=</span> <span class="cf">await</span> client.create_dataset(</span>
+<span id="cb25-3"><a href="#cb25-3" aria-hidden="true" tabindex="-1"></a>    projects[<span class="st">"items"</span>][<span class="dv">0</span>][<span class="st">"id"</span>], <span class="st">"New Dataset"</span>, <span class="st">"This is a new dataset"</span></span>
+<span id="cb25-4"><a href="#cb25-4" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb25-5"><a href="#cb25-5" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"New dataset created: </span><span class="sc">{</span>new_dataset<span class="sc">}</span><span class="ss">"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>New dataset created: {'id': '2382037f-906c-45a0-9b9f-702d32903efd', 'name': 'New Dataset', 'description': 'This is a new dataset', 'updated_at': '2025-04-16T03:52:01.91574+00:00', 'created_at': '2025-04-16T03:52:01.91574+00:00', 'version_counter': 0, 'project_id': '1ef0843b-231f-4a2c-b64d-d39bcee9d830'}</code></pre>
+</div>
+</div>
+<div id="cell-24" class="cell">
+<div class="sourceCode cell-code" id="cb27"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb27-1"><a href="#cb27-1" aria-hidden="true" tabindex="-1"></a><span class="co"># List datasets in the project</span></span>
+<span id="cb27-2"><a href="#cb27-2" aria-hidden="true" tabindex="-1"></a>datasets <span class="op">=</span> <span class="cf">await</span> client.list_datasets(projects[<span class="st">"items"</span>][<span class="dv">0</span>][<span class="st">"id"</span>])</span>
+<span id="cb27-3"><a href="#cb27-3" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"Found </span><span class="sc">{</span><span class="bu">len</span>(datasets)<span class="sc">}</span><span class="ss"> datasets"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>Found 2 datasets</code></pre>
+</div>
+</div>
+<div id="cell-25" class="cell">
+<div class="sourceCode cell-code" id="cb29"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb29-1"><a href="#cb29-1" aria-hidden="true" tabindex="-1"></a>updated_dataset <span class="op">=</span> <span class="cf">await</span> client.update_dataset(</span>
+<span id="cb29-2"><a href="#cb29-2" aria-hidden="true" tabindex="-1"></a>    projects[<span class="st">"items"</span>][<span class="dv">0</span>][<span class="st">"id"</span>],</span>
+<span id="cb29-3"><a href="#cb29-3" aria-hidden="true" tabindex="-1"></a>    datasets[<span class="st">"items"</span>][<span class="dv">0</span>][<span class="st">"id"</span>],</span>
+<span id="cb29-4"><a href="#cb29-4" aria-hidden="true" tabindex="-1"></a>    <span class="st">"Updated Dataset"</span>,</span>
+<span id="cb29-5"><a href="#cb29-5" aria-hidden="true" tabindex="-1"></a>    <span class="st">"This is an updated dataset"</span>,</span>
+<span id="cb29-6"><a href="#cb29-6" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb29-7"><a href="#cb29-7" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"Updated dataset: </span><span class="sc">{</span>updated_dataset<span class="sc">}</span><span class="ss">"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>Updated dataset: {'id': '8572180f-fddf-46c5-b943-e6ff6448eb01', 'name': 'Updated Dataset', 'description': 'This is an updated dataset', 'created_at': '2025-04-15T03:28:09.050125+00:00', 'updated_at': '2025-04-16T03:52:09.627448+00:00', 'version_counter': 0, 'project_id': '1ef0843b-231f-4a2c-b64d-d39bcee9d830'}</code></pre>
+</div>
+</div>
+<div id="cell-26" class="cell">
+<div class="sourceCode cell-code" id="cb31"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb31-1"><a href="#cb31-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Delete the dataset</span></span>
+<span id="cb31-2"><a href="#cb31-2" aria-hidden="true" tabindex="-1"></a><span class="cf">await</span> client.delete_dataset(projects[<span class="st">"items"</span>][<span class="dv">0</span>][<span class="st">"id"</span>], datasets[<span class="st">"items"</span>][<span class="dv">0</span>][<span class="st">"id"</span>])</span>
+<span id="cb31-3"><a href="#cb31-3" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">"Dataset deleted"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>Dataset deleted</code></pre>
+</div>
+</div>
+<p>For the time being I’ve also added another option to get the dataset by name too</p>
+<hr>
+<p><a href="https://github.com/explodinggradients/ragas_experimental/blob/main/ragas_experimental/backends/ragas_api_client.py#L341" target="_blank" style="float:right; font-size:smaller">source</a></p>
+</section>
+<section id="ragasapiclient.get_dataset_by_name" class="level3">
+<h3 class="anchored" data-anchor-id="ragasapiclient.get_dataset_by_name">RagasApiClient.get_dataset_by_name</h3>
+<blockquote class="blockquote">
+<pre><code> RagasApiClient.get_dataset_by_name (project_id:str, dataset_name:str)</code></pre>
+</blockquote>
+<p>*Get a dataset by its name.</p>
+<p>Args: project_id: ID of the project dataset_name: Name of the dataset to find</p>
+<p>Returns: The dataset information dictionary</p>
+<p>Raises: DatasetNotFoundError: If no dataset with the given name is found DuplicateDatasetError: If multiple datasets with the given name are found*</p>
+<div id="cell-29" class="cell">
+<div class="sourceCode cell-code" id="cb34"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb34-1"><a href="#cb34-1" aria-hidden="true" tabindex="-1"></a><span class="cf">await</span> client.get_dataset_by_name(project_id<span class="op">=</span>TEST_PROJECT_ID, dataset_name<span class="op">=</span><span class="st">"test"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-error">
+<div class="ansi-escaped-output">
+<pre><span class="ansi-red-fg">---------------------------------------------------------------------------</span>
+<span class="ansi-red-fg">DuplicateDatasetError</span>                     Traceback (most recent call last)
+<span class="ansi-cyan-fg">Cell</span><span class="ansi-cyan-fg"> </span><span class="ansi-green-fg">In[19]</span><span class="ansi-green-fg">, line 1</span>
+<span class="ansi-green-fg">----&gt; </span><span class="ansi-green-fg">1</span> <span style="font-weight:bold;color:rgb(0,135,0)">await</span> client.get_dataset_by_name(project_id=TEST_PROJECT_ID, dataset_name=<span class="ansi-yellow-fg">"</span><span class="ansi-yellow-fg">test</span><span class="ansi-yellow-fg">"</span>)
+
+<span class="ansi-cyan-fg">Cell</span><span class="ansi-cyan-fg"> </span><span class="ansi-green-fg">In[18]</span><span class="ansi-green-fg">, line 18</span>, in <span class="ansi-cyan-fg">get_dataset_by_name</span><span class="ansi-blue-fg">(self, project_id, dataset_name)</span>
+<span class="ansi-green-fg">      1</span> <span style="color:rgb(175,0,255)">@patch</span>
+<span class="ansi-green-fg">      2</span> <span style="font-weight:bold;color:rgb(0,135,0)">async</span> <span style="font-weight:bold;color:rgb(0,135,0)">def</span><span style="color:rgb(188,188,188)"> </span><span class="ansi-blue-fg">get_dataset_by_name</span>(
+<span class="ansi-green-fg">      3</span>     <span style="color:rgb(0,135,0)">self</span>: RagasApiClient, project_id: <span style="color:rgb(0,135,0)">str</span>, dataset_name: <span style="color:rgb(0,135,0)">str</span>
+<span class="ansi-green-fg">      4</span> ) -&gt; t.Dict:
+<span class="ansi-green-fg">      5</span> <span style="color:rgb(188,188,188)">    </span><span style="font-style:italic" class="ansi-yellow-fg">"""Get a dataset by its name.</span>
+<span class="ansi-green-fg">      6</span> 
+<span class="ansi-green-fg">      7</span> <span style="font-style:italic" class="ansi-yellow-fg">    Args:</span>
+<span class="ansi-green-fg">   (...)</span><span class="ansi-green-fg">     16</span> <span style="font-style:italic" class="ansi-yellow-fg">        DuplicateDatasetError: If multiple datasets with the given name are found</span>
+<span class="ansi-green-fg">     17</span> <span style="font-style:italic" class="ansi-yellow-fg">    """</span>
+<span class="ansi-green-fg">---&gt; </span><span class="ansi-green-fg">18</span>     <span style="font-weight:bold;color:rgb(0,135,0)">return</span> <span style="font-weight:bold;color:rgb(0,135,0)">await</span> <span style="color:rgb(0,135,0)">self</span>._get_resource_by_name(
+<span class="ansi-green-fg">     19</span>         list_method=<span style="color:rgb(0,135,0)">self</span>.list_datasets,
+<span class="ansi-green-fg">     20</span>         get_method=<span style="color:rgb(0,135,0)">self</span>.get_dataset,
+<span class="ansi-green-fg">     21</span>         resource_name=dataset_name,
+<span class="ansi-green-fg">     22</span>         name_field=<span class="ansi-yellow-fg">"</span><span class="ansi-yellow-fg">name</span><span class="ansi-yellow-fg">"</span>,
+<span class="ansi-green-fg">     23</span>         not_found_error=DatasetNotFoundError,
+<span class="ansi-green-fg">     24</span>         duplicate_error=DuplicateDatasetError,
+<span class="ansi-green-fg">     25</span>         resource_type_name=<span class="ansi-yellow-fg">"</span><span class="ansi-yellow-fg">dataset</span><span class="ansi-yellow-fg">"</span>,
+<span class="ansi-green-fg">     26</span>         project_id=project_id
+<span class="ansi-green-fg">     27</span>     )
+
+<span class="ansi-cyan-fg">Cell</span><span class="ansi-cyan-fg"> </span><span class="ansi-green-fg">In[12]</span><span class="ansi-green-fg">, line 76</span>, in <span class="ansi-cyan-fg">_get_resource_by_name</span><span class="ansi-blue-fg">(self, list_method, get_method, resource_name, name_field, not_found_error, duplicate_error, resource_type_name, **list_method_kwargs)</span>
+<span class="ansi-green-fg">     73</span>     context = list_method_kwargs.get(<span class="ansi-yellow-fg">"</span><span class="ansi-yellow-fg">project_id</span><span class="ansi-yellow-fg">"</span>, <span class="ansi-yellow-fg">"</span><span class="ansi-yellow-fg">"</span>)
+<span class="ansi-green-fg">     74</span>     context_msg = <span class="ansi-yellow-fg">f</span><span class="ansi-yellow-fg">"</span><span class="ansi-yellow-fg"> in project </span><span style="font-weight:bold;color:rgb(175,95,135)">{</span>context<span style="font-weight:bold;color:rgb(175,95,135)">}</span><span class="ansi-yellow-fg">"</span> <span style="font-weight:bold;color:rgb(0,135,0)">if</span> context <span style="font-weight:bold;color:rgb(0,135,0)">else</span> <span class="ansi-yellow-fg">"</span><span class="ansi-yellow-fg">"</span>
+<span class="ansi-green-fg">---&gt; </span><span class="ansi-green-fg">76</span>     <span style="font-weight:bold;color:rgb(0,135,0)">raise</span> duplicate_error(
+<span class="ansi-green-fg">     77</span>         <span class="ansi-yellow-fg">f</span><span class="ansi-yellow-fg">"</span><span class="ansi-yellow-fg">Multiple </span><span style="font-weight:bold;color:rgb(175,95,135)">{</span>resource_type_name<span style="font-weight:bold;color:rgb(175,95,135)">}</span><span class="ansi-yellow-fg">s found with name </span><span class="ansi-yellow-fg">'</span><span style="font-weight:bold;color:rgb(175,95,135)">{</span>resource_name<span style="font-weight:bold;color:rgb(175,95,135)">}</span><span class="ansi-yellow-fg">'</span><span style="font-weight:bold;color:rgb(175,95,135)">{</span>context_msg<span style="font-weight:bold;color:rgb(175,95,135)">}</span><span class="ansi-yellow-fg">. </span><span class="ansi-yellow-fg">"</span>
+<span class="ansi-green-fg">     78</span>         <span class="ansi-yellow-fg">f</span><span class="ansi-yellow-fg">"</span><span style="font-weight:bold;color:rgb(175,95,135)">{</span>resource_type_name.capitalize()<span style="font-weight:bold;color:rgb(175,95,135)">}</span><span class="ansi-yellow-fg"> IDs: </span><span style="font-weight:bold;color:rgb(175,95,135)">{</span><span class="ansi-yellow-fg">'</span><span class="ansi-yellow-fg">, </span><span class="ansi-yellow-fg">'</span>.join(resource_ids)<span style="font-weight:bold;color:rgb(175,95,135)">}</span><span class="ansi-yellow-fg">. </span><span class="ansi-yellow-fg">"</span>
+<span class="ansi-green-fg">     79</span>         <span class="ansi-yellow-fg">f</span><span class="ansi-yellow-fg">"</span><span class="ansi-yellow-fg">Please use get_</span><span style="font-weight:bold;color:rgb(175,95,135)">{</span>resource_type_name<span style="font-weight:bold;color:rgb(175,95,135)">}</span><span class="ansi-yellow-fg">() with a specific ID instead.</span><span class="ansi-yellow-fg">"</span>
+<span class="ansi-green-fg">     80</span>     )
+<span class="ansi-green-fg">     82</span> <span style="font-style:italic;color:rgb(95,135,135)"># Exactly one match found - retrieve full details</span>
+<span class="ansi-green-fg">     83</span> <span style="font-weight:bold;color:rgb(0,135,0)">if</span> <span class="ansi-yellow-fg">"</span><span class="ansi-yellow-fg">project_id</span><span class="ansi-yellow-fg">"</span> <span style="font-weight:bold;color:rgb(175,0,255)">in</span> list_method_kwargs:
+
+<span class="ansi-red-fg">DuplicateDatasetError</span>: Multiple datasets found with name 'test' in project a6ccabe0-7b8d-4866-98af-f167a36b94ff. Dataset IDs: 9a48d5d1-531f-424f-b2d2-d8f9bcaeec1e, 483477a4-3d00-4010-a253-c92dee3bc092. Please use get_dataset() with a specific ID instead.</pre>
+</div>
+</div>
+</div>
+</section>
+<section id="experiments" class="level3">
+<h3 class="anchored" data-anchor-id="experiments">Experiments</h3>
+<hr>
+<p><a href="https://github.com/explodinggradients/ragas_experimental/blob/main/ragas_experimental/backends/ragas_api_client.py#L432" target="_blank" style="float:right; font-size:smaller">source</a></p>
+</section>
+<section id="ragasapiclient.delete_experiment" class="level3">
+<h3 class="anchored" data-anchor-id="ragasapiclient.delete_experiment">RagasApiClient.delete_experiment</h3>
+<blockquote class="blockquote">
+<pre><code> RagasApiClient.delete_experiment (project_id:str, experiment_id:str)</code></pre>
+</blockquote>
+<p><em>Delete an experiment.</em></p>
+<hr>
+<p><a href="https://github.com/explodinggradients/ragas_experimental/blob/main/ragas_experimental/backends/ragas_api_client.py#L413" target="_blank" style="float:right; font-size:smaller">source</a></p>
+</section>
+<section id="ragasapiclient.update_experiment" class="level3">
+<h3 class="anchored" data-anchor-id="ragasapiclient.update_experiment">RagasApiClient.update_experiment</h3>
+<blockquote class="blockquote">
+<pre><code> RagasApiClient.update_experiment (project_id:str, experiment_id:str,
+                                   name:Optional[str]=None,
+                                   description:Optional[str]=None)</code></pre>
+</blockquote>
+<p><em>Update an existing experiment.</em></p>
+<hr>
+<p><a href="https://github.com/explodinggradients/ragas_experimental/blob/main/ragas_experimental/backends/ragas_api_client.py#L399" target="_blank" style="float:right; font-size:smaller">source</a></p>
+</section>
+<section id="ragasapiclient.create_experiment" class="level3">
+<h3 class="anchored" data-anchor-id="ragasapiclient.create_experiment">RagasApiClient.create_experiment</h3>
+<blockquote class="blockquote">
+<pre><code> RagasApiClient.create_experiment (project_id:str, name:str,
+                                   description:Optional[str]=None)</code></pre>
+</blockquote>
+<p><em>Create a new experiment in a project.</em></p>
+<hr>
+<p><a href="https://github.com/explodinggradients/ragas_experimental/blob/main/ragas_experimental/backends/ragas_api_client.py#L389" target="_blank" style="float:right; font-size:smaller">source</a></p>
+</section>
+<section id="ragasapiclient.get_experiment" class="level3">
+<h3 class="anchored" data-anchor-id="ragasapiclient.get_experiment">RagasApiClient.get_experiment</h3>
+<blockquote class="blockquote">
+<pre><code> RagasApiClient.get_experiment (project_id:str, experiment_id:str)</code></pre>
+</blockquote>
+<p><em>Get a specific experiment.</em></p>
+<hr>
+<p><a href="https://github.com/explodinggradients/ragas_experimental/blob/main/ragas_experimental/backends/ragas_api_client.py#L371" target="_blank" style="float:right; font-size:smaller">source</a></p>
+</section>
+<section id="ragasapiclient.list_experiments" class="level3">
+<h3 class="anchored" data-anchor-id="ragasapiclient.list_experiments">RagasApiClient.list_experiments</h3>
+<blockquote class="blockquote">
+<pre><code> RagasApiClient.list_experiments (project_id:str, limit:int=50,
+                                  offset:int=0,
+                                  order_by:Optional[str]=None,
+                                  sort_dir:Optional[str]=None)</code></pre>
+</blockquote>
+<p><em>List experiments in a project.</em></p>
+<div id="cell-36" class="cell">
+<div class="sourceCode cell-code" id="cb40"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb40-1"><a href="#cb40-1" aria-hidden="true" tabindex="-1"></a><span class="co"># create a new experiment</span></span>
+<span id="cb40-2"><a href="#cb40-2" aria-hidden="true" tabindex="-1"></a>new_experiment <span class="op">=</span> <span class="cf">await</span> client.create_experiment(</span>
+<span id="cb40-3"><a href="#cb40-3" aria-hidden="true" tabindex="-1"></a>    projects[<span class="st">"items"</span>][<span class="dv">0</span>][<span class="st">"id"</span>], <span class="st">"New Experiment"</span>, <span class="st">"This is a new experiment"</span></span>
+<span id="cb40-4"><a href="#cb40-4" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb40-5"><a href="#cb40-5" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"New experiment created: </span><span class="sc">{</span>new_experiment<span class="sc">}</span><span class="ss">"</span>)</span>
+<span id="cb40-6"><a href="#cb40-6" aria-hidden="true" tabindex="-1"></a><span class="co"># list experiments</span></span>
+<span id="cb40-7"><a href="#cb40-7" aria-hidden="true" tabindex="-1"></a>experiments <span class="op">=</span> <span class="cf">await</span> client.list_experiments(projects[<span class="st">"items"</span>][<span class="dv">0</span>][<span class="st">"id"</span>])</span>
+<span id="cb40-8"><a href="#cb40-8" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"Found </span><span class="sc">{</span><span class="bu">len</span>(experiments)<span class="sc">}</span><span class="ss"> experiments"</span>)</span>
+<span id="cb40-9"><a href="#cb40-9" aria-hidden="true" tabindex="-1"></a><span class="co"># get a specific experiment</span></span>
+<span id="cb40-10"><a href="#cb40-10" aria-hidden="true" tabindex="-1"></a>experiment <span class="op">=</span> <span class="cf">await</span> client.get_experiment(</span>
+<span id="cb40-11"><a href="#cb40-11" aria-hidden="true" tabindex="-1"></a>    projects[<span class="st">"items"</span>][<span class="dv">0</span>][<span class="st">"id"</span>], experiments[<span class="st">"items"</span>][<span class="dv">0</span>][<span class="st">"id"</span>]</span>
+<span id="cb40-12"><a href="#cb40-12" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb40-13"><a href="#cb40-13" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"Experiment: </span><span class="sc">{</span>experiment<span class="sc">}</span><span class="ss">"</span>)</span>
+<span id="cb40-14"><a href="#cb40-14" aria-hidden="true" tabindex="-1"></a><span class="co"># update an experiment</span></span>
+<span id="cb40-15"><a href="#cb40-15" aria-hidden="true" tabindex="-1"></a>updated_experiment <span class="op">=</span> <span class="cf">await</span> client.update_experiment(</span>
+<span id="cb40-16"><a href="#cb40-16" aria-hidden="true" tabindex="-1"></a>    projects[<span class="st">"items"</span>][<span class="dv">0</span>][<span class="st">"id"</span>],</span>
+<span id="cb40-17"><a href="#cb40-17" aria-hidden="true" tabindex="-1"></a>    experiments[<span class="st">"items"</span>][<span class="dv">0</span>][<span class="st">"id"</span>],</span>
+<span id="cb40-18"><a href="#cb40-18" aria-hidden="true" tabindex="-1"></a>    <span class="st">"Updated Experiment"</span>,</span>
+<span id="cb40-19"><a href="#cb40-19" aria-hidden="true" tabindex="-1"></a>    <span class="st">"This is an updated experiment"</span>,</span>
+<span id="cb40-20"><a href="#cb40-20" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb40-21"><a href="#cb40-21" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"Updated experiment: </span><span class="sc">{</span>updated_experiment<span class="sc">}</span><span class="ss">"</span>)</span>
+<span id="cb40-22"><a href="#cb40-22" aria-hidden="true" tabindex="-1"></a><span class="co"># delete an experiment</span></span>
+<span id="cb40-23"><a href="#cb40-23" aria-hidden="true" tabindex="-1"></a><span class="cf">await</span> client.delete_experiment(projects[<span class="st">"items"</span>][<span class="dv">0</span>][<span class="st">"id"</span>], experiments[<span class="st">"items"</span>][<span class="dv">0</span>][<span class="st">"id"</span>])</span>
+<span id="cb40-24"><a href="#cb40-24" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">"Experiment deleted"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>New experiment created: {'id': 'b575c5d1-6934-45c0-b67a-fc9a4d7bdba3', 'name': 'New Experiment', 'description': 'This is a new experiment', 'updated_at': '2025-04-10T00:12:39.955229+00:00', 'created_at': '2025-04-10T00:12:39.955229+00:00', 'version_counter': 0, 'project_id': '26b0e577-8ff8-4014-bc7a-cfc410df3488'}
+Found 2 experiments
+Experiment: {'id': 'b575c5d1-6934-45c0-b67a-fc9a4d7bdba3', 'name': 'New Experiment', 'description': 'This is a new experiment', 'created_at': '2025-04-10T00:12:39.955229+00:00', 'updated_at': '2025-04-10T00:12:39.955229+00:00', 'version_counter': 0, 'project_id': '26b0e577-8ff8-4014-bc7a-cfc410df3488'}
+Updated experiment: {'id': 'b575c5d1-6934-45c0-b67a-fc9a4d7bdba3', 'name': 'Updated Experiment', 'description': 'This is an updated experiment', 'created_at': '2025-04-10T00:12:39.955229+00:00', 'updated_at': '2025-04-10T00:12:41.676216+00:00', 'version_counter': 0, 'project_id': '26b0e577-8ff8-4014-bc7a-cfc410df3488'}
+Experiment deleted</code></pre>
+</div>
+</div>
+<div id="cell-37" class="cell">
+<div class="sourceCode cell-code" id="cb42"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb42-1"><a href="#cb42-1" aria-hidden="true" tabindex="-1"></a><span class="cf">await</span> client.list_experiments(TEST_PROJECT_ID)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-display">
+<pre><code>{'items': [{'id': '78fd6c58-7edf-4239-93d1-4f49185d8e49',
+   'name': 'New Experiment',
+   'description': 'This is a new experiment',
+   'created_at': '2025-03-30T06:31:31.689269+00:00',
+   'updated_at': '2025-03-30T06:31:31.689269+00:00',
+   'project_id': 'e1b3f1e4-d344-48f4-a178-84e7e32e6ab6'},
+  {'id': '7c695b58-7fc3-464c-a18b-a96e35f9684d',
+   'name': 'New Experiment',
+   'description': 'This is a new experiment',
+   'created_at': '2025-04-09T17:03:44.340782+00:00',
+   'updated_at': '2025-04-09T17:03:44.340782+00:00',
+   'project_id': 'e1b3f1e4-d344-48f4-a178-84e7e32e6ab6'}],
+ 'pagination': {'offset': 0,
+  'limit': 50,
+  'total': 2,
+  'order_by': 'created_at',
+  'sort_dir': 'asc'}}</code></pre>
+</div>
+</div>
+<hr>
+<p><a href="https://github.com/explodinggradients/ragas_experimental/blob/main/ragas_experimental/backends/ragas_api_client.py#L440" target="_blank" style="float:right; font-size:smaller">source</a></p>
+</section>
+<section id="ragasapiclient.get_experiment_by_name" class="level3">
+<h3 class="anchored" data-anchor-id="ragasapiclient.get_experiment_by_name">RagasApiClient.get_experiment_by_name</h3>
+<blockquote class="blockquote">
+<pre><code> RagasApiClient.get_experiment_by_name (project_id:str,
+                                        experiment_name:str)</code></pre>
+</blockquote>
+<p>*Get an experiment by its name.</p>
+<p>Args: project_id: ID of the project containing the experiment experiment_name: Name of the experiment to find</p>
+<p>Returns: The experiment information dictionary</p>
+<p>Raises: ExperimentNotFoundError: If no experiment with the given name is found DuplicateExperimentError: If multiple experiments with the given name are found*</p>
+<div id="cell-39" class="cell">
+<div class="sourceCode cell-code" id="cb45"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb45-1"><a href="#cb45-1" aria-hidden="true" tabindex="-1"></a><span class="cf">await</span> client.get_experiment_by_name(TEST_PROJECT_ID, <span class="st">"test"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-error">
+<div class="ansi-escaped-output">
+<pre><span class="ansi-red-fg">---------------------------------------------------------------------------</span>
+<span class="ansi-red-fg">DuplicateExperimentError</span>                  Traceback (most recent call last)
+<span class="ansi-cyan-fg">Cell</span><span class="ansi-cyan-fg"> </span><span class="ansi-green-fg">In[23]</span><span class="ansi-green-fg">, line 1</span>
+<span class="ansi-green-fg">----&gt; </span><span class="ansi-green-fg">1</span> <span style="font-weight:bold;color:rgb(0,135,0)">await</span> client.get_experiment_by_name(TEST_PROJECT_ID, <span class="ansi-yellow-fg">"</span><span class="ansi-yellow-fg">test</span><span class="ansi-yellow-fg">"</span>)
+
+<span class="ansi-cyan-fg">Cell</span><span class="ansi-cyan-fg"> </span><span class="ansi-green-fg">In[22]</span><span class="ansi-green-fg">, line 19</span>, in <span class="ansi-cyan-fg">get_experiment_by_name</span><span class="ansi-blue-fg">(self, project_id, experiment_name)</span>
+<span class="ansi-green-fg">      2</span> <span style="color:rgb(175,0,255)">@patch</span>
+<span class="ansi-green-fg">      3</span> <span style="font-weight:bold;color:rgb(0,135,0)">async</span> <span style="font-weight:bold;color:rgb(0,135,0)">def</span><span style="color:rgb(188,188,188)"> </span><span class="ansi-blue-fg">get_experiment_by_name</span>(
+<span class="ansi-green-fg">      4</span>     <span style="color:rgb(0,135,0)">self</span>: RagasApiClient, project_id: <span style="color:rgb(0,135,0)">str</span>, experiment_name: <span style="color:rgb(0,135,0)">str</span>
+<span class="ansi-green-fg">      5</span> ) -&gt; t.Dict:
+<span class="ansi-green-fg">      6</span> <span style="color:rgb(188,188,188)">    </span><span style="font-style:italic" class="ansi-yellow-fg">"""Get an experiment by its name.</span>
+<span class="ansi-green-fg">      7</span> 
+<span class="ansi-green-fg">      8</span> <span style="font-style:italic" class="ansi-yellow-fg">    Args:</span>
+<span class="ansi-green-fg">   (...)</span><span class="ansi-green-fg">     17</span> <span style="font-style:italic" class="ansi-yellow-fg">        DuplicateExperimentError: If multiple experiments with the given name are found</span>
+<span class="ansi-green-fg">     18</span> <span style="font-style:italic" class="ansi-yellow-fg">    """</span>
+<span class="ansi-green-fg">---&gt; </span><span class="ansi-green-fg">19</span>     <span style="font-weight:bold;color:rgb(0,135,0)">return</span> <span style="font-weight:bold;color:rgb(0,135,0)">await</span> <span style="color:rgb(0,135,0)">self</span>._get_resource_by_name(
+<span class="ansi-green-fg">     20</span>         list_method=<span style="color:rgb(0,135,0)">self</span>.list_experiments,
+<span class="ansi-green-fg">     21</span>         get_method=<span style="color:rgb(0,135,0)">self</span>.get_experiment,
+<span class="ansi-green-fg">     22</span>         resource_name=experiment_name,
+<span class="ansi-green-fg">     23</span>         name_field=<span class="ansi-yellow-fg">"</span><span class="ansi-yellow-fg">name</span><span class="ansi-yellow-fg">"</span>,
+<span class="ansi-green-fg">     24</span>         not_found_error=ExperimentNotFoundError,
+<span class="ansi-green-fg">     25</span>         duplicate_error=DuplicateExperimentError,
+<span class="ansi-green-fg">     26</span>         resource_type_name=<span class="ansi-yellow-fg">"</span><span class="ansi-yellow-fg">experiment</span><span class="ansi-yellow-fg">"</span>,
+<span class="ansi-green-fg">     27</span>         project_id=project_id
+<span class="ansi-green-fg">     28</span>     )
+
+<span class="ansi-cyan-fg">Cell</span><span class="ansi-cyan-fg"> </span><span class="ansi-green-fg">In[12]</span><span class="ansi-green-fg">, line 76</span>, in <span class="ansi-cyan-fg">_get_resource_by_name</span><span class="ansi-blue-fg">(self, list_method, get_method, resource_name, name_field, not_found_error, duplicate_error, resource_type_name, **list_method_kwargs)</span>
+<span class="ansi-green-fg">     73</span>     context = list_method_kwargs.get(<span class="ansi-yellow-fg">"</span><span class="ansi-yellow-fg">project_id</span><span class="ansi-yellow-fg">"</span>, <span class="ansi-yellow-fg">"</span><span class="ansi-yellow-fg">"</span>)
+<span class="ansi-green-fg">     74</span>     context_msg = <span class="ansi-yellow-fg">f</span><span class="ansi-yellow-fg">"</span><span class="ansi-yellow-fg"> in project </span><span style="font-weight:bold;color:rgb(175,95,135)">{</span>context<span style="font-weight:bold;color:rgb(175,95,135)">}</span><span class="ansi-yellow-fg">"</span> <span style="font-weight:bold;color:rgb(0,135,0)">if</span> context <span style="font-weight:bold;color:rgb(0,135,0)">else</span> <span class="ansi-yellow-fg">"</span><span class="ansi-yellow-fg">"</span>
+<span class="ansi-green-fg">---&gt; </span><span class="ansi-green-fg">76</span>     <span style="font-weight:bold;color:rgb(0,135,0)">raise</span> duplicate_error(
+<span class="ansi-green-fg">     77</span>         <span class="ansi-yellow-fg">f</span><span class="ansi-yellow-fg">"</span><span class="ansi-yellow-fg">Multiple </span><span style="font-weight:bold;color:rgb(175,95,135)">{</span>resource_type_name<span style="font-weight:bold;color:rgb(175,95,135)">}</span><span class="ansi-yellow-fg">s found with name </span><span class="ansi-yellow-fg">'</span><span style="font-weight:bold;color:rgb(175,95,135)">{</span>resource_name<span style="font-weight:bold;color:rgb(175,95,135)">}</span><span class="ansi-yellow-fg">'</span><span style="font-weight:bold;color:rgb(175,95,135)">{</span>context_msg<span style="font-weight:bold;color:rgb(175,95,135)">}</span><span class="ansi-yellow-fg">. </span><span class="ansi-yellow-fg">"</span>
+<span class="ansi-green-fg">     78</span>         <span class="ansi-yellow-fg">f</span><span class="ansi-yellow-fg">"</span><span style="font-weight:bold;color:rgb(175,95,135)">{</span>resource_type_name.capitalize()<span style="font-weight:bold;color:rgb(175,95,135)">}</span><span class="ansi-yellow-fg"> IDs: </span><span style="font-weight:bold;color:rgb(175,95,135)">{</span><span class="ansi-yellow-fg">'</span><span class="ansi-yellow-fg">, </span><span class="ansi-yellow-fg">'</span>.join(resource_ids)<span style="font-weight:bold;color:rgb(175,95,135)">}</span><span class="ansi-yellow-fg">. </span><span class="ansi-yellow-fg">"</span>
+<span class="ansi-green-fg">     79</span>         <span class="ansi-yellow-fg">f</span><span class="ansi-yellow-fg">"</span><span class="ansi-yellow-fg">Please use get_</span><span style="font-weight:bold;color:rgb(175,95,135)">{</span>resource_type_name<span style="font-weight:bold;color:rgb(175,95,135)">}</span><span class="ansi-yellow-fg">() with a specific ID instead.</span><span class="ansi-yellow-fg">"</span>
+<span class="ansi-green-fg">     80</span>     )
+<span class="ansi-green-fg">     82</span> <span style="font-style:italic;color:rgb(95,135,135)"># Exactly one match found - retrieve full details</span>
+<span class="ansi-green-fg">     83</span> <span style="font-weight:bold;color:rgb(0,135,0)">if</span> <span class="ansi-yellow-fg">"</span><span class="ansi-yellow-fg">project_id</span><span class="ansi-yellow-fg">"</span> <span style="font-weight:bold;color:rgb(175,0,255)">in</span> list_method_kwargs:
+
+<span class="ansi-red-fg">DuplicateExperimentError</span>: Multiple experiments found with name 'test' in project a6ccabe0-7b8d-4866-98af-f167a36b94ff. Experiment IDs: e1ae15aa-2e0e-40dd-902a-0f0e0fd4df69, 52428c79-afdf-468e-82dc-6ef82c5b71d2, 55e14ac3-0037-4909-898f-eee9533a6d3f, 9adfa008-b479-41cf-ba28-c860e01401ea, 233d28c8-6556-49c5-b146-1e001720c214, 6aed5143-3f60-4bf2-bcf2-ecfdb950e992. Please use get_experiment() with a specific ID instead.</pre>
+</div>
+</div>
+</div>
+</section>
+<section id="columns-for-datasets" class="level3">
+<h3 class="anchored" data-anchor-id="columns-for-datasets">Columns (for datasets)</h3>
+<hr>
+<p><a href="https://github.com/explodinggradients/ragas_experimental/blob/main/ragas_experimental/backends/ragas_api_client.py#L541" target="_blank" style="float:right; font-size:smaller">source</a></p>
+</section>
+<section id="ragasapiclient.delete_dataset_column" class="level3">
+<h3 class="anchored" data-anchor-id="ragasapiclient.delete_dataset_column">RagasApiClient.delete_dataset_column</h3>
+<blockquote class="blockquote">
+<pre><code> RagasApiClient.delete_dataset_column (project_id:str, dataset_id:str,
+                                       column_id:str)</code></pre>
+</blockquote>
+<p><em>Delete a column from a dataset.</em></p>
+<hr>
+<p><a href="https://github.com/explodinggradients/ragas_experimental/blob/main/ragas_experimental/backends/ragas_api_client.py#L526" target="_blank" style="float:right; font-size:smaller">source</a></p>
+</section>
+<section id="ragasapiclient.update_dataset_column" class="level3">
+<h3 class="anchored" data-anchor-id="ragasapiclient.update_dataset_column">RagasApiClient.update_dataset_column</h3>
+<blockquote class="blockquote">
+<pre><code> RagasApiClient.update_dataset_column (project_id:str, dataset_id:str,
+                                       column_id:str, **column_data)</code></pre>
+</blockquote>
+<p><em>Update an existing column in a dataset.</em></p>
+<hr>
+<p><a href="https://github.com/explodinggradients/ragas_experimental/blob/main/ragas_experimental/backends/ragas_api_client.py#L504" target="_blank" style="float:right; font-size:smaller">source</a></p>
+</section>
+<section id="ragasapiclient.create_dataset_column" class="level3">
+<h3 class="anchored" data-anchor-id="ragasapiclient.create_dataset_column">RagasApiClient.create_dataset_column</h3>
+<blockquote class="blockquote">
+<pre><code> RagasApiClient.create_dataset_column (project_id:str, dataset_id:str,
+                                       id:str, name:str, type:str,
+                                       col_order:Optional[int]=None,
+                                       settings:Optional[Dict]=None)</code></pre>
+</blockquote>
+<p><em>Create a new column in a dataset.</em></p>
+<hr>
+<p><a href="https://github.com/explodinggradients/ragas_experimental/blob/main/ragas_experimental/backends/ragas_api_client.py#L494" target="_blank" style="float:right; font-size:smaller">source</a></p>
+</section>
+<section id="ragasapiclient.get_dataset_column" class="level3">
+<h3 class="anchored" data-anchor-id="ragasapiclient.get_dataset_column">RagasApiClient.get_dataset_column</h3>
+<blockquote class="blockquote">
+<pre><code> RagasApiClient.get_dataset_column (project_id:str, dataset_id:str,
+                                    column_id:str)</code></pre>
+</blockquote>
+<p><em>Get a specific column in a dataset.</em></p>
+<hr>
+<p><a href="https://github.com/explodinggradients/ragas_experimental/blob/main/ragas_experimental/backends/ragas_api_client.py#L473" target="_blank" style="float:right; font-size:smaller">source</a></p>
+</section>
+<section id="ragasapiclient.list_dataset_columns" class="level3">
+<h3 class="anchored" data-anchor-id="ragasapiclient.list_dataset_columns">RagasApiClient.list_dataset_columns</h3>
+<blockquote class="blockquote">
+<pre><code> RagasApiClient.list_dataset_columns (project_id:str, dataset_id:str,
+                                      limit:int=50, offset:int=0,
+                                      order_by:Optional[str]=None,
+                                      sort_dir:Optional[str]=None)</code></pre>
+</blockquote>
+<p><em>List columns in a dataset.</em></p>
+<div id="cell-46" class="cell">
+<div class="sourceCode cell-code" id="cb51"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb51-1"><a href="#cb51-1" aria-hidden="true" tabindex="-1"></a>datasets <span class="op">=</span> <span class="cf">await</span> client.create_dataset(</span>
+<span id="cb51-2"><a href="#cb51-2" aria-hidden="true" tabindex="-1"></a>    projects[<span class="st">"items"</span>][<span class="dv">0</span>][<span class="st">"id"</span>],</span>
+<span id="cb51-3"><a href="#cb51-3" aria-hidden="true" tabindex="-1"></a>    <span class="st">"New Dataset for testing columns"</span>,</span>
+<span id="cb51-4"><a href="#cb51-4" aria-hidden="true" tabindex="-1"></a>    <span class="st">"This is a new dataset for testing columns"</span>,</span>
+<span id="cb51-5"><a href="#cb51-5" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb51-6"><a href="#cb51-6" aria-hidden="true" tabindex="-1"></a>datasets</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-display">
+<pre><code>{'id': 'cc6794e1-3505-4d5c-b403-ca7e55142bbc',
+ 'name': 'New Dataset for testing columns',
+ 'description': 'This is a new dataset for testing columns',
+ 'updated_at': '2025-04-16T18:05:53.249101+00:00',
+ 'created_at': '2025-04-16T18:05:53.249101+00:00',
+ 'version_counter': 0,
+ 'project_id': '3d9b529b-c23f-4e87-8a26-dd1923749aa7'}</code></pre>
+</div>
+</div>
+<div id="cell-47" class="cell">
+<div class="sourceCode cell-code" id="cb53"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb53-1"><a href="#cb53-1" aria-hidden="true" tabindex="-1"></a><span class="co"># add a new column to the dataset</span></span>
+<span id="cb53-2"><a href="#cb53-2" aria-hidden="true" tabindex="-1"></a>new_column <span class="op">=</span> <span class="cf">await</span> client.create_dataset_column(</span>
+<span id="cb53-3"><a href="#cb53-3" aria-hidden="true" tabindex="-1"></a>    project_id<span class="op">=</span>projects[<span class="st">"items"</span>][<span class="dv">0</span>][<span class="st">"id"</span>],</span>
+<span id="cb53-4"><a href="#cb53-4" aria-hidden="true" tabindex="-1"></a>    dataset_id<span class="op">=</span>datasets[<span class="st">"id"</span>],</span>
+<span id="cb53-5"><a href="#cb53-5" aria-hidden="true" tabindex="-1"></a>    <span class="bu">id</span><span class="op">=</span><span class="st">"new_column_5"</span>,</span>
+<span id="cb53-6"><a href="#cb53-6" aria-hidden="true" tabindex="-1"></a>    name<span class="op">=</span><span class="st">"New Column 3"</span>,</span>
+<span id="cb53-7"><a href="#cb53-7" aria-hidden="true" tabindex="-1"></a>    <span class="bu">type</span><span class="op">=</span>ColumnType.SELECT.value,</span>
+<span id="cb53-8"><a href="#cb53-8" aria-hidden="true" tabindex="-1"></a>    settings<span class="op">=</span>{</span>
+<span id="cb53-9"><a href="#cb53-9" aria-hidden="true" tabindex="-1"></a>        <span class="st">"width"</span>: <span class="dv">255</span>,</span>
+<span id="cb53-10"><a href="#cb53-10" aria-hidden="true" tabindex="-1"></a>        <span class="st">"isVisible"</span>: <span class="va">True</span>,</span>
+<span id="cb53-11"><a href="#cb53-11" aria-hidden="true" tabindex="-1"></a>        <span class="st">"isEditable"</span>: <span class="va">True</span>,</span>
+<span id="cb53-12"><a href="#cb53-12" aria-hidden="true" tabindex="-1"></a>        <span class="st">"options"</span>: [</span>
+<span id="cb53-13"><a href="#cb53-13" aria-hidden="true" tabindex="-1"></a>            {<span class="st">"name"</span>: <span class="st">"name"</span>, <span class="st">"color"</span>: <span class="st">"hsl(200, 100%, 50%)"</span>, <span class="st">"value"</span>: <span class="st">"name"</span>},</span>
+<span id="cb53-14"><a href="#cb53-14" aria-hidden="true" tabindex="-1"></a>            {<span class="st">"name"</span>: <span class="st">"age"</span>, <span class="st">"color"</span>: <span class="st">"hsl(200, 100%, 50%)"</span>, <span class="st">"value"</span>: <span class="st">"age"</span>},</span>
+<span id="cb53-15"><a href="#cb53-15" aria-hidden="true" tabindex="-1"></a>            {<span class="st">"name"</span>: <span class="st">"gender"</span>, <span class="st">"color"</span>: <span class="st">"hsl(200, 100%, 50%)"</span>, <span class="st">"value"</span>: <span class="st">"gender"</span>},</span>
+<span id="cb53-16"><a href="#cb53-16" aria-hidden="true" tabindex="-1"></a>        ]</span>
+<span id="cb53-17"><a href="#cb53-17" aria-hidden="true" tabindex="-1"></a>    },</span>
+<span id="cb53-18"><a href="#cb53-18" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb53-19"><a href="#cb53-19" aria-hidden="true" tabindex="-1"></a>new_column</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-display">
+<pre><code>{'id': 'new_column_5',
+ 'name': 'New Column 5',
+ 'type': 'select',
+ 'settings': {'id': 'new_column_5',
+  'name': 'New Column 5',
+  'type': 'select',
+  'width': 255,
+  'options': [{'name': 'name', 'value': 'name'},
+   {'name': 'age', 'value': 'age'},
+   {'name': 'gender', 'value': 'gender'}],
+  'isVisible': True,
+  'isEditable': True},
+ 'created_at': '2025-04-16T18:11:14.305975+00:00',
+ 'updated_at': '2025-04-16T18:11:14.305975+00:00',
+ 'datatable_id': 'cc6794e1-3505-4d5c-b403-ca7e55142bbc'}</code></pre>
+</div>
+</div>
+<div id="cell-48" class="cell">
+<div class="sourceCode cell-code" id="cb55"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb55-1"><a href="#cb55-1" aria-hidden="true" tabindex="-1"></a><span class="cf">await</span> client.list_dataset_columns(projects[<span class="st">"items"</span>][<span class="dv">0</span>][<span class="st">"id"</span>], <span class="st">"271b8bc7-2d04-43b8-8960-ce20365f546b"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-display">
+<pre><code>{'items': [{'id': 'dQ7hCb1AUfog',
+   'name': 'tags_color_coded',
+   'type': 'select',
+   'settings': {'id': 'dQ7hCb1AUfog',
+    'name': 'tags_color_coded',
+    'type': 'select',
+    'width': 255,
+    'options': [{'name': 'red', 'color': 'hsl(0, 85%, 60%)', 'value': 'red'},
+     {'name': 'green', 'color': 'hsl(30, 85%, 60%)', 'value': 'green'},
+     {'name': 'blue', 'color': 'hsl(45, 85%, 60%)', 'value': 'blue'}],
+    'isVisible': True,
+    'isEditable': True},
+   'created_at': '2025-04-16T19:00:39.936764+00:00',
+   'updated_at': '2025-04-16T19:00:39.936764+00:00',
+   'datatable_id': '271b8bc7-2d04-43b8-8960-ce20365f546b'},
+  {'id': 'eCAiMBRqm0Uc',
+   'name': 'id',
+   'type': 'number',
+   'settings': {'id': 'eCAiMBRqm0Uc',
+    'name': 'id',
+    'type': 'number',
+    'width': 255,
+    'isVisible': True,
+    'isEditable': True},
+   'created_at': '2025-04-16T19:00:39.971857+00:00',
+   'updated_at': '2025-04-16T19:00:39.971857+00:00',
+   'datatable_id': '271b8bc7-2d04-43b8-8960-ce20365f546b'},
+  {'id': 'fRegl7Ucx3Sp',
+   'name': 'description',
+   'type': 'longText',
+   'settings': {'id': 'fRegl7Ucx3Sp',
+    'name': 'description',
+    'type': 'longText',
+    'width': 255,
+    'isVisible': True,
+    'isEditable': True,
+    'max_length': 1000},
+   'created_at': '2025-04-16T19:00:40.055047+00:00',
+   'updated_at': '2025-04-16T19:00:40.055047+00:00',
+   'datatable_id': '271b8bc7-2d04-43b8-8960-ce20365f546b'},
+  {'id': 'foebrzYhiu9x',
+   'name': 'tags',
+   'type': 'select',
+   'settings': {'id': 'foebrzYhiu9x',
+    'name': 'tags',
+    'type': 'select',
+    'width': 255,
+    'options': [{'name': 'tag1', 'color': 'hsl(0, 85%, 60%)', 'value': 'tag1'},
+     {'name': 'tag2', 'color': 'hsl(30, 85%, 60%)', 'value': 'tag2'},
+     {'name': 'tag3', 'color': 'hsl(45, 85%, 60%)', 'value': 'tag3'}],
+    'isVisible': True,
+    'isEditable': True},
+   'created_at': '2025-04-16T19:00:40.084457+00:00',
+   'updated_at': '2025-04-16T19:00:40.084457+00:00',
+   'datatable_id': '271b8bc7-2d04-43b8-8960-ce20365f546b'},
+  {'id': 'ciAzRUhKct9c',
+   'name': 'name',
+   'type': 'longText',
+   'settings': {'id': 'ciAzRUhKct9c',
+    'name': 'name',
+    'type': 'longText',
+    'width': 255,
+    'isVisible': True,
+    'isEditable': True,
+    'max_length': 1000},
+   'created_at': '2025-04-16T19:00:40.232989+00:00',
+   'updated_at': '2025-04-16T19:00:40.232989+00:00',
+   'datatable_id': '271b8bc7-2d04-43b8-8960-ce20365f546b'},
+  {'id': 'iAW5muBh9mc251p8-LqKz',
+   'name': 'url',
+   'type': 'url',
+   'settings': {'id': 'iAW5muBh9mc251p8-LqKz',
+    'name': 'url',
+    'type': 'url',
+    'width': 192,
+    'position': 5,
+    'isVisible': True,
+    'isEditable': True},
+   'created_at': '2025-04-16T20:13:09.418698+00:00',
+   'updated_at': '2025-04-16T20:13:16.914367+00:00',
+   'datatable_id': '271b8bc7-2d04-43b8-8960-ce20365f546b'}],
+ 'pagination': {'offset': 0,
+  'limit': 50,
+  'total': 6,
+  'order_by': 'created_at',
+  'sort_dir': 'asc'}}</code></pre>
+</div>
+</div>
+<div id="cell-49" class="cell">
+<div class="sourceCode cell-code" id="cb57"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb57-1"><a href="#cb57-1" aria-hidden="true" tabindex="-1"></a>col3 <span class="op">=</span> <span class="cf">await</span> client.get_dataset_column(</span>
+<span id="cb57-2"><a href="#cb57-2" aria-hidden="true" tabindex="-1"></a>    projects[<span class="st">"items"</span>][<span class="dv">0</span>][<span class="st">"id"</span>], datasets[<span class="st">"id"</span>], <span class="st">"new_column_3"</span></span>
+<span id="cb57-3"><a href="#cb57-3" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb57-4"><a href="#cb57-4" aria-hidden="true" tabindex="-1"></a>col3</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-display">
+<pre><code>{'id': 'new_column_3',
+ 'name': 'New Column 3',
+ 'type': 'text',
+ 'settings': {'id': 'new_column_3',
+  'name': 'New Column 3',
+  'type': 'text',
+  'max_length': 255,
+  'is_required': True},
+ 'created_at': '2025-04-10T02:22:07.300895+00:00',
+ 'updated_at': '2025-04-10T02:22:07.300895+00:00',
+ 'datatable_id': 'ebc3dd3e-f88b-4f8b-8c72-6cfcae0a0cd4'}</code></pre>
+</div>
+</div>
+<div id="cell-50" class="cell">
+<div class="sourceCode cell-code" id="cb59"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb59-1"><a href="#cb59-1" aria-hidden="true" tabindex="-1"></a><span class="cf">await</span> client.update_dataset_column(</span>
+<span id="cb59-2"><a href="#cb59-2" aria-hidden="true" tabindex="-1"></a>    projects[<span class="st">"items"</span>][<span class="dv">0</span>][<span class="st">"id"</span>],</span>
+<span id="cb59-3"><a href="#cb59-3" aria-hidden="true" tabindex="-1"></a>    datasets[<span class="st">"id"</span>],</span>
+<span id="cb59-4"><a href="#cb59-4" aria-hidden="true" tabindex="-1"></a>    <span class="st">"new_column_3"</span>,</span>
+<span id="cb59-5"><a href="#cb59-5" aria-hidden="true" tabindex="-1"></a>    name<span class="op">=</span><span class="st">"New Column 3 Updated"</span>,</span>
+<span id="cb59-6"><a href="#cb59-6" aria-hidden="true" tabindex="-1"></a>    <span class="bu">type</span><span class="op">=</span>ColumnType.NUMBER.value,</span>
+<span id="cb59-7"><a href="#cb59-7" aria-hidden="true" tabindex="-1"></a>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-display">
+<pre><code>{'id': 'new_column_3',
+ 'name': 'New Column 3 Updated',
+ 'type': 'number',
+ 'settings': {'id': 'new_column_3',
+  'name': 'New Column 3',
+  'type': 'text',
+  'max_length': 255,
+  'is_required': True},
+ 'created_at': '2025-04-10T02:22:07.300895+00:00',
+ 'updated_at': '2025-04-10T02:22:11.116882+00:00',
+ 'datatable_id': 'ebc3dd3e-f88b-4f8b-8c72-6cfcae0a0cd4'}</code></pre>
+</div>
+</div>
+<div id="cell-51" class="cell">
+<div class="sourceCode cell-code" id="cb61"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb61-1"><a href="#cb61-1" aria-hidden="true" tabindex="-1"></a><span class="cf">await</span> client.delete_dataset_column(</span>
+<span id="cb61-2"><a href="#cb61-2" aria-hidden="true" tabindex="-1"></a>    projects[<span class="st">"items"</span>][<span class="dv">0</span>][<span class="st">"id"</span>], datasets[<span class="st">"id"</span>], <span class="st">"new_column_3"</span></span>
+<span id="cb61-3"><a href="#cb61-3" aria-hidden="true" tabindex="-1"></a>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+</section>
+<section id="rows-for-datasets" class="level3">
+<h3 class="anchored" data-anchor-id="rows-for-datasets">Rows (for datasets)</h3>
+<hr>
+<p><a href="https://github.com/explodinggradients/ragas_experimental/blob/main/ragas_experimental/backends/ragas_api_client.py#L606" target="_blank" style="float:right; font-size:smaller">source</a></p>
+</section>
+<section id="ragasapiclient.delete_dataset_row" class="level3">
+<h3 class="anchored" data-anchor-id="ragasapiclient.delete_dataset_row">RagasApiClient.delete_dataset_row</h3>
+<blockquote class="blockquote">
+<pre><code> RagasApiClient.delete_dataset_row (project_id:str, dataset_id:str,
+                                    row_id:str)</code></pre>
+</blockquote>
+<p><em>Delete a row from a dataset.</em></p>
+<hr>
+<p><a href="https://github.com/explodinggradients/ragas_experimental/blob/main/ragas_experimental/backends/ragas_api_client.py#L594" target="_blank" style="float:right; font-size:smaller">source</a></p>
+</section>
+<section id="ragasapiclient.update_dataset_row" class="level3">
+<h3 class="anchored" data-anchor-id="ragasapiclient.update_dataset_row">RagasApiClient.update_dataset_row</h3>
+<blockquote class="blockquote">
+<pre><code> RagasApiClient.update_dataset_row (project_id:str, dataset_id:str,
+                                    row_id:str, data:Dict)</code></pre>
+</blockquote>
+<p><em>Update an existing row in a dataset.</em></p>
+<hr>
+<p><a href="https://github.com/explodinggradients/ragas_experimental/blob/main/ragas_experimental/backends/ragas_api_client.py#L583" target="_blank" style="float:right; font-size:smaller">source</a></p>
+</section>
+<section id="ragasapiclient.create_dataset_row" class="level3">
+<h3 class="anchored" data-anchor-id="ragasapiclient.create_dataset_row">RagasApiClient.create_dataset_row</h3>
+<blockquote class="blockquote">
+<pre><code> RagasApiClient.create_dataset_row (project_id:str, dataset_id:str,
+                                    id:str, data:Dict)</code></pre>
+</blockquote>
+<p><em>Create a new row in a dataset.</em></p>
+<hr>
+<p><a href="https://github.com/explodinggradients/ragas_experimental/blob/main/ragas_experimental/backends/ragas_api_client.py#L573" target="_blank" style="float:right; font-size:smaller">source</a></p>
+</section>
+<section id="ragasapiclient.get_dataset_row" class="level3">
+<h3 class="anchored" data-anchor-id="ragasapiclient.get_dataset_row">RagasApiClient.get_dataset_row</h3>
+<blockquote class="blockquote">
+<pre><code> RagasApiClient.get_dataset_row (project_id:str, dataset_id:str,
+                                 row_id:str)</code></pre>
+</blockquote>
+<p><em>Get a specific row in a dataset.</em></p>
+<hr>
+<p><a href="https://github.com/explodinggradients/ragas_experimental/blob/main/ragas_experimental/backends/ragas_api_client.py#L552" target="_blank" style="float:right; font-size:smaller">source</a></p>
+</section>
+<section id="ragasapiclient.list_dataset_rows" class="level3">
+<h3 class="anchored" data-anchor-id="ragasapiclient.list_dataset_rows">RagasApiClient.list_dataset_rows</h3>
+<blockquote class="blockquote">
+<pre><code> RagasApiClient.list_dataset_rows (project_id:str, dataset_id:str,
+                                   limit:int=50, offset:int=0,
+                                   order_by:Optional[str]=None,
+                                   sort_dir:Optional[str]=None)</code></pre>
+</blockquote>
+<p><em>List rows in a dataset.</em></p>
+<div id="cell-58" class="cell">
+<div class="sourceCode cell-code" id="cb67"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb67-1"><a href="#cb67-1" aria-hidden="true" tabindex="-1"></a>datasets[<span class="st">"id"</span>]</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-display">
+<pre><code>'3374b891-8398-41bd-8f81-2867759df294'</code></pre>
+</div>
+</div>
+<div id="cell-59" class="cell">
+<div class="sourceCode cell-code" id="cb69"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb69-1"><a href="#cb69-1" aria-hidden="true" tabindex="-1"></a><span class="cf">await</span> client.create_dataset_row(</span>
+<span id="cb69-2"><a href="#cb69-2" aria-hidden="true" tabindex="-1"></a>    project_id<span class="op">=</span>projects[<span class="st">"items"</span>][<span class="dv">0</span>][<span class="st">"id"</span>],</span>
+<span id="cb69-3"><a href="#cb69-3" aria-hidden="true" tabindex="-1"></a>    dataset_id<span class="op">=</span>datasets[<span class="st">"id"</span>],</span>
+<span id="cb69-4"><a href="#cb69-4" aria-hidden="true" tabindex="-1"></a>    <span class="bu">id</span><span class="op">=</span><span class="st">""</span>,</span>
+<span id="cb69-5"><a href="#cb69-5" aria-hidden="true" tabindex="-1"></a>    data<span class="op">=</span>{<span class="st">"new_column_3"</span>: <span class="st">"name"</span>},</span>
+<span id="cb69-6"><a href="#cb69-6" aria-hidden="true" tabindex="-1"></a>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-display">
+<pre><code>{'id': '',
+ 'data': {'id': '', 'new_column_3': 'name'},
+ 'created_at': '2025-04-16T17:46:39.100525+00:00',
+ 'updated_at': '2025-04-16T17:46:39.100525+00:00',
+ 'datatable_id': '3374b891-8398-41bd-8f81-2867759df294'}</code></pre>
+</div>
+</div>
+</section>
+<section id="get-a-dataset-visualized---created-from-ui" class="level3">
+<h3 class="anchored" data-anchor-id="get-a-dataset-visualized---created-from-ui">Get a Dataset Visualized - Created From UI</h3>
+<p>Lets Create a new dataset and add columns and rows via the endpoint to see how it behaves</p>
+<div id="cell-61" class="cell">
+<div class="sourceCode cell-code" id="cb71"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb71-1"><a href="#cb71-1" aria-hidden="true" tabindex="-1"></a><span class="co"># generate a dataset</span></span>
+<span id="cb71-2"><a href="#cb71-2" aria-hidden="true" tabindex="-1"></a>dataset <span class="op">=</span> <span class="cf">await</span> client.create_dataset(</span>
+<span id="cb71-3"><a href="#cb71-3" aria-hidden="true" tabindex="-1"></a>    project_id<span class="op">=</span>TEST_PROJECT_ID,</span>
+<span id="cb71-4"><a href="#cb71-4" aria-hidden="true" tabindex="-1"></a>    name<span class="op">=</span><span class="st">"Dataset Visualized from UI"</span>,</span>
+<span id="cb71-5"><a href="#cb71-5" aria-hidden="true" tabindex="-1"></a>    description<span class="op">=</span><span class="st">"This is a dataset created from the UI"</span>,</span>
+<span id="cb71-6"><a href="#cb71-6" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb71-7"><a href="#cb71-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb71-8"><a href="#cb71-8" aria-hidden="true" tabindex="-1"></a><span class="co"># show url</span></span>
+<span id="cb71-9"><a href="#cb71-9" aria-hidden="true" tabindex="-1"></a>WEB_ENDPOINT <span class="op">=</span> <span class="st">"https://dev.app.ragas.io"</span></span>
+<span id="cb71-10"><a href="#cb71-10" aria-hidden="true" tabindex="-1"></a>url <span class="op">=</span> <span class="ss">f"</span><span class="sc">{</span>WEB_ENDPOINT<span class="sc">}</span><span class="ss">/dashboard/projects/</span><span class="sc">{</span>TEST_PROJECT_ID<span class="sc">}</span><span class="ss">/datasets/</span><span class="sc">{</span>dataset[<span class="st">'id'</span>]<span class="sc">}</span><span class="ss">"</span></span>
+<span id="cb71-11"><a href="#cb71-11" aria-hidden="true" tabindex="-1"></a>url</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-display">
+<pre><code>'https://dev.app.ragas.io/dashboard/projects/e1b3f1e4-d344-48f4-a178-84e7e32e6ab6/datasets/dbccf6aa-b923-47ed-8e97-bd46f2f2cee8'</code></pre>
+</div>
+</div>
+<div id="cell-62" class="cell">
+<div class="sourceCode cell-code" id="cb73"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb73-1"><a href="#cb73-1" aria-hidden="true" tabindex="-1"></a><span class="co"># list columns</span></span>
+<span id="cb73-2"><a href="#cb73-2" aria-hidden="true" tabindex="-1"></a>columns <span class="op">=</span> <span class="cf">await</span> client.list_dataset_columns(TEST_PROJECT_ID, dataset[<span class="st">"id"</span>])</span>
+<span id="cb73-3"><a href="#cb73-3" aria-hidden="true" tabindex="-1"></a><span class="co"># list rows</span></span>
+<span id="cb73-4"><a href="#cb73-4" aria-hidden="true" tabindex="-1"></a>rows <span class="op">=</span> <span class="cf">await</span> client.list_dataset_rows(TEST_PROJECT_ID, dataset[<span class="st">"id"</span>])</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<div id="cell-63" class="cell">
+<div class="sourceCode cell-code" id="cb74"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb74-1"><a href="#cb74-1" aria-hidden="true" tabindex="-1"></a>columns</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-display">
+<pre><code>{'items': [],
+ 'pagination': {'offset': 0,
+  'limit': 50,
+  'total': 0,
+  'order_by': 'created_at',
+  'sort_dir': 'asc'}}</code></pre>
+</div>
+</div>
+<div id="cell-64" class="cell">
+<div class="sourceCode cell-code" id="cb76"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb76-1"><a href="#cb76-1" aria-hidden="true" tabindex="-1"></a>rows</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-display">
+<pre><code>{'items': [],
+ 'pagination': {'offset': 0,
+  'limit': 50,
+  'total': 0,
+  'order_by': 'created_at',
+  'sort_dir': 'asc'}}</code></pre>
+</div>
+</div>
+</section>
+<section id="create-a-dataset-from-data" class="level3">
+<h3 class="anchored" data-anchor-id="create-a-dataset-from-data">Create a Dataset from data</h3>
+<p>we want to be able to use the API with python data like this <code>t.List[t.Dict]</code>.</p>
+<div class="sourceCode" id="cb78"><pre class="sourceCode py code-with-copy"><code class="sourceCode python"><span id="cb78-1"><a href="#cb78-1" aria-hidden="true" tabindex="-1"></a><span class="co"># how we want the data to look</span></span>
+<span id="cb78-2"><a href="#cb78-2" aria-hidden="true" tabindex="-1"></a>data <span class="op">=</span> [</span>
+<span id="cb78-3"><a href="#cb78-3" aria-hidden="true" tabindex="-1"></a>    {</span>
+<span id="cb78-4"><a href="#cb78-4" aria-hidden="true" tabindex="-1"></a>        <span class="st">"id"</span>: <span class="st">"1"</span>,</span>
+<span id="cb78-5"><a href="#cb78-5" aria-hidden="true" tabindex="-1"></a>        <span class="st">"query"</span>: <span class="st">"What is the capital of France?"</span>,</span>
+<span id="cb78-6"><a href="#cb78-6" aria-hidden="true" tabindex="-1"></a>        <span class="st">"persona"</span>: <span class="st">"John"</span>,</span>
+<span id="cb78-7"><a href="#cb78-7" aria-hidden="true" tabindex="-1"></a>        <span class="st">"ground_truth"</span>: <span class="st">"Paris"</span>,</span>
+<span id="cb78-8"><a href="#cb78-8" aria-hidden="true" tabindex="-1"></a>    },</span>
+<span id="cb78-9"><a href="#cb78-9" aria-hidden="true" tabindex="-1"></a>    {</span>
+<span id="cb78-10"><a href="#cb78-10" aria-hidden="true" tabindex="-1"></a>        <span class="st">"id"</span>: <span class="st">"2"</span>,</span>
+<span id="cb78-11"><a href="#cb78-11" aria-hidden="true" tabindex="-1"></a>        <span class="st">"query"</span>: <span class="st">"What is the capital of Germany?"</span>,</span>
+<span id="cb78-12"><a href="#cb78-12" aria-hidden="true" tabindex="-1"></a>        <span class="st">"persona"</span>: <span class="st">"Jane"</span>,</span>
+<span id="cb78-13"><a href="#cb78-13" aria-hidden="true" tabindex="-1"></a>        <span class="st">"ground_truth"</span>: <span class="st">"Berlin"</span>,</span>
+<span id="cb78-14"><a href="#cb78-14" aria-hidden="true" tabindex="-1"></a>    },</span>
+<span id="cb78-15"><a href="#cb78-15" aria-hidden="true" tabindex="-1"></a>    {</span>
+<span id="cb78-16"><a href="#cb78-16" aria-hidden="true" tabindex="-1"></a>        <span class="st">"id"</span>: <span class="st">"3"</span>,</span>
+<span id="cb78-17"><a href="#cb78-17" aria-hidden="true" tabindex="-1"></a>        <span class="st">"query"</span>: <span class="st">"What is the capital of Italy?"</span>,</span>
+<span id="cb78-18"><a href="#cb78-18" aria-hidden="true" tabindex="-1"></a>        <span class="st">"persona"</span>: <span class="st">"John"</span>,</span>
+<span id="cb78-19"><a href="#cb78-19" aria-hidden="true" tabindex="-1"></a>        <span class="st">"ground_truth"</span>: <span class="st">"Rome"</span>,</span>
+<span id="cb78-20"><a href="#cb78-20" aria-hidden="true" tabindex="-1"></a>    },</span>
+<span id="cb78-21"><a href="#cb78-21" aria-hidden="true" tabindex="-1"></a>]</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div id="cell-66" class="cell">
+<div class="sourceCode cell-code" id="cb79"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb79-1"><a href="#cb79-1" aria-hidden="true" tabindex="-1"></a><span class="co"># print out column types</span></span>
+<span id="cb79-2"><a href="#cb79-2" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>([col.value <span class="cf">for</span> col <span class="kw">in</span> ColumnType])</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>['number', 'text', 'longText', 'select', 'date', 'multiSelect', 'checkbox', 'custom']</code></pre>
+</div>
+</div>
+<div id="cell-67" class="cell">
+<div class="sourceCode cell-code" id="cb81"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb81-1"><a href="#cb81-1" aria-hidden="true" tabindex="-1"></a><span class="co"># it should be able to handle simple python dicts</span></span>
+<span id="cb81-2"><a href="#cb81-2" aria-hidden="true" tabindex="-1"></a>data <span class="op">=</span> [</span>
+<span id="cb81-3"><a href="#cb81-3" aria-hidden="true" tabindex="-1"></a>    {</span>
+<span id="cb81-4"><a href="#cb81-4" aria-hidden="true" tabindex="-1"></a>        <span class="st">"id"</span>: <span class="st">"1"</span>,</span>
+<span id="cb81-5"><a href="#cb81-5" aria-hidden="true" tabindex="-1"></a>        <span class="st">"query"</span>: <span class="st">"What is the capital of France?"</span>,</span>
+<span id="cb81-6"><a href="#cb81-6" aria-hidden="true" tabindex="-1"></a>        <span class="st">"persona"</span>: <span class="st">"John"</span>,</span>
+<span id="cb81-7"><a href="#cb81-7" aria-hidden="true" tabindex="-1"></a>        <span class="st">"ground_truth"</span>: <span class="st">"Paris"</span>,</span>
+<span id="cb81-8"><a href="#cb81-8" aria-hidden="true" tabindex="-1"></a>    },</span>
+<span id="cb81-9"><a href="#cb81-9" aria-hidden="true" tabindex="-1"></a>    {</span>
+<span id="cb81-10"><a href="#cb81-10" aria-hidden="true" tabindex="-1"></a>        <span class="st">"id"</span>: <span class="st">"2"</span>,</span>
+<span id="cb81-11"><a href="#cb81-11" aria-hidden="true" tabindex="-1"></a>        <span class="st">"query"</span>: <span class="st">"What is the capital of Germany?"</span>,</span>
+<span id="cb81-12"><a href="#cb81-12" aria-hidden="true" tabindex="-1"></a>        <span class="st">"persona"</span>: <span class="st">"Jane"</span>,</span>
+<span id="cb81-13"><a href="#cb81-13" aria-hidden="true" tabindex="-1"></a>        <span class="st">"ground_truth"</span>: <span class="st">"Berlin"</span>,</span>
+<span id="cb81-14"><a href="#cb81-14" aria-hidden="true" tabindex="-1"></a>    },</span>
+<span id="cb81-15"><a href="#cb81-15" aria-hidden="true" tabindex="-1"></a>]</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>There can be 2 ways to pass in data</p>
+<ol type="1">
+<li>Data can come as either as simple dicts</li>
+</ol>
+<div class="sourceCode" id="cb82"><pre class="sourceCode py code-with-copy"><code class="sourceCode python"><span id="cb82-1"><a href="#cb82-1" aria-hidden="true" tabindex="-1"></a>data <span class="op">=</span> [</span>
+<span id="cb82-2"><a href="#cb82-2" aria-hidden="true" tabindex="-1"></a>    {<span class="st">"column_1"</span>: <span class="st">"value"</span>, <span class="st">"column_2"</span>: <span class="st">"value"</span>}</span>
+<span id="cb82-3"><a href="#cb82-3" aria-hidden="true" tabindex="-1"></a>]</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<ol start="2" type="1">
+<li>or if you want to give more settings</li>
+</ol>
+<div class="sourceCode" id="cb83"><pre class="sourceCode py code-with-copy"><code class="sourceCode python"><span id="cb83-1"><a href="#cb83-1" aria-hidden="true" tabindex="-1"></a>data <span class="op">=</span> [</span>
+<span id="cb83-2"><a href="#cb83-2" aria-hidden="true" tabindex="-1"></a>    {</span>
+<span id="cb83-3"><a href="#cb83-3" aria-hidden="true" tabindex="-1"></a>        <span class="st">"column_1"</span>: {<span class="st">"data"</span>: <span class="st">"value"</span>, <span class="st">"type"</span>: ColumnType.text},</span>
+<span id="cb83-4"><a href="#cb83-4" aria-hidden="true" tabindex="-1"></a>        <span class="st">"column_2"</span>: {<span class="st">"data"</span>: <span class="st">"value"</span>, <span class="st">"type"</span>: ColumnType.number},</span>
+<span id="cb83-5"><a href="#cb83-5" aria-hidden="true" tabindex="-1"></a>    }</span>
+<span id="cb83-6"><a href="#cb83-6" aria-hidden="true" tabindex="-1"></a>]</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<ol start="3" type="1">
+<li>after that you will have to pass a list <a href="https://explodinggradients.github.io/ragas_experimental/backends/ragas_api_client.html#column"><code>Column</code></a> and <a href="https://explodinggradients.github.io/ragas_experimental/backends/ragas_api_client.html#row"><code>Row</code></a> to add it.</li>
+</ol>
+<div id="cell-69" class="cell">
+<div class="sourceCode cell-code" id="cb84"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb84-1"><a href="#cb84-1" aria-hidden="true" tabindex="-1"></a><span class="co"># test data</span></span>
+<span id="cb84-2"><a href="#cb84-2" aria-hidden="true" tabindex="-1"></a>test_data_columns <span class="op">=</span> [</span>
+<span id="cb84-3"><a href="#cb84-3" aria-hidden="true" tabindex="-1"></a>    {<span class="st">"name"</span>: <span class="st">"id"</span>, <span class="st">"type"</span>: ColumnType.NUMBER.value},</span>
+<span id="cb84-4"><a href="#cb84-4" aria-hidden="true" tabindex="-1"></a>    {<span class="st">"name"</span>: <span class="st">"query"</span>, <span class="st">"type"</span>: ColumnType.TEXT.value},</span>
+<span id="cb84-5"><a href="#cb84-5" aria-hidden="true" tabindex="-1"></a>    {<span class="st">"name"</span>: <span class="st">"persona"</span>, <span class="st">"type"</span>: ColumnType.TEXT.value},</span>
+<span id="cb84-6"><a href="#cb84-6" aria-hidden="true" tabindex="-1"></a>    {<span class="st">"name"</span>: <span class="st">"ground_truth"</span>, <span class="st">"type"</span>: ColumnType.TEXT.value},</span>
+<span id="cb84-7"><a href="#cb84-7" aria-hidden="true" tabindex="-1"></a>]</span>
+<span id="cb84-8"><a href="#cb84-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb84-9"><a href="#cb84-9" aria-hidden="true" tabindex="-1"></a>test_data_rows <span class="op">=</span> [{</span>
+<span id="cb84-10"><a href="#cb84-10" aria-hidden="true" tabindex="-1"></a>    <span class="st">"id"</span>: <span class="st">"1"</span>,</span>
+<span id="cb84-11"><a href="#cb84-11" aria-hidden="true" tabindex="-1"></a>    <span class="st">"query"</span>: <span class="st">"What is the capital of France?"</span>,</span>
+<span id="cb84-12"><a href="#cb84-12" aria-hidden="true" tabindex="-1"></a>    <span class="st">"persona"</span>: <span class="st">"John"</span>,</span>
+<span id="cb84-13"><a href="#cb84-13" aria-hidden="true" tabindex="-1"></a>    <span class="st">"ground_truth"</span>: <span class="st">"Paris"</span>,</span>
+<span id="cb84-14"><a href="#cb84-14" aria-hidden="true" tabindex="-1"></a>}, {</span>
+<span id="cb84-15"><a href="#cb84-15" aria-hidden="true" tabindex="-1"></a>    <span class="st">"id"</span>: <span class="st">"2"</span>,</span>
+<span id="cb84-16"><a href="#cb84-16" aria-hidden="true" tabindex="-1"></a>    <span class="st">"query"</span>: <span class="st">"What is the capital of Germany?"</span>,</span>
+<span id="cb84-17"><a href="#cb84-17" aria-hidden="true" tabindex="-1"></a>    <span class="st">"persona"</span>: <span class="st">"Jane"</span>,</span>
+<span id="cb84-18"><a href="#cb84-18" aria-hidden="true" tabindex="-1"></a>    <span class="st">"ground_truth"</span>: <span class="st">"Berlin"</span>,</span>
+<span id="cb84-19"><a href="#cb84-19" aria-hidden="true" tabindex="-1"></a>}, {</span>
+<span id="cb84-20"><a href="#cb84-20" aria-hidden="true" tabindex="-1"></a>    <span class="st">"id"</span>: <span class="st">"3"</span>,</span>
+<span id="cb84-21"><a href="#cb84-21" aria-hidden="true" tabindex="-1"></a>    <span class="st">"query"</span>: <span class="st">"What is the capital of Italy?"</span>,</span>
+<span id="cb84-22"><a href="#cb84-22" aria-hidden="true" tabindex="-1"></a>    <span class="st">"persona"</span>: <span class="st">"John"</span>,</span>
+<span id="cb84-23"><a href="#cb84-23" aria-hidden="true" tabindex="-1"></a>    <span class="st">"ground_truth"</span>: <span class="st">"Rome"</span>,</span>
+<span id="cb84-24"><a href="#cb84-24" aria-hidden="true" tabindex="-1"></a>}]</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<hr>
+<p><a href="https://github.com/explodinggradients/ragas_experimental/blob/main/ragas_experimental/backends/ragas_api_client.py#L640" target="_blank" style="float:right; font-size:smaller">source</a></p>
+</section>
+<section id="create_nano_id" class="level3">
+<h3 class="anchored" data-anchor-id="create_nano_id">create_nano_id</h3>
+<blockquote class="blockquote">
+<pre><code> create_nano_id (size=12)</code></pre>
+</blockquote>
+<div id="cell-71" class="cell">
+<div class="sourceCode cell-code" id="cb86"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb86-1"><a href="#cb86-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Usage</span></span>
+<span id="cb86-2"><a href="#cb86-2" aria-hidden="true" tabindex="-1"></a>nano_id <span class="op">=</span> create_nano_id()  <span class="co"># e.g., "8dK9cNw3mP5x"</span></span>
+<span id="cb86-3"><a href="#cb86-3" aria-hidden="true" tabindex="-1"></a>nano_id</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-display">
+<pre><code>'Anvz5k9geU7T'</code></pre>
+</div>
+</div>
+<hr>
+<p><a href="https://github.com/explodinggradients/ragas_experimental/blob/main/ragas_experimental/backends/ragas_api_client.py#L640" target="_blank" style="float:right; font-size:smaller">source</a></p>
+</section>
+<section id="create_nano_id-1" class="level3">
+<h3 class="anchored" data-anchor-id="create_nano_id-1">create_nano_id</h3>
+<blockquote class="blockquote">
+<pre><code> create_nano_id (size=12)</code></pre>
+</blockquote>
+<div id="cell-73" class="cell">
+<div class="sourceCode cell-code" id="cb89"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb89-1"><a href="#cb89-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Usage</span></span>
+<span id="cb89-2"><a href="#cb89-2" aria-hidden="true" tabindex="-1"></a>nano_id <span class="op">=</span> create_nano_id()  <span class="co"># e.g., "8dK9cNw3mP5x"</span></span>
+<span id="cb89-3"><a href="#cb89-3" aria-hidden="true" tabindex="-1"></a>nano_id</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-display">
+<pre><code>'Anvz5k9geU7T'</code></pre>
+</div>
+</div>
+<hr>
+<p><a href="https://github.com/explodinggradients/ragas_experimental/blob/main/ragas_experimental/backends/ragas_api_client.py#L675" target="_blank" style="float:right; font-size:smaller">source</a></p>
+</section>
+<section id="row" class="level3">
+<h3 class="anchored" data-anchor-id="row">Row</h3>
+<blockquote class="blockquote">
+<pre><code> Row (id:str=&lt;factory&gt;, data:List[__main__.RowCell])</code></pre>
+</blockquote>
+<p>*!!! abstract “Usage Documentation” <a href="../concepts/models.md">Models</a></p>
+<p>A base class for creating Pydantic models.</p>
+<p>Attributes: <strong>class_vars</strong>: The names of the class variables defined on the model. <strong>private_attributes</strong>: Metadata about the private attributes of the model. <strong>signature</strong>: The synthesized <code>__init__</code> [<code>Signature</code>][inspect.Signature] of the model.</p>
+<pre><code>__pydantic_complete__: Whether model building is completed, or if there are still undefined fields.
+__pydantic_core_schema__: The core schema of the model.
+__pydantic_custom_init__: Whether the model has a custom `__init__` function.
+__pydantic_decorators__: Metadata containing the decorators defined on the model.
+    This replaces `Model.__validators__` and `Model.__root_validators__` from Pydantic V1.
+__pydantic_generic_metadata__: Metadata for generic models; contains data used for a similar purpose to
+    __args__, __origin__, __parameters__ in typing-module generics. May eventually be replaced by these.
+__pydantic_parent_namespace__: Parent namespace of the model, used for automatic rebuilding of models.
+__pydantic_post_init__: The name of the post-init method for the model, if defined.
+__pydantic_root_model__: Whether the model is a [`RootModel`][pydantic.root_model.RootModel].
+__pydantic_serializer__: The `pydantic-core` `SchemaSerializer` used to dump instances of the model.
+__pydantic_validator__: The `pydantic-core` `SchemaValidator` used to validate instances of the model.
+
+__pydantic_fields__: A dictionary of field names and their corresponding [`FieldInfo`][pydantic.fields.FieldInfo] objects.
+__pydantic_computed_fields__: A dictionary of computed field names and their corresponding [`ComputedFieldInfo`][pydantic.fields.ComputedFieldInfo] objects.
+
+__pydantic_extra__: A dictionary containing extra values, if [`extra`][pydantic.config.ConfigDict.extra]
+    is set to `'allow'`.
+__pydantic_fields_set__: The names of fields explicitly set during instantiation.
+__pydantic_private__: Values of private attributes set on the model instance.*</code></pre>
+<hr>
+<p><a href="https://github.com/explodinggradients/ragas_experimental/blob/main/ragas_experimental/backends/ragas_api_client.py#L670" target="_blank" style="float:right; font-size:smaller">source</a></p>
+</section>
+<section id="rowcell" class="level3">
+<h3 class="anchored" data-anchor-id="rowcell">RowCell</h3>
+<blockquote class="blockquote">
+<pre><code> RowCell (data:Any, column_id:str)</code></pre>
+</blockquote>
+<p>*!!! abstract “Usage Documentation” <a href="../concepts/models.md">Models</a></p>
+<p>A base class for creating Pydantic models.</p>
+<p>Attributes: <strong>class_vars</strong>: The names of the class variables defined on the model. <strong>private_attributes</strong>: Metadata about the private attributes of the model. <strong>signature</strong>: The synthesized <code>__init__</code> [<code>Signature</code>][inspect.Signature] of the model.</p>
+<pre><code>__pydantic_complete__: Whether model building is completed, or if there are still undefined fields.
+__pydantic_core_schema__: The core schema of the model.
+__pydantic_custom_init__: Whether the model has a custom `__init__` function.
+__pydantic_decorators__: Metadata containing the decorators defined on the model.
+    This replaces `Model.__validators__` and `Model.__root_validators__` from Pydantic V1.
+__pydantic_generic_metadata__: Metadata for generic models; contains data used for a similar purpose to
+    __args__, __origin__, __parameters__ in typing-module generics. May eventually be replaced by these.
+__pydantic_parent_namespace__: Parent namespace of the model, used for automatic rebuilding of models.
+__pydantic_post_init__: The name of the post-init method for the model, if defined.
+__pydantic_root_model__: Whether the model is a [`RootModel`][pydantic.root_model.RootModel].
+__pydantic_serializer__: The `pydantic-core` `SchemaSerializer` used to dump instances of the model.
+__pydantic_validator__: The `pydantic-core` `SchemaValidator` used to validate instances of the model.
+
+__pydantic_fields__: A dictionary of field names and their corresponding [`FieldInfo`][pydantic.fields.FieldInfo] objects.
+__pydantic_computed_fields__: A dictionary of computed field names and their corresponding [`ComputedFieldInfo`][pydantic.fields.ComputedFieldInfo] objects.
+
+__pydantic_extra__: A dictionary containing extra values, if [`extra`][pydantic.config.ConfigDict.extra]
+    is set to `'allow'`.
+__pydantic_fields_set__: The names of fields explicitly set during instantiation.
+__pydantic_private__: Values of private attributes set on the model instance.*</code></pre>
+<hr>
+<p><a href="https://github.com/explodinggradients/ragas_experimental/blob/main/ragas_experimental/backends/ragas_api_client.py#L662" target="_blank" style="float:right; font-size:smaller">source</a></p>
+</section>
+<section id="column" class="level3">
+<h3 class="anchored" data-anchor-id="column">Column</h3>
+<blockquote class="blockquote">
+<pre><code> Column (id:str=&lt;factory&gt;, name:str, type:str, settings:Dict=&lt;factory&gt;,
+         col_order:Optional[int]=None)</code></pre>
+</blockquote>
+<p>*!!! abstract “Usage Documentation” <a href="../concepts/models.md">Models</a></p>
+<p>A base class for creating Pydantic models.</p>
+<p>Attributes: <strong>class_vars</strong>: The names of the class variables defined on the model. <strong>private_attributes</strong>: Metadata about the private attributes of the model. <strong>signature</strong>: The synthesized <code>__init__</code> [<code>Signature</code>][inspect.Signature] of the model.</p>
+<pre><code>__pydantic_complete__: Whether model building is completed, or if there are still undefined fields.
+__pydantic_core_schema__: The core schema of the model.
+__pydantic_custom_init__: Whether the model has a custom `__init__` function.
+__pydantic_decorators__: Metadata containing the decorators defined on the model.
+    This replaces `Model.__validators__` and `Model.__root_validators__` from Pydantic V1.
+__pydantic_generic_metadata__: Metadata for generic models; contains data used for a similar purpose to
+    __args__, __origin__, __parameters__ in typing-module generics. May eventually be replaced by these.
+__pydantic_parent_namespace__: Parent namespace of the model, used for automatic rebuilding of models.
+__pydantic_post_init__: The name of the post-init method for the model, if defined.
+__pydantic_root_model__: Whether the model is a [`RootModel`][pydantic.root_model.RootModel].
+__pydantic_serializer__: The `pydantic-core` `SchemaSerializer` used to dump instances of the model.
+__pydantic_validator__: The `pydantic-core` `SchemaValidator` used to validate instances of the model.
+
+__pydantic_fields__: A dictionary of field names and their corresponding [`FieldInfo`][pydantic.fields.FieldInfo] objects.
+__pydantic_computed_fields__: A dictionary of computed field names and their corresponding [`ComputedFieldInfo`][pydantic.fields.ComputedFieldInfo] objects.
+
+__pydantic_extra__: A dictionary containing extra values, if [`extra`][pydantic.config.ConfigDict.extra]
+    is set to `'allow'`.
+__pydantic_fields_set__: The names of fields explicitly set during instantiation.
+__pydantic_private__: Values of private attributes set on the model instance.*</code></pre>
+<hr>
+<p><a href="https://github.com/explodinggradients/ragas_experimental/blob/main/ragas_experimental/backends/ragas_api_client.py#L778" target="_blank" style="float:right; font-size:smaller">source</a></p>
+</section>
+<section id="ragasapiclient.create_dataset_with_data" class="level3">
+<h3 class="anchored" data-anchor-id="ragasapiclient.create_dataset_with_data">RagasApiClient.create_dataset_with_data</h3>
+<blockquote class="blockquote">
+<pre><code> RagasApiClient.create_dataset_with_data (project_id:str, name:str,
+                                          description:str,
+                                          columns:List[__main__.Column],
+                                          rows:List[__main__.Row],
+                                          batch_size:int=50)</code></pre>
+</blockquote>
+<p>*Create a dataset with columns and rows.</p>
+<p>This method creates a dataset and populates it with columns and rows in an optimized way using concurrent requests.</p>
+<p>Args: project_id: Project ID name: Dataset name description: Dataset description columns: List of column definitions rows: List of row data batch_size: Number of operations to perform concurrently</p>
+<p>Returns: The created dataset*</p>
+<p>Now lets test this.</p>
+<div id="cell-79" class="cell">
+<div class="sourceCode cell-code" id="cb98"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb98-1"><a href="#cb98-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Create Column objects</span></span>
+<span id="cb98-2"><a href="#cb98-2" aria-hidden="true" tabindex="-1"></a>column_objects <span class="op">=</span> []</span>
+<span id="cb98-3"><a href="#cb98-3" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> col <span class="kw">in</span> test_data_columns:</span>
+<span id="cb98-4"><a href="#cb98-4" aria-hidden="true" tabindex="-1"></a>    column_objects.append(Column(</span>
+<span id="cb98-5"><a href="#cb98-5" aria-hidden="true" tabindex="-1"></a>        name<span class="op">=</span>col[<span class="st">"name"</span>],</span>
+<span id="cb98-6"><a href="#cb98-6" aria-hidden="true" tabindex="-1"></a>        <span class="bu">type</span><span class="op">=</span>col[<span class="st">"type"</span>]</span>
+<span id="cb98-7"><a href="#cb98-7" aria-hidden="true" tabindex="-1"></a>        <span class="co"># id and settings will be auto-generated</span></span>
+<span id="cb98-8"><a href="#cb98-8" aria-hidden="true" tabindex="-1"></a>    ))</span>
+<span id="cb98-9"><a href="#cb98-9" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb98-10"><a href="#cb98-10" aria-hidden="true" tabindex="-1"></a><span class="co"># Create a mapping of column names to their IDs for creating rows</span></span>
+<span id="cb98-11"><a href="#cb98-11" aria-hidden="true" tabindex="-1"></a>column_map <span class="op">=</span> {col.name: col.<span class="bu">id</span> <span class="cf">for</span> col <span class="kw">in</span> column_objects}</span>
+<span id="cb98-12"><a href="#cb98-12" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb98-13"><a href="#cb98-13" aria-hidden="true" tabindex="-1"></a><span class="co"># Create Row objects</span></span>
+<span id="cb98-14"><a href="#cb98-14" aria-hidden="true" tabindex="-1"></a>row_objects <span class="op">=</span> []</span>
+<span id="cb98-15"><a href="#cb98-15" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> row <span class="kw">in</span> test_data_rows:</span>
+<span id="cb98-16"><a href="#cb98-16" aria-hidden="true" tabindex="-1"></a>    cells <span class="op">=</span> []</span>
+<span id="cb98-17"><a href="#cb98-17" aria-hidden="true" tabindex="-1"></a>    <span class="cf">for</span> key, value <span class="kw">in</span> row.items():</span>
+<span id="cb98-18"><a href="#cb98-18" aria-hidden="true" tabindex="-1"></a>        <span class="cf">if</span> key <span class="kw">in</span> column_map:  <span class="co"># Skip any extra fields not in columns</span></span>
+<span id="cb98-19"><a href="#cb98-19" aria-hidden="true" tabindex="-1"></a>            cells.append(RowCell(</span>
+<span id="cb98-20"><a href="#cb98-20" aria-hidden="true" tabindex="-1"></a>                data<span class="op">=</span>value,</span>
+<span id="cb98-21"><a href="#cb98-21" aria-hidden="true" tabindex="-1"></a>                column_id<span class="op">=</span>column_map[key]</span>
+<span id="cb98-22"><a href="#cb98-22" aria-hidden="true" tabindex="-1"></a>            ))</span>
+<span id="cb98-23"><a href="#cb98-23" aria-hidden="true" tabindex="-1"></a>    row_objects.append(Row(data<span class="op">=</span>cells))</span>
+<span id="cb98-24"><a href="#cb98-24" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb98-25"><a href="#cb98-25" aria-hidden="true" tabindex="-1"></a><span class="co"># Now we can create the dataset</span></span>
+<span id="cb98-26"><a href="#cb98-26" aria-hidden="true" tabindex="-1"></a>dataset <span class="op">=</span> <span class="cf">await</span> client.create_dataset_with_data(</span>
+<span id="cb98-27"><a href="#cb98-27" aria-hidden="true" tabindex="-1"></a>    project_id<span class="op">=</span>TEST_PROJECT_ID,</span>
+<span id="cb98-28"><a href="#cb98-28" aria-hidden="true" tabindex="-1"></a>    name<span class="op">=</span><span class="st">"Capitals Dataset"</span>,</span>
+<span id="cb98-29"><a href="#cb98-29" aria-hidden="true" tabindex="-1"></a>    description<span class="op">=</span><span class="st">"A dataset about capital cities"</span>,</span>
+<span id="cb98-30"><a href="#cb98-30" aria-hidden="true" tabindex="-1"></a>    columns<span class="op">=</span>column_objects,</span>
+<span id="cb98-31"><a href="#cb98-31" aria-hidden="true" tabindex="-1"></a>    rows<span class="op">=</span>row_objects</span>
+<span id="cb98-32"><a href="#cb98-32" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb98-33"><a href="#cb98-33" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb98-34"><a href="#cb98-34" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"Created dataset with ID: </span><span class="sc">{</span>dataset[<span class="st">'id'</span>]<span class="sc">}</span><span class="ss">"</span>)</span>
+<span id="cb98-35"><a href="#cb98-35" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb98-36"><a href="#cb98-36" aria-hidden="true" tabindex="-1"></a><span class="co"># Verify the data</span></span>
+<span id="cb98-37"><a href="#cb98-37" aria-hidden="true" tabindex="-1"></a>columns <span class="op">=</span> <span class="cf">await</span> client.list_dataset_columns(TEST_PROJECT_ID, dataset[<span class="st">"id"</span>])</span>
+<span id="cb98-38"><a href="#cb98-38" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"Created </span><span class="sc">{</span><span class="bu">len</span>(columns[<span class="st">'items'</span>])<span class="sc">}</span><span class="ss"> columns"</span>)</span>
+<span id="cb98-39"><a href="#cb98-39" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb98-40"><a href="#cb98-40" aria-hidden="true" tabindex="-1"></a>rows <span class="op">=</span> <span class="cf">await</span> client.list_dataset_rows(TEST_PROJECT_ID, dataset[<span class="st">"id"</span>])</span>
+<span id="cb98-41"><a href="#cb98-41" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"Created </span><span class="sc">{</span><span class="bu">len</span>(rows[<span class="st">'items'</span>])<span class="sc">}</span><span class="ss"> rows"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>Created dataset with ID: 5e7912f4-6a65-4d0c-bf79-0fab9ddda40c
+Created 4 columns
+Created 3 rows</code></pre>
+</div>
+</div>
+<div id="cell-80" class="cell">
+<div class="sourceCode cell-code" id="cb100"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb100-1"><a href="#cb100-1" aria-hidden="true" tabindex="-1"></a><span class="co"># get dataset url</span></span>
+<span id="cb100-2"><a href="#cb100-2" aria-hidden="true" tabindex="-1"></a>url <span class="op">=</span> <span class="ss">f"</span><span class="sc">{</span>WEB_ENDPOINT<span class="sc">}</span><span class="ss">/dashboard/projects/</span><span class="sc">{</span>TEST_PROJECT_ID<span class="sc">}</span><span class="ss">/datasets/</span><span class="sc">{</span>dataset[<span class="st">'id'</span>]<span class="sc">}</span><span class="ss">"</span></span>
+<span id="cb100-3"><a href="#cb100-3" aria-hidden="true" tabindex="-1"></a>url</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-display">
+<pre><code>'https://dev.app.ragas.io/dashboard/projects/e1b3f1e4-d344-48f4-a178-84e7e32e6ab6/datasets/5e7912f4-6a65-4d0c-bf79-0fab9ddda40c'</code></pre>
+</div>
+</div>
+<div id="cell-81" class="cell">
+<div class="sourceCode cell-code" id="cb102"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb102-1"><a href="#cb102-1" aria-hidden="true" tabindex="-1"></a><span class="co"># cleanup</span></span>
+<span id="cb102-2"><a href="#cb102-2" aria-hidden="true" tabindex="-1"></a><span class="cf">await</span> client.delete_dataset(TEST_PROJECT_ID, dataset[<span class="st">"id"</span>])</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+</section>
+<section id="the-same-but-for-experiments" class="level3">
+<h3 class="anchored" data-anchor-id="the-same-but-for-experiments">The same but for Experiments</h3>
+<hr>
+<p><a href="https://github.com/explodinggradients/ragas_experimental/blob/main/ragas_experimental/backends/ragas_api_client.py#L943" target="_blank" style="float:right; font-size:smaller">source</a></p>
+</section>
+<section id="ragasapiclient.delete_experiment_row" class="level3">
+<h3 class="anchored" data-anchor-id="ragasapiclient.delete_experiment_row">RagasApiClient.delete_experiment_row</h3>
+<blockquote class="blockquote">
+<pre><code> RagasApiClient.delete_experiment_row (project_id:str, experiment_id:str,
+                                       row_id:str)</code></pre>
+</blockquote>
+<p><em>Delete a row from an experiment.</em></p>
+<hr>
+<p><a href="https://github.com/explodinggradients/ragas_experimental/blob/main/ragas_experimental/backends/ragas_api_client.py#L931" target="_blank" style="float:right; font-size:smaller">source</a></p>
+</section>
+<section id="ragasapiclient.update_experiment_row" class="level3">
+<h3 class="anchored" data-anchor-id="ragasapiclient.update_experiment_row">RagasApiClient.update_experiment_row</h3>
+<blockquote class="blockquote">
+<pre><code> RagasApiClient.update_experiment_row (project_id:str, experiment_id:str,
+                                       row_id:str, data:Dict)</code></pre>
+</blockquote>
+<p><em>Update an existing row in an experiment.</em></p>
+<hr>
+<p><a href="https://github.com/explodinggradients/ragas_experimental/blob/main/ragas_experimental/backends/ragas_api_client.py#L920" target="_blank" style="float:right; font-size:smaller">source</a></p>
+</section>
+<section id="ragasapiclient.create_experiment_row" class="level3">
+<h3 class="anchored" data-anchor-id="ragasapiclient.create_experiment_row">RagasApiClient.create_experiment_row</h3>
+<blockquote class="blockquote">
+<pre><code> RagasApiClient.create_experiment_row (project_id:str, experiment_id:str,
+                                       id:str, data:Dict)</code></pre>
+</blockquote>
+<p><em>Create a new row in an experiment.</em></p>
+<hr>
+<p><a href="https://github.com/explodinggradients/ragas_experimental/blob/main/ragas_experimental/backends/ragas_api_client.py#L910" target="_blank" style="float:right; font-size:smaller">source</a></p>
+</section>
+<section id="ragasapiclient.get_experiment_row" class="level3">
+<h3 class="anchored" data-anchor-id="ragasapiclient.get_experiment_row">RagasApiClient.get_experiment_row</h3>
+<blockquote class="blockquote">
+<pre><code> RagasApiClient.get_experiment_row (project_id:str, experiment_id:str,
+                                    row_id:str)</code></pre>
+</blockquote>
+<p><em>Get a specific row in an experiment.</em></p>
+<hr>
+<p><a href="https://github.com/explodinggradients/ragas_experimental/blob/main/ragas_experimental/backends/ragas_api_client.py#L889" target="_blank" style="float:right; font-size:smaller">source</a></p>
+</section>
+<section id="ragasapiclient.list_experiment_rows" class="level3">
+<h3 class="anchored" data-anchor-id="ragasapiclient.list_experiment_rows">RagasApiClient.list_experiment_rows</h3>
+<blockquote class="blockquote">
+<pre><code> RagasApiClient.list_experiment_rows (project_id:str, experiment_id:str,
+                                      limit:int=50, offset:int=0,
+                                      order_by:Optional[str]=None,
+                                      sort_dir:Optional[str]=None)</code></pre>
+</blockquote>
+<p><em>List rows in an experiment.</em></p>
+<hr>
+<p><a href="https://github.com/explodinggradients/ragas_experimental/blob/main/ragas_experimental/backends/ragas_api_client.py#L878" target="_blank" style="float:right; font-size:smaller">source</a></p>
+</section>
+<section id="ragasapiclient.delete_experiment_column" class="level3">
+<h3 class="anchored" data-anchor-id="ragasapiclient.delete_experiment_column">RagasApiClient.delete_experiment_column</h3>
+<blockquote class="blockquote">
+<pre><code> RagasApiClient.delete_experiment_column (project_id:str,
+                                          experiment_id:str,
+                                          column_id:str)</code></pre>
+</blockquote>
+<p><em>Delete a column from an experiment.</em></p>
+<hr>
+<p><a href="https://github.com/explodinggradients/ragas_experimental/blob/main/ragas_experimental/backends/ragas_api_client.py#L863" target="_blank" style="float:right; font-size:smaller">source</a></p>
+</section>
+<section id="ragasapiclient.update_experiment_column" class="level3">
+<h3 class="anchored" data-anchor-id="ragasapiclient.update_experiment_column">RagasApiClient.update_experiment_column</h3>
+<blockquote class="blockquote">
+<pre><code> RagasApiClient.update_experiment_column (project_id:str,
+                                          experiment_id:str,
+                                          column_id:str, **column_data)</code></pre>
+</blockquote>
+<p><em>Update an existing column in an experiment.</em></p>
+<hr>
+<p><a href="https://github.com/explodinggradients/ragas_experimental/blob/main/ragas_experimental/backends/ragas_api_client.py#L841" target="_blank" style="float:right; font-size:smaller">source</a></p>
+</section>
+<section id="ragasapiclient.create_experiment_column" class="level3">
+<h3 class="anchored" data-anchor-id="ragasapiclient.create_experiment_column">RagasApiClient.create_experiment_column</h3>
+<blockquote class="blockquote">
+<pre><code> RagasApiClient.create_experiment_column (project_id:str,
+                                          experiment_id:str, id:str,
+                                          name:str, type:str,
+                                          col_order:Optional[int]=None,
+                                          settings:Optional[Dict]=None)</code></pre>
+</blockquote>
+<p><em>Create a new column in an experiment.</em></p>
+<hr>
+<p><a href="https://github.com/explodinggradients/ragas_experimental/blob/main/ragas_experimental/backends/ragas_api_client.py#L831" target="_blank" style="float:right; font-size:smaller">source</a></p>
+</section>
+<section id="ragasapiclient.get_experiment_column" class="level3">
+<h3 class="anchored" data-anchor-id="ragasapiclient.get_experiment_column">RagasApiClient.get_experiment_column</h3>
+<blockquote class="blockquote">
+<pre><code> RagasApiClient.get_experiment_column (project_id:str, experiment_id:str,
+                                       column_id:str)</code></pre>
+</blockquote>
+<p><em>Get a specific column in an experiment.</em></p>
+<hr>
+<p><a href="https://github.com/explodinggradients/ragas_experimental/blob/main/ragas_experimental/backends/ragas_api_client.py#L810" target="_blank" style="float:right; font-size:smaller">source</a></p>
+</section>
+<section id="ragasapiclient.list_experiment_columns" class="level3">
+<h3 class="anchored" data-anchor-id="ragasapiclient.list_experiment_columns">RagasApiClient.list_experiment_columns</h3>
+<blockquote class="blockquote">
+<pre><code> RagasApiClient.list_experiment_columns (project_id:str,
+                                         experiment_id:str, limit:int=50,
+                                         offset:int=0,
+                                         order_by:Optional[str]=None,
+                                         sort_dir:Optional[str]=None)</code></pre>
+</blockquote>
+<p><em>List columns in an experiment.</em></p>
+<div id="cell-93" class="cell">
+<div class="sourceCode cell-code" id="cb113"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb113-1"><a href="#cb113-1" aria-hidden="true" tabindex="-1"></a><span class="cf">await</span> client.create_experiment(TEST_PROJECT_ID, <span class="st">"New Experiment"</span>, <span class="st">"This is a new experiment"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-display">
+<pre><code>{'id': '7c695b58-7fc3-464c-a18b-a96e35f9684d',
+ 'name': 'New Experiment',
+ 'description': 'This is a new experiment',
+ 'updated_at': '2025-04-09T17:03:44.340782+00:00',
+ 'created_at': '2025-04-09T17:03:44.340782+00:00',
+ 'version_counter': 0,
+ 'project_id': 'e1b3f1e4-d344-48f4-a178-84e7e32e6ab6'}</code></pre>
+</div>
+</div>
+<div id="cell-94" class="cell">
+<div class="sourceCode cell-code" id="cb115"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb115-1"><a href="#cb115-1" aria-hidden="true" tabindex="-1"></a>experiments <span class="op">=</span> <span class="cf">await</span> client.list_experiments(TEST_PROJECT_ID)</span>
+<span id="cb115-2"><a href="#cb115-2" aria-hidden="true" tabindex="-1"></a>EXPERIMENT_ID <span class="op">=</span> experiments[<span class="st">"items"</span>][<span class="dv">0</span>][<span class="st">"id"</span>]</span>
+<span id="cb115-3"><a href="#cb115-3" aria-hidden="true" tabindex="-1"></a>EXPERIMENT_ID</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-display">
+<pre><code>'78fd6c58-7edf-4239-93d1-4f49185d8e49'</code></pre>
+</div>
+</div>
+<hr>
+<p><a href="https://github.com/explodinggradients/ragas_experimental/blob/main/ragas_experimental/backends/ragas_api_client.py#L953" target="_blank" style="float:right; font-size:smaller">source</a></p>
+</section>
+<section id="ragasapiclient.create_experiment_with_data" class="level3">
+<h3 class="anchored" data-anchor-id="ragasapiclient.create_experiment_with_data">RagasApiClient.create_experiment_with_data</h3>
+<blockquote class="blockquote">
+<pre><code> RagasApiClient.create_experiment_with_data (project_id:str, name:str,
+                                             description:str, columns:List
+                                             [__main__.Column],
+                                             rows:List[__main__.Row],
+                                             batch_size:int=50)</code></pre>
+</blockquote>
+<p>*Create an experiment with columns and rows.</p>
+<p>This method creates an experiment and populates it with columns and rows in an optimized way using concurrent requests.</p>
+<p>Args: project_id: Project ID name: Experiment name description: Experiment description columns: List of column definitions rows: List of row data batch_size: Number of operations to perform concurrently</p>
+<p>Returns: The created experiment*</p>
+<hr>
+<p><a href="https://github.com/explodinggradients/ragas_experimental/blob/main/ragas_experimental/backends/ragas_api_client.py#L1061" target="_blank" style="float:right; font-size:smaller">source</a></p>
+</section>
+<section id="ragasapiclient.convert_raw_data" class="level3">
+<h3 class="anchored" data-anchor-id="ragasapiclient.convert_raw_data">RagasApiClient.convert_raw_data</h3>
+<blockquote class="blockquote">
+<pre><code> RagasApiClient.convert_raw_data (column_defs:List[Dict],
+                                  row_data:List[Dict])</code></pre>
+</blockquote>
+<p>*Convert raw data to column and row objects.</p>
+<p>Args: column_defs: List of column definitions (dicts with name, type) row_data: List of dictionaries with row data</p>
+<p>Returns: Tuple of (columns, rows)*</p>
+<hr>
+<p><a href="https://github.com/explodinggradients/ragas_experimental/blob/main/ragas_experimental/backends/ragas_api_client.py#L1046" target="_blank" style="float:right; font-size:smaller">source</a></p>
+</section>
+<section id="ragasapiclient.create_column_map" class="level3">
+<h3 class="anchored" data-anchor-id="ragasapiclient.create_column_map">RagasApiClient.create_column_map</h3>
+<blockquote class="blockquote">
+<pre><code> RagasApiClient.create_column_map (columns:List[__main__.Column])</code></pre>
+</blockquote>
+<p>*Create a mapping of column names to IDs.</p>
+<p>Args: columns: List of column objects</p>
+<p>Returns: Dictionary mapping column names to IDs*</p>
+<hr>
+<p><a href="https://github.com/explodinggradients/ragas_experimental/blob/main/ragas_experimental/backends/ragas_api_client.py#L1017" target="_blank" style="float:right; font-size:smaller">source</a></p>
+</section>
+<section id="ragasapiclient.create_row" class="level3">
+<h3 class="anchored" data-anchor-id="ragasapiclient.create_row">RagasApiClient.create_row</h3>
+<blockquote class="blockquote">
+<pre><code> RagasApiClient.create_row (data:Dict[str,Any], column_map:Dict[str,str],
+                            id:Optional[str]=None)</code></pre>
+</blockquote>
+<p>*Create a Row object from a dictionary.</p>
+<p>Args: data: Dictionary mapping column names to values column_map: Dictionary mapping column names to column IDs id: Custom ID (generates one if not provided)</p>
+<p>Returns: Row object*</p>
+<hr>
+<p><a href="https://github.com/explodinggradients/ragas_experimental/blob/main/ragas_experimental/backends/ragas_api_client.py#L985" target="_blank" style="float:right; font-size:smaller">source</a></p>
+</section>
+<section id="ragasapiclient.create_column" class="level3">
+<h3 class="anchored" data-anchor-id="ragasapiclient.create_column">RagasApiClient.create_column</h3>
+<blockquote class="blockquote">
+<pre><code> RagasApiClient.create_column (name:str, type:str,
+                               settings:Optional[Dict]=None,
+                               col_order:Optional[int]=None,
+                               id:Optional[str]=None)</code></pre>
+</blockquote>
+<p>*Create a Column object.</p>
+<p>Args: name: Column name type: Column type (use ColumnType enum) settings: Column settings col_order: Column order id: Custom ID (generates one if not provided)</p>
+<p>Returns: Column object*</p>
+
+
+</section>
+
+</main> <!-- /main -->
+<script id="quarto-html-after-body" type="application/javascript">
+window.document.addEventListener("DOMContentLoaded", function (event) {
+  const toggleBodyColorMode = (bsSheetEl) => {
+    const mode = bsSheetEl.getAttribute("data-mode");
+    const bodyEl = window.document.querySelector("body");
+    if (mode === "dark") {
+      bodyEl.classList.add("quarto-dark");
+      bodyEl.classList.remove("quarto-light");
+    } else {
+      bodyEl.classList.add("quarto-light");
+      bodyEl.classList.remove("quarto-dark");
+    }
+  }
+  const toggleBodyColorPrimary = () => {
+    const bsSheetEl = window.document.querySelector("link#quarto-bootstrap");
+    if (bsSheetEl) {
+      toggleBodyColorMode(bsSheetEl);
+    }
+  }
+  toggleBodyColorPrimary();  
+  const icon = "";
+  const anchorJS = new window.AnchorJS();
+  anchorJS.options = {
+    placement: 'right',
+    icon: icon
+  };
+  anchorJS.add('.anchored');
+  const isCodeAnnotation = (el) => {
+    for (const clz of el.classList) {
+      if (clz.startsWith('code-annotation-')) {                     
+        return true;
+      }
+    }
+    return false;
+  }
+  const onCopySuccess = function(e) {
+    // button target
+    const button = e.trigger;
+    // don't keep focus
+    button.blur();
+    // flash "checked"
+    button.classList.add('code-copy-button-checked');
+    var currentTitle = button.getAttribute("title");
+    button.setAttribute("title", "Copied!");
+    let tooltip;
+    if (window.bootstrap) {
+      button.setAttribute("data-bs-toggle", "tooltip");
+      button.setAttribute("data-bs-placement", "left");
+      button.setAttribute("data-bs-title", "Copied!");
+      tooltip = new bootstrap.Tooltip(button, 
+        { trigger: "manual", 
+          customClass: "code-copy-button-tooltip",
+          offset: [0, -8]});
+      tooltip.show();    
+    }
+    setTimeout(function() {
+      if (tooltip) {
+        tooltip.hide();
+        button.removeAttribute("data-bs-title");
+        button.removeAttribute("data-bs-toggle");
+        button.removeAttribute("data-bs-placement");
+      }
+      button.setAttribute("title", currentTitle);
+      button.classList.remove('code-copy-button-checked');
+    }, 1000);
+    // clear code selection
+    e.clearSelection();
+  }
+  const getTextToCopy = function(trigger) {
+      const codeEl = trigger.previousElementSibling.cloneNode(true);
+      for (const childEl of codeEl.children) {
+        if (isCodeAnnotation(childEl)) {
+          childEl.remove();
+        }
+      }
+      return codeEl.innerText;
+  }
+  const clipboard = new window.ClipboardJS('.code-copy-button:not([data-in-quarto-modal])', {
+    text: getTextToCopy
+  });
+  clipboard.on('success', onCopySuccess);
+  if (window.document.getElementById('quarto-embedded-source-code-modal')) {
+    const clipboardModal = new window.ClipboardJS('.code-copy-button[data-in-quarto-modal]', {
+      text: getTextToCopy,
+      container: window.document.getElementById('quarto-embedded-source-code-modal')
+    });
+    clipboardModal.on('success', onCopySuccess);
+  }
+    var localhostRegex = new RegExp(/^(?:http|https):\/\/localhost\:?[0-9]*\//);
+    var mailtoRegex = new RegExp(/^mailto:/);
+      var filterRegex = new RegExp("https:\/\/explodinggradients\.github\.io\/ragas_experimental");
+    var isInternal = (href) => {
+        return filterRegex.test(href) || localhostRegex.test(href) || mailtoRegex.test(href);
+    }
+    // Inspect non-navigation links and adorn them if external
+ 	var links = window.document.querySelectorAll('a[href]:not(.nav-link):not(.navbar-brand):not(.toc-action):not(.sidebar-link):not(.sidebar-item-toggle):not(.pagination-link):not(.no-external):not([aria-hidden]):not(.dropdown-item):not(.quarto-navigation-tool):not(.about-link)');
+    for (var i=0; i<links.length; i++) {
+      const link = links[i];
+      if (!isInternal(link.href)) {
+        // undo the damage that might have been done by quarto-nav.js in the case of
+        // links that we want to consider external
+        if (link.dataset.originalHref !== undefined) {
+          link.href = link.dataset.originalHref;
+        }
+      }
+    }
+  function tippyHover(el, contentFn, onTriggerFn, onUntriggerFn) {
+    const config = {
+      allowHTML: true,
+      maxWidth: 500,
+      delay: 100,
+      arrow: false,
+      appendTo: function(el) {
+          return el.parentElement;
+      },
+      interactive: true,
+      interactiveBorder: 10,
+      theme: 'quarto',
+      placement: 'bottom-start',
+    };
+    if (contentFn) {
+      config.content = contentFn;
+    }
+    if (onTriggerFn) {
+      config.onTrigger = onTriggerFn;
+    }
+    if (onUntriggerFn) {
+      config.onUntrigger = onUntriggerFn;
+    }
+    window.tippy(el, config); 
+  }
+  const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
+  for (var i=0; i<noterefs.length; i++) {
+    const ref = noterefs[i];
+    tippyHover(ref, function() {
+      // use id or data attribute instead here
+      let href = ref.getAttribute('data-footnote-href') || ref.getAttribute('href');
+      try { href = new URL(href).hash; } catch {}
+      const id = href.replace(/^#\/?/, "");
+      const note = window.document.getElementById(id);
+      if (note) {
+        return note.innerHTML;
+      } else {
+        return "";
+      }
+    });
+  }
+  const xrefs = window.document.querySelectorAll('a.quarto-xref');
+  const processXRef = (id, note) => {
+    // Strip column container classes
+    const stripColumnClz = (el) => {
+      el.classList.remove("page-full", "page-columns");
+      if (el.children) {
+        for (const child of el.children) {
+          stripColumnClz(child);
+        }
+      }
+    }
+    stripColumnClz(note)
+    if (id === null || id.startsWith('sec-')) {
+      // Special case sections, only their first couple elements
+      const container = document.createElement("div");
+      if (note.children && note.children.length > 2) {
+        container.appendChild(note.children[0].cloneNode(true));
+        for (let i = 1; i < note.children.length; i++) {
+          const child = note.children[i];
+          if (child.tagName === "P" && child.innerText === "") {
+            continue;
+          } else {
+            container.appendChild(child.cloneNode(true));
+            break;
+          }
+        }
+        if (window.Quarto?.typesetMath) {
+          window.Quarto.typesetMath(container);
+        }
+        return container.innerHTML
+      } else {
+        if (window.Quarto?.typesetMath) {
+          window.Quarto.typesetMath(note);
+        }
+        return note.innerHTML;
+      }
+    } else {
+      // Remove any anchor links if they are present
+      const anchorLink = note.querySelector('a.anchorjs-link');
+      if (anchorLink) {
+        anchorLink.remove();
+      }
+      if (window.Quarto?.typesetMath) {
+        window.Quarto.typesetMath(note);
+      }
+      if (note.classList.contains("callout")) {
+        return note.outerHTML;
+      } else {
+        return note.innerHTML;
+      }
+    }
+  }
+  for (var i=0; i<xrefs.length; i++) {
+    const xref = xrefs[i];
+    tippyHover(xref, undefined, function(instance) {
+      instance.disable();
+      let url = xref.getAttribute('href');
+      let hash = undefined; 
+      if (url.startsWith('#')) {
+        hash = url;
+      } else {
+        try { hash = new URL(url).hash; } catch {}
+      }
+      if (hash) {
+        const id = hash.replace(/^#\/?/, "");
+        const note = window.document.getElementById(id);
+        if (note !== null) {
+          try {
+            const html = processXRef(id, note.cloneNode(true));
+            instance.setContent(html);
+          } finally {
+            instance.enable();
+            instance.show();
+          }
+        } else {
+          // See if we can fetch this
+          fetch(url.split('#')[0])
+          .then(res => res.text())
+          .then(html => {
+            const parser = new DOMParser();
+            const htmlDoc = parser.parseFromString(html, "text/html");
+            const note = htmlDoc.getElementById(id);
+            if (note !== null) {
+              const html = processXRef(id, note);
+              instance.setContent(html);
+            } 
+          }).finally(() => {
+            instance.enable();
+            instance.show();
+          });
+        }
+      } else {
+        // See if we can fetch a full url (with no hash to target)
+        // This is a special case and we should probably do some content thinning / targeting
+        fetch(url)
+        .then(res => res.text())
+        .then(html => {
+          const parser = new DOMParser();
+          const htmlDoc = parser.parseFromString(html, "text/html");
+          const note = htmlDoc.querySelector('main.content');
+          if (note !== null) {
+            // This should only happen for chapter cross references
+            // (since there is no id in the URL)
+            // remove the first header
+            if (note.children.length > 0 && note.children[0].tagName === "HEADER") {
+              note.children[0].remove();
+            }
+            const html = processXRef(null, note);
+            instance.setContent(html);
+          } 
+        }).finally(() => {
+          instance.enable();
+          instance.show();
+        });
+      }
+    }, function(instance) {
+    });
+  }
+      let selectedAnnoteEl;
+      const selectorForAnnotation = ( cell, annotation) => {
+        let cellAttr = 'data-code-cell="' + cell + '"';
+        let lineAttr = 'data-code-annotation="' +  annotation + '"';
+        const selector = 'span[' + cellAttr + '][' + lineAttr + ']';
+        return selector;
+      }
+      const selectCodeLines = (annoteEl) => {
+        const doc = window.document;
+        const targetCell = annoteEl.getAttribute("data-target-cell");
+        const targetAnnotation = annoteEl.getAttribute("data-target-annotation");
+        const annoteSpan = window.document.querySelector(selectorForAnnotation(targetCell, targetAnnotation));
+        const lines = annoteSpan.getAttribute("data-code-lines").split(",");
+        const lineIds = lines.map((line) => {
+          return targetCell + "-" + line;
+        })
+        let top = null;
+        let height = null;
+        let parent = null;
+        if (lineIds.length > 0) {
+            //compute the position of the single el (top and bottom and make a div)
+            const el = window.document.getElementById(lineIds[0]);
+            top = el.offsetTop;
+            height = el.offsetHeight;
+            parent = el.parentElement.parentElement;
+          if (lineIds.length > 1) {
+            const lastEl = window.document.getElementById(lineIds[lineIds.length - 1]);
+            const bottom = lastEl.offsetTop + lastEl.offsetHeight;
+            height = bottom - top;
+          }
+          if (top !== null && height !== null && parent !== null) {
+            // cook up a div (if necessary) and position it 
+            let div = window.document.getElementById("code-annotation-line-highlight");
+            if (div === null) {
+              div = window.document.createElement("div");
+              div.setAttribute("id", "code-annotation-line-highlight");
+              div.style.position = 'absolute';
+              parent.appendChild(div);
+            }
+            div.style.top = top - 2 + "px";
+            div.style.height = height + 4 + "px";
+            div.style.left = 0;
+            let gutterDiv = window.document.getElementById("code-annotation-line-highlight-gutter");
+            if (gutterDiv === null) {
+              gutterDiv = window.document.createElement("div");
+              gutterDiv.setAttribute("id", "code-annotation-line-highlight-gutter");
+              gutterDiv.style.position = 'absolute';
+              const codeCell = window.document.getElementById(targetCell);
+              const gutter = codeCell.querySelector('.code-annotation-gutter');
+              gutter.appendChild(gutterDiv);
+            }
+            gutterDiv.style.top = top - 2 + "px";
+            gutterDiv.style.height = height + 4 + "px";
+          }
+          selectedAnnoteEl = annoteEl;
+        }
+      };
+      const unselectCodeLines = () => {
+        const elementsIds = ["code-annotation-line-highlight", "code-annotation-line-highlight-gutter"];
+        elementsIds.forEach((elId) => {
+          const div = window.document.getElementById(elId);
+          if (div) {
+            div.remove();
+          }
+        });
+        selectedAnnoteEl = undefined;
+      };
+        // Handle positioning of the toggle
+    window.addEventListener(
+      "resize",
+      throttle(() => {
+        elRect = undefined;
+        if (selectedAnnoteEl) {
+          selectCodeLines(selectedAnnoteEl);
+        }
+      }, 10)
+    );
+    function throttle(fn, ms) {
+    let throttle = false;
+    let timer;
+      return (...args) => {
+        if(!throttle) { // first call gets through
+            fn.apply(this, args);
+            throttle = true;
+        } else { // all the others get throttled
+            if(timer) clearTimeout(timer); // cancel #2
+            timer = setTimeout(() => {
+              fn.apply(this, args);
+              timer = throttle = false;
+            }, ms);
+        }
+      };
+    }
+      // Attach click handler to the DT
+      const annoteDls = window.document.querySelectorAll('dt[data-target-cell]');
+      for (const annoteDlNode of annoteDls) {
+        annoteDlNode.addEventListener('click', (event) => {
+          const clickedEl = event.target;
+          if (clickedEl !== selectedAnnoteEl) {
+            unselectCodeLines();
+            const activeEl = window.document.querySelector('dt[data-target-cell].code-annotation-active');
+            if (activeEl) {
+              activeEl.classList.remove('code-annotation-active');
+            }
+            selectCodeLines(clickedEl);
+            clickedEl.classList.add('code-annotation-active');
+          } else {
+            // Unselect the line
+            unselectCodeLines();
+            clickedEl.classList.remove('code-annotation-active');
+          }
+        });
+      }
+  const findCites = (el) => {
+    const parentEl = el.parentElement;
+    if (parentEl) {
+      const cites = parentEl.dataset.cites;
+      if (cites) {
+        return {
+          el,
+          cites: cites.split(' ')
+        };
+      } else {
+        return findCites(el.parentElement)
+      }
+    } else {
+      return undefined;
+    }
+  };
+  var bibliorefs = window.document.querySelectorAll('a[role="doc-biblioref"]');
+  for (var i=0; i<bibliorefs.length; i++) {
+    const ref = bibliorefs[i];
+    const citeInfo = findCites(ref);
+    if (citeInfo) {
+      tippyHover(citeInfo.el, function() {
+        var popup = window.document.createElement('div');
+        citeInfo.cites.forEach(function(cite) {
+          var citeDiv = window.document.createElement('div');
+          citeDiv.classList.add('hanging-indent');
+          citeDiv.classList.add('csl-entry');
+          var biblioDiv = window.document.getElementById('ref-' + cite);
+          if (biblioDiv) {
+            citeDiv.innerHTML = biblioDiv.innerHTML;
+          }
+          popup.appendChild(citeDiv);
+        });
+        return popup.innerHTML;
+      });
+    }
+  }
+});
+</script>
+</div> <!-- /content -->
+
+
+
+
+<footer class="footer"><div class="nav-footer"><div class="nav-footer-center"><div class="toc-actions d-sm-block d-md-none"><ul><li><a href="https://github.com/explodinggradients/ragas_experimental/issues/new" class="toc-action"><i class="bi bi-github"></i>Report an issue</a></li></ul></div></div></div></footer></body></html>
