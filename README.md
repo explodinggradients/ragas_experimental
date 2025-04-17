@@ -23,5 +23,5 @@ $ pip install ragas_experimental
 ## Getting Started
 
 First lets init a
-[`Project`](https://explodinggradients.github.io/ragas_annotator/project/core.html#project)
+[`Project`](https://explodinggradients.github.io/ragas_experimental/project/core.html#project)
 from notion.
