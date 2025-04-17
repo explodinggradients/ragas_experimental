@@ -63,7 +63,7 @@ class Project:
     def __repr__(self):
         return f"Project(name='{self.name}')"
 
-# %% ../../nbs/project/core.ipynb 9
+# %% ../../nbs/project/core.ipynb 8
 @patch(cls_method=True)
 def get(cls: Project, name: str, ragas_app_client: t.Optional[RagasApiClient] = None) -> Project:
     """Get an existing project by name."""
@@ -83,7 +83,7 @@ def get(cls: Project, name: str, ragas_app_client: t.Optional[RagasApiClient] = 
         ragas_app_client=ragas_app_client,
     )
 
-# %% ../../nbs/project/core.ipynb 13
+# %% ../../nbs/project/core.ipynb 12
 async def create_dataset_columns(project_id, dataset_id, columns, create_dataset_column_func):
     tasks = []
     for column in columns:
@@ -98,7 +98,7 @@ async def create_dataset_columns(project_id, dataset_id, columns, create_dataset
     return await asyncio.gather(*tasks)
 
 
-# %% ../../nbs/project/core.ipynb 14
+# %% ../../nbs/project/core.ipynb 13
 @patch
 def create_dataset(
     self: Project, model: t.Type[BaseModel], name: t.Optional[str] = None
@@ -138,7 +138,7 @@ def create_dataset(
         ragas_api_client=self._ragas_api_client,
     )
 
-# %% ../../nbs/project/core.ipynb 18
+# %% ../../nbs/project/core.ipynb 17
 @patch
 def get_dataset_by_id(self: Project, dataset_id: str, model) -> Dataset:
     """Get an existing dataset by name."""
@@ -158,7 +158,7 @@ def get_dataset_by_id(self: Project, dataset_id: str, model) -> Dataset:
         ragas_api_client=self._ragas_api_client,
     )
 
-# %% ../../nbs/project/core.ipynb 20
+# %% ../../nbs/project/core.ipynb 19
 @patch
 def get_dataset(self: Project, dataset_name: str, model) -> Dataset:
     """Get an existing dataset by name."""

@@ -336,6 +336,9 @@ def model_to_columns(cls: ModelConverter, model_class):
             
             columns.append(column)
     
+    # set the position of the columns
+    for i in range(len(columns)):
+        columns[i]["settings"]["position"] = i
     return columns
 
 # %% ../nbs/typing.ipynb 23
