@@ -23,6 +23,21 @@ from ..experiment import Experiment
 import ragas_experimental.typing as rt
 
 # %% ../../nbs/project/experiments.ipynb 4
+# Add this helper function similar to create_dataset_columns in core.ipynb
+async def create_experiment_columns(project_id, experiment_id, columns, create_experiment_column_func):
+    tasks = []
+    for column in columns:
+        tasks.append(create_experiment_column_func(
+            project_id=project_id,
+            experiment_id=experiment_id,
+            id=create_nano_id(),
+            name=column["name"],
+            type=column["type"],
+            settings=column["settings"]
+        ))
+    return await asyncio.gather(*tasks)
+
+# %% ../../nbs/project/experiments.ipynb 5
 @patch
 def create_experiment(
     self: Project, name: str, model: t.Type[BaseModel]
@@ -62,24 +77,8 @@ def create_experiment(
         ragas_api_client=self._ragas_api_client,
     )
 
-# Add this helper function similar to create_dataset_columns in core.ipynb
-async def create_experiment_columns(project_id, experiment_id, columns, create_experiment_column_func):
-    tasks = []
-    for column in columns:
-        tasks.append(create_experiment_column_func(
-            project_id=project_id,
-            experiment_id=experiment_id,
-            id=create_nano_id(),
-            name=column["name"],
-            type=column["type"],
-            settings={
-                "max_length": 255,
-                "is_required": True,
-            },
-        ))
-    return await asyncio.gather(*tasks)
 
-# %% ../../nbs/project/experiments.ipynb 8
+# %% ../../nbs/project/experiments.ipynb 9
 @patch
 def get_experiment_by_id(self: Project, experiment_id: str, model: t.Type[BaseModel]) -> Experiment:
     """Get an existing experiment by ID."""
@@ -98,7 +97,7 @@ def get_experiment_by_id(self: Project, experiment_id: str, model: t.Type[BaseMo
         ragas_api_client=self._ragas_api_client,
     )
 
-# %% ../../nbs/project/experiments.ipynb 11
+# %% ../../nbs/project/experiments.ipynb 12
 @patch
 def get_experiment(self: Project, experiment_name: str, model) -> Dataset:
     """Get an existing dataset by name."""
@@ -118,23 +117,23 @@ def get_experiment(self: Project, experiment_name: str, model) -> Dataset:
         ragas_api_client=self._ragas_api_client,
     )
 
-# %% ../../nbs/project/experiments.ipynb 14
+# %% ../../nbs/project/experiments.ipynb 15
 @t.runtime_checkable
 class ExperimentProtocol(t.Protocol):
     async def __call__(self, *args, **kwargs): ...
     async def run_async(self, name: str, dataset: Dataset): ...
 
-# %% ../../nbs/project/experiments.ipynb 15
+# %% ../../nbs/project/experiments.ipynb 16
 # this one we have to clean up
 from langfuse.decorators import observe
 
-# %% ../../nbs/project/experiments.ipynb 16
+# %% ../../nbs/project/experiments.ipynb 17
 from .naming import MemorableNames
 
-# %% ../../nbs/project/experiments.ipynb 17
+# %% ../../nbs/project/experiments.ipynb 18
 memorable_names = MemorableNames()
 
-# %% ../../nbs/project/experiments.ipynb 18
+# %% ../../nbs/project/experiments.ipynb 19
 @patch
 def experiment(
     self: Project, experiment_model, name_prefix: str = ""
@@ -215,7 +214,7 @@ def experiment(
 
 
 
-# %% ../../nbs/project/experiments.ipynb 22
+# %% ../../nbs/project/experiments.ipynb 23
 @patch
 def langfuse_experiment(
     self: Project, experiment_model, name_prefix: str = ""
@@ -261,7 +260,7 @@ def langfuse_experiment(
 
     return decorator
 
-# %% ../../nbs/project/experiments.ipynb 23
+# %% ../../nbs/project/experiments.ipynb 24
 import logging
 from ..utils import plot_experiments_as_subplots
 
