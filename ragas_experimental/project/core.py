@@ -65,7 +65,9 @@ class Project:
 
 # %% ../../nbs/project/core.ipynb 8
 @patch(cls_method=True)
-def get(cls: Project, name: str, ragas_app_client: t.Optional[RagasApiClient] = None) -> Project:
+def get(
+    cls: Project, name: str, ragas_app_client: t.Optional[RagasApiClient] = None
+) -> Project:
     """Get an existing project by name."""
     # Search for project with given name
     if ragas_app_client is None:
@@ -73,9 +75,7 @@ def get(cls: Project, name: str, ragas_app_client: t.Optional[RagasApiClient] = 
 
     # get the project by name
     sync_version = async_to_sync(ragas_app_client.get_project_by_name)
-    project_info = sync_version(
-        project_name=name
-    )
+    project_info = sync_version(project_name=name)
 
     # Return Project instance
     return Project(
@@ -84,19 +84,22 @@ def get(cls: Project, name: str, ragas_app_client: t.Optional[RagasApiClient] = 
     )
 
 # %% ../../nbs/project/core.ipynb 12
-async def create_dataset_columns(project_id, dataset_id, columns, create_dataset_column_func):
+async def create_dataset_columns(
+    project_id, dataset_id, columns, create_dataset_column_func
+):
     tasks = []
     for column in columns:
-        tasks.append(create_dataset_column_func(
-            project_id=project_id,
-            dataset_id=dataset_id,
-            id=create_nano_id(),
-            name=column["name"],
-            type=column["type"],
-            settings=column["settings"],
-        ))
+        tasks.append(
+            create_dataset_column_func(
+                project_id=project_id,
+                dataset_id=dataset_id,
+                id=create_nano_id(),
+                name=column["name"],
+                type=column["type"],
+                settings=column["settings"],
+            )
+        )
     return await asyncio.gather(*tasks)
-
 
 # %% ../../nbs/project/core.ipynb 13
 @patch
@@ -128,7 +131,7 @@ def create_dataset(
         columns=column_types,
         create_dataset_column_func=self._ragas_api_client.create_dataset_column,
     )
-        
+
     # Return a new Dataset instance
     return Dataset(
         name=name if name is not None else model.__name__,
@@ -144,10 +147,7 @@ def get_dataset_by_id(self: Project, dataset_id: str, model) -> Dataset:
     """Get an existing dataset by name."""
     # Search for database with given name
     sync_version = async_to_sync(self._ragas_api_client.get_dataset)
-    dataset_info = sync_version(
-        project_id=self.project_id,
-        dataset_id=dataset_id
-    )
+    dataset_info = sync_version(project_id=self.project_id, dataset_id=dataset_id)
 
     # For now, return Dataset without model type
     return Dataset(
@@ -164,10 +164,7 @@ def get_dataset(self: Project, dataset_name: str, model) -> Dataset:
     """Get an existing dataset by name."""
     # Search for dataset with given name
     sync_version = async_to_sync(self._ragas_api_client.get_dataset_by_name)
-    dataset_info = sync_version(
-        project_id=self.project_id,
-        dataset_name=dataset_name
-    )
+    dataset_info = sync_version(project_id=self.project_id, dataset_name=dataset_name)
 
     # Return Dataset instance
     return Dataset(
