@@ -79,7 +79,7 @@ def create_experiment(
     )
 
 
-# %% ../../nbs/project/experiments.ipynb 9
+# %% ../../nbs/project/experiments.ipynb 10
 @patch
 def get_experiment_by_id(self: Project, experiment_id: str, model: t.Type[BaseModel]) -> Experiment:
     """Get an existing experiment by ID."""
@@ -98,7 +98,7 @@ def get_experiment_by_id(self: Project, experiment_id: str, model: t.Type[BaseMo
         ragas_api_client=self._ragas_api_client,
     )
 
-# %% ../../nbs/project/experiments.ipynb 12
+# %% ../../nbs/project/experiments.ipynb 13
 @patch
 def get_experiment(self: Project, experiment_name: str, model) -> Dataset:
     """Get an existing dataset by name."""
@@ -118,24 +118,15 @@ def get_experiment(self: Project, experiment_name: str, model) -> Dataset:
         ragas_api_client=self._ragas_api_client,
     )
 
-# %% ../../nbs/project/experiments.ipynb 15
+# %% ../../nbs/project/experiments.ipynb 16
 import git
-import os
 from pathlib import Path
 
-# %% ../../nbs/project/experiments.ipynb 16
-def find_git_root(start_path: t.Union[str, Path, None] = None) -> Path:
-    """Find the root directory of a git repository by traversing up from the start path.
-    
-    Args:
-        start_path: Path to start searching from (defaults to current working directory)
-        
-    Returns:
-        Path: Absolute path to the git repository root
-        
-    Raises:
-        ValueError: If no git repository is found
-    """
+# %% ../../nbs/project/experiments.ipynb 17
+def find_git_root(
+        start_path: t.Union[str, Path, None] = None # starting path to search from
+    ) -> Path:
+    """Find the root directory of a git repository by traversing up from the start path."""
     # Start from the current directory if no path is provided
     if start_path is None:
         start_path = Path.cwd()
@@ -158,7 +149,7 @@ def find_git_root(start_path: t.Union[str, Path, None] = None) -> Path:
     # No git repository found
     raise ValueError(f"No git repository found in or above {start_path}")
 
-# %% ../../nbs/project/experiments.ipynb 19
+# %% ../../nbs/project/experiments.ipynb 20
 def version_experiment(
     experiment_name: str,
     commit_message: t.Optional[str] = None,
@@ -166,9 +157,7 @@ def version_experiment(
     create_branch: bool = True,
     stage_all: bool = False,
 ) -> str:
-    """
-    Version control the current state of the codebase for an experiment.
-    """
+    "Version control the current state of the codebase for an experiment."
     # Default to current directory if no repo path is provided
     if repo_path is None:
         repo_path = find_git_root()
@@ -212,7 +201,7 @@ def version_experiment(
     
     return commit_hash
 
-# %% ../../nbs/project/experiments.ipynb 20
+# %% ../../nbs/project/experiments.ipynb 22
 def cleanup_experiment_branches(
     prefix: str = "ragas/", 
     repo_path: t.Union[str, Path, None] = None,
@@ -287,19 +276,19 @@ def cleanup_experiment_branches(
     
     return deleted_branches
 
-# %% ../../nbs/project/experiments.ipynb 23
+# %% ../../nbs/project/experiments.ipynb 25
 @t.runtime_checkable
 class ExperimentProtocol(t.Protocol):
     async def __call__(self, *args, **kwargs): ...
     async def run_async(self, name: str, dataset: Dataset): ...
 
-# %% ../../nbs/project/experiments.ipynb 24
+# %% ../../nbs/project/experiments.ipynb 26
 from .naming import MemorableNames
 
-# %% ../../nbs/project/experiments.ipynb 25
+# %% ../../nbs/project/experiments.ipynb 27
 memorable_names = MemorableNames()
 
-# %% ../../nbs/project/experiments.ipynb 26
+# %% ../../nbs/project/experiments.ipynb 28
 @patch
 def experiment(
     self: Project, experiment_model, name_prefix: str = "", save_to_git: bool = True, stage_all: bool = False
@@ -386,11 +375,11 @@ def experiment(
 
 
 
-# %% ../../nbs/project/experiments.ipynb 30
+# %% ../../nbs/project/experiments.ipynb 32
 # this one we have to clean up
 from langfuse.decorators import observe
 
-# %% ../../nbs/project/experiments.ipynb 31
+# %% ../../nbs/project/experiments.ipynb 33
 @patch
 def langfuse_experiment(
     self: Project, experiment_model, name_prefix: str = ""
@@ -420,7 +409,7 @@ def langfuse_experiment(
 
     return decorator
 
-# %% ../../nbs/project/experiments.ipynb 38
+# %% ../../nbs/project/experiments.ipynb 40
 from mlflow import trace
 
 @patch
@@ -468,7 +457,7 @@ def mlflow_experiment(
 
     return decorator
 
-# %% ../../nbs/project/experiments.ipynb 39
+# %% ../../nbs/project/experiments.ipynb 41
 import logging
 from ..utils import plot_experiments_as_subplots
 
