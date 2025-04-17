@@ -93,10 +93,7 @@ async def create_dataset_columns(project_id, dataset_id, columns, create_dataset
             id=create_nano_id(),
             name=column["name"],
             type=column["type"],
-            settings={
-                "max_length": 255,
-                "is_required": True,
-            },
+            settings=column["settings"],
         ))
     return await asyncio.gather(*tasks)
 
