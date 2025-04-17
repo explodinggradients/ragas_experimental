@@ -202,7 +202,7 @@ def version_experiment(
 
     return commit_hash
 
-# %% ../../nbs/project/experiments.ipynb 22
+# %% ../../nbs/project/experiments.ipynb 21
 def cleanup_experiment_branches(
     prefix: str = "ragas/",
     repo_path: t.Union[str, Path, None] = None,
@@ -281,26 +281,26 @@ def cleanup_experiment_branches(
 
     return deleted_branches
 
-# %% ../../nbs/project/experiments.ipynb 25
+# %% ../../nbs/project/experiments.ipynb 24
 @t.runtime_checkable
 class ExperimentProtocol(t.Protocol):
     async def __call__(self, *args, **kwargs): ...
     async def run_async(self, name: str, dataset: Dataset): ...
 
-# %% ../../nbs/project/experiments.ipynb 26
+# %% ../../nbs/project/experiments.ipynb 25
 from .naming import MemorableNames
 
-# %% ../../nbs/project/experiments.ipynb 27
+# %% ../../nbs/project/experiments.ipynb 26
 memorable_names = MemorableNames()
 
-# %% ../../nbs/project/experiments.ipynb 28
+# %% ../../nbs/project/experiments.ipynb 27
 @patch
 def experiment(
     self: Project,
     experiment_model,
     name_prefix: str = "",
     save_to_git: bool = True,
-    stage_all: bool = False,
+    stage_all: bool = True,
 ):
     """Decorator for creating experiment functions without Langfuse integration.
 
@@ -400,11 +400,11 @@ def experiment(
 
     return decorator
 
-# %% ../../nbs/project/experiments.ipynb 32
+# %% ../../nbs/project/experiments.ipynb 31
 # this one we have to clean up
 from langfuse.decorators import observe
 
-# %% ../../nbs/project/experiments.ipynb 33
+# %% ../../nbs/project/experiments.ipynb 32
 @patch
 def langfuse_experiment(self: Project, experiment_model, name_prefix: str = ""):
     """Decorator for creating experiment functions with Langfuse integration.
@@ -436,7 +436,7 @@ def langfuse_experiment(self: Project, experiment_model, name_prefix: str = ""):
 
     return decorator
 
-# %% ../../nbs/project/experiments.ipynb 40
+# %% ../../nbs/project/experiments.ipynb 39
 from mlflow import trace
 
 
@@ -481,7 +481,7 @@ def mlflow_experiment(self: Project, experiment_model, name_prefix: str = ""):
 
     return decorator
 
-# %% ../../nbs/project/experiments.ipynb 41
+# %% ../../nbs/project/experiments.ipynb 40
 import logging
 from ..utils import plot_experiments_as_subplots
 

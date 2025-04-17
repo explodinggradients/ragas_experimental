@@ -25,13 +25,13 @@ class Project:
     def __init__(
         self,
         project_id: str,
-        ragas_app_client: t.Optional[RagasApiClient] = None,
+        ragas_api_client: t.Optional[RagasApiClient] = None,
     ):
         self.project_id = project_id
-        if ragas_app_client is None:
+        if ragas_api_client is None:
             self._ragas_api_client = RagasApiClientFactory.create()
         else:
-            self._ragas_api_client = ragas_app_client
+            self._ragas_api_client = ragas_api_client
 
         # create the project
         try:
@@ -48,12 +48,12 @@ class Project:
         cls,
         name: str,
         description: str = "",
-        ragas_app_client: t.Optional[RagasApiClient] = None,
+        ragas_api_client: t.Optional[RagasApiClient] = None,
     ):
-        ragas_app_client = RagasApiClientFactory.create()
-        sync_version = async_to_sync(ragas_app_client.create_project)
+        ragas_api_client = RagasApiClientFactory.create()
+        sync_version = async_to_sync(ragas_api_client.create_project)
         new_project = sync_version(title=name, description=description)
-        return cls(new_project["id"], ragas_app_client)
+        return cls(new_project["id"], ragas_api_client)
 
     def delete(self):
         sync_version = async_to_sync(self._ragas_api_client.delete_project)
@@ -66,21 +66,21 @@ class Project:
 # %% ../../nbs/project/core.ipynb 8
 @patch(cls_method=True)
 def get(
-    cls: Project, name: str, ragas_app_client: t.Optional[RagasApiClient] = None
+    cls: Project, name: str, ragas_api_client: t.Optional[RagasApiClient] = None
 ) -> Project:
     """Get an existing project by name."""
     # Search for project with given name
-    if ragas_app_client is None:
-        ragas_app_client = RagasApiClientFactory.create()
+    if ragas_api_client is None:
+        ragas_api_client = RagasApiClientFactory.create()
 
     # get the project by name
-    sync_version = async_to_sync(ragas_app_client.get_project_by_name)
+    sync_version = async_to_sync(ragas_api_client.get_project_by_name)
     project_info = sync_version(project_name=name)
 
     # Return Project instance
     return Project(
         project_id=project_info["id"],
-        ragas_app_client=ragas_app_client,
+        ragas_api_client=ragas_api_client,
     )
 
 # %% ../../nbs/project/core.ipynb 12

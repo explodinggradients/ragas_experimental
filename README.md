@@ -22,6 +22,23 @@ $ pip install ragas_experimental
 
 ## Getting Started
 
-First lets init a
+First do signup to [beta.app.ragas.io](https://beta.app.ragas.io/) and
+generate the App Token and put it in the as the env variable
+`RAGAS_APP_TOKEN`.
+
+``` python
+import os
+# ideally you load this from a .env file so as to not commit it to the repo
+os.environ["RAGAS_APP_TOKEN"] = "api-key"
+```
+
+Now lets init a
 [`Project`](https://explodinggradients.github.io/ragas_experimental/project/core.html#project)
-from notion.
+in the App
+
+``` python
+from ragas_experimental import Project
+
+project = Project.create("my-project")
+project
+```
